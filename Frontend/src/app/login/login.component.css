@@ -1,0 +1,109 @@
+/*
+--- Main Layout ---
+*/
+.login-page-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.form-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.form-content {
+  width: 100%;
+  max-width: 450px;
+}
+
+.visual-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('https://images.unsplash.com/photo-1527529482837-4698179dc6ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80') center center/cover no-repeat;
+  position: relative;
+}
+
+/*
+--- Branding Visual Styling ---
+*/
+.visual-container .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.6), rgba(43, 4, 119, 0.7));
+}
+
+.visual-content {
+  position: relative; /* To be on top of the overlay */
+  z-index: 1;
+  padding: 2rem;
+}
+
+/*
+--- Form Styling ---
+*/
+.input-group-text {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+}
+
+.form-control {
+  min-height: 3rem; /* Taller inputs */
+}
+
+.invalid-feedback.d-block {
+    text-align: left;
+}
+
+/* Divider "OR" */
+.divider {
+  text-align: center;
+  color: #adb5bd;
+  position: relative;
+}
+.divider::before, .divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background-color: #dee2e6;
+}
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+/*
+--- Social Button Styling ---
+*/
+.btn-google {
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  transition: background-color 0.3s ease;
+}
+
+.btn-google:hover {
+  background-color: #f1f3f5;
+  border-color: #ced4da;
+}
+
+/*
+--- Responsive Design ---
+*/
+@media (max-width: 992px) {
+  .visual-container {
+    display: none; /* Hide the image panel on smaller screens */
+  }
+  .form-container {
+    flex-basis: 100%;
+  }
+}

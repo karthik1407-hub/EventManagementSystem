@@ -1,0 +1,86 @@
+<div class="login-page-wrapper">
+
+  <div class="form-container">
+    <div class="form-content">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold display-6 text-primary">Create an Account</h2>
+        <p class="text-muted">Join EventPro to start your journey.</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+            <input type="email" formControlName="email" class="form-control" id="email" placeholder="you@example.com"
+                   [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+            <input type="password" formControlName="password" class="form-control" id="password" placeholder="••••••••"
+                   [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" (input)="checkPasswordStrength()">
+          </div>
+        </div>
+
+        <div class="password-strength-meter mb-3">
+            <div class="strength-bar" [ngClass]="passwordStrength"></div>
+            <div class="strength-text" [ngClass]="passwordStrength">{{ passwordStrength | titlecase }}</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-shield-lock-fill"></i></span>
+            <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword" placeholder="••••••••"
+                   [ngClass]="{ 'is-invalid': submitted && (f['confirmPassword'].errors || registerForm.errors?.['passwordsMismatch']) }">
+          </div>
+          <div *ngIf="submitted && registerForm.errors?.['passwordsMismatch']" class="invalid-feedback d-block">
+            Passwords do not match.
+          </div>
+        </div>
+
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" formControlName="terms" id="termsCheck">
+          <label class="form-check-label" for="termsCheck">
+            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a>.
+          </label>
+        </div>
+
+        <div class="d-grid mb-4">
+          <button [disabled]="loading || registerForm.invalid" class="btn btn-primary btn-lg shadow">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            Create Account
+          </button>
+        </div>
+      </form>
+
+      <div class="divider my-4">OR</div>
+
+      <!-- <div class="d-grid gap-3">
+        <button class="btn btn-google d-flex align-items-center justify-content-center">
+            <i class="bi bi-google me-2"></i> Sign Up with Google
+        </button>
+      </div> -->
+
+      <div class="text-center mt-4">
+        <p class="text-muted">Already have an account? <a routerLink="/login" class="fw-medium text-decoration-none">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="visual-container">
+    <div class="overlay"></div>
+    <div class="visual-content text-center text-white">
+        <h1 class="display-4 fw-bold">One Step Away From Your Next Event</h1>
+        <p class="lead mt-3">Join a community of event enthusiasts and creators.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="container mt-5">
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!ticket && !errorMessage" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading ticket details...</p>
+  </div>
+
+  <div *ngIf="ticket" class="ticket-card shadow-lg rounded-3 p-4 mb-5">
+    <div class="ticket-header text-center mb-4">
+      <h2 class="text-primary fw-bold">{{ ticket.event?.name || 'Event Ticket' }}</h2>
+      <p class="lead">Your Entry Pass</p>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <p><strong>Ticket ID:</strong> {{ ticket.ticketID }}</p>
+        <p><strong>Event:</strong> {{ ticket.event?.name }}</p>
+        <p><strong>Location:</strong> {{ ticket.event?.location }}</p>
+        <p><strong>Date:</strong> {{ ticket.event?.date | date:'fullDate' }}</p>
+                <p><strong>Time:</strong> {{ ticket.event?.date | date:'shortTime' }}</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <p><strong>Booked By:</strong> {{ ticket.user?.name || 'N/A' }}</p>
+        <p><strong>Booking Date:</strong> {{ ticket.bookingDate | date:'medium' }}</p>
+        <p><strong>Status:</strong>
+          <span *ngIf="ticket.isCancelled" class="badge bg-danger">Cancelled</span>
+          <span *ngIf="!ticket.isCancelled" class="badge bg-success">Active</span>
+        </p>
+        <p><strong>Price:</strong> {{ ticket.event?.eventPrice | currency:'USD' }}</p>
+      </div>
+    </div>
+
+    <div class="ticket-footer text-center pt-3 border-top">
+      <p class="mb-1">Please present this ticket at the entrance.</p>
+      <p class="text-muted">Thank you for booking with us!</p>
+    </div>
+  </div>
+</div>

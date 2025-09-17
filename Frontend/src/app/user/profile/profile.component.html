@@ -1,0 +1,57 @@
+<div class="container mt-5">
+  <div class="col-12 col-md-6 col-lg-4 mx-auto">
+    <h1>User Profile</h1>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="profile">
+      <p><strong>Email:</strong> {{ profile.email }}</p>
+      <p><strong>Roles:</strong> {{ profile.roles }}</p>
+      <p><strong>ID</strong> {{ profile.userID }}</p>
+     
+     
+      <div>
+        <strong>Token:</strong>
+        <pre class="bg-light p-2 mb-2" style="white-space: pre-wrap; word-break: break-all;">{{ token }}</pre>
+        <button class="btn btn-sm btn-outline-secondary" (click)="copyToken()">Copy</button>
+        <span *ngIf="copied" class="ms-2 text-success">Copied!</span>
+      </div>
+      <!-- Show/Hide Orders Button -->
+       <button class="btn btn-primary mt-3" (click)="toggleOrders()">
+        {{ ordersVisible ? 'Hide Orders' : 'Show Orders' }}
+      </button>
+     
+    </div>
+  </div>
+
+  <!-- Orders Section -->
+    <div class="col-12 col-md-8 col-lg-6 mx-auto mt-5" *ngIf="ordersVisible">
+    <h2>Order History</h2>
+    <div *ngIf="ordersLoading" class="my-3">
+      <span class="spinner-border spinner-border-sm"></span> Loading orders...
+    </div>
+    <div *ngIf="ordersError" class="alert alert-danger">{{ ordersError }}</div>
+    <table *ngIf="orders.length > 0" class="table table-bordered table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.id }}</td>
+          <td>{{ order.statusString }}</td>
+          <td>{{ order.createdDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+          <td>{{ order.updatedDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!ordersLoading && orders.length === 0" class="alert alert-info mt-3">
+      No orders found.
+    </div>
+  </div>
+  
+    
+  
+</div>

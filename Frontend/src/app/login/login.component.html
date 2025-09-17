@@ -1,0 +1,78 @@
+<div class="login-page-wrapper">
+
+  <div class="form-container">
+    <div class="form-content">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold display-6 text-primary">EventPro</h2>
+        <h3 class="mb-3 fw-light">Welcome Back!</h3>
+        <p class="text-muted">Sign in to continue to your account.</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center mb-3">
+         <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+      </div>
+       <div *ngIf="successMessage" class="alert alert-success mt-3"> {{ successMessage }}</div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+            <input type="email" formControlName="email" class="form-control" id="email" placeholder="you@example.com"
+                   [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+          </div>
+          <div *ngIf="submitted && f['email'].errors" class="invalid-feedback d-block">
+            <div *ngIf="f['email'].errors['required']">Email is required.</div>
+            <div *ngIf="f['email'].errors['email']">Please enter a valid email.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-group">
+             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" id="password" placeholder="••••••••"
+                   [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
+            <button type="button" class="input-group-text" (click)="togglePasswordVisibility()">
+              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
+            </button>
+          </div>
+          <div *ngIf="submitted && f['password'].errors" class="invalid-feedback d-block">
+            <div *ngIf="f['password'].errors['required']">Password is required.</div>
+          </div>
+        </div>
+
+        <!-- <div class="d-flex justify-content-end mb-4">
+            <a href="#" class="form-text text-decoration-none">Forgot Password?</a>
+        </div> -->
+
+        <div class="d-grid mb-4">
+          <button [disabled]="loading" class="btn btn-primary btn-lg shadow">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            Sign In
+          </button>
+        </div>
+      </form>
+
+      <!-- <div class="divider my-4">OR</div>
+
+      <div class="d-grid gap-3">
+        <button class="btn btn-google d-flex align-items-center justify-content-center">
+            <i class="bi bi-google me-2"></i> Continue with Google
+        </button>
+      </div> -->
+
+      <div class="text-center mt-5">
+        <p class="text-muted">Don't have an account? <a routerLink="/register" class="fw-medium text-decoration-none">Register now</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="visual-container">
+    <div class="overlay"></div>
+    <div class="visual-content text-center text-white">
+        <h1 class="display-4 fw-bold">Your Next Event Awaits</h1>
+        <p class="lead mt-3">Discover, book, and manage memorable experiences with EventPro.</p>
+    </div>
+  </div>
+</div>

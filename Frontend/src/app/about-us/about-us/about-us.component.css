@@ -1,0 +1,63 @@
+/* Lock layout and prevent scroll */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f7fa;
+  
+}
+
+/* Wrapper respects navbar and footer height */
+.about-wrapper {
+  position: absolute;
+  top: 80px; /* height of navbar */
+  bottom: 60px; /* height of footer */
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Scrollable content box */
+.about-box {
+  width: 90%;
+  max-width: 700px;
+  height: 100%;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  box-sizing: border-box;
+  margin-left: 250px;
+}
+
+/* Heading */
+.about-box h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #222;
+  text-align: center;
+}
+
+/* Paragraphs */
+.about-box p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #444;
+  margin-bottom: 1rem;
+}
+
+/* Optional scrollbar styling */
+.about-box::-webkit-scrollbar {
+  width: 6px;
+}
+.about-box::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}

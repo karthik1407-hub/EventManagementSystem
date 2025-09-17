@@ -1,0 +1,40 @@
+<div class="container my-5">
+  <div class="card p-4 shadow-sm">
+      <h2 class="card-title text-center mb-4">Weather Forecast</h2>
+      <div class="card-body">
+          <div *ngIf="isLoading" class="text-center p-3">
+              <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+              </div>
+              <p>Loading weather data...</p>
+          </div>
+          
+          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+              {{ errorMessage }}
+          </div>
+
+          <table class="table table-striped" *ngIf="!isLoading && weatherData.length > 0">
+              <thead>
+                  <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Temp. (C)</th>
+                      <th scope="col">Temp. (F)</th>
+                      <th scope="col">Summary</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let forecast of weatherData">
+                      <td>{{ forecast.date | date: 'short' }}</td>
+                      <td>{{ forecast.temperatureC }}°C</td>
+                      <td>{{ forecast.temperatureF }}°F</td>
+                      <td>{{ forecast.summary }}</td>
+                  </tr>
+              </tbody>
+          </table>
+
+          <div *ngIf="!isLoading && weatherData.length === 0 && !errorMessage" class="text-center p-3">
+              <p>No weather data available.</p>
+          </div>
+      </div>
+  </div>
+</div>

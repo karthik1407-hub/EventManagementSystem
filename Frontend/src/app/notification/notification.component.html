@@ -1,0 +1,97 @@
+<div class="container my-4">
+  <h2 class="mb-4">📢 Notifications</h2>
+
+  <!-- Notification Creation Form - Only for Organizers -->
+  <div *ngIf="isOrganizer" class="card p-4 shadow-sm mb-4">
+    <h3 class="card-title mb-3">Create Notification</h3>
+
+    <!-- Error Message Display -->
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <div class="mb-3">
+        <label for="userID" class="form-label">User</label>
+        <select
+          formControlName="userID"
+          class="form-select"
+          id="userID"
+        >
+          <option value="" disabled>Select User</option>
+          <option *ngFor="let user of users" [value]="user.userID">{{ user.email }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="eventID" class="form-label">Event</label>
+        <select
+          formControlName="eventID"
+          class="form-select"
+          id="eventID"
+        >
+          <option value="" disabled>Select Event</option>
+          <option *ngFor="let event of events" [value]="event.eventID">{{ event.eventName }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="message" class="form-label">Message</label>
+        <textarea
+          formControlName="message"
+          class="form-control"
+          rows="3"
+          placeholder="Enter notification message"
+          [class.is-invalid]="form.get('message')?.invalid && form.get('message')?.touched"
+        ></textarea>
+        <div class="invalid-feedback" *ngIf="form.get('message')?.invalid && form.get('message')?.touched">
+          Message is required.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="sentTimestamp" class="form-label">Sent Timestamp</label>
+        <input
+          formControlName="sentTimestamp"
+          type="datetime-local"
+          class="form-control"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary me-2" [disabled]="form.invalid">
+        {{ isEdit ? 'Update' : 'Create' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="reset()">Clear</button>
+    </form>
+  </div>
+
+  <!-- Notifications List -->
+  <div class="card p-4 shadow-sm">
+    <h4 class="card-title mb-3">All Notifications</h4>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Message</th>
+            <th>User</th>
+            <th>Event</th>
+            <th>Sent</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let n of notifications">
+            <td>{{ n.message }}</td>
+            <td>{{ n.user?.name || n.userID }}</td>
+            <td>{{ n.event?.title || n.eventID }}</td>
+            <td>{{ n.sentTimestamp | date:'short' }}</td>
+            <td>
+              <button *ngIf="isUser" class="btn btn-sm btn-danger" (click)="delete(n.notificationID)">Delete</button>
+              <button *ngIf="isOrganizer" class="btn btn-sm btn-danger" (click)="delete(n.notificationID)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

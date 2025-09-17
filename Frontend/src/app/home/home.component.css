@@ -1,0 +1,113 @@
+/*
+--- Page Header & Filters ---
+*/
+.page-header {
+  background-color: #f8f9fa; /* A very light grey */
+  padding: 4rem 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.filter-controls .form-control,
+.filter-controls .form-select {
+  border: 1px solid #ced4da;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.filter-controls .form-control:focus,
+.filter-controls .form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+}
+
+.filter-controls .input-group-text {
+  background-color: #fff;
+}
+
+/*
+--- Event Card Styling ---
+*/
+.event-card {
+  border: none;
+  border-radius: 0.75rem; /* Softer corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden; /* Ensures content respects the border-radius */
+}
+
+.event-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+.card-img-container {
+  position: relative;
+}
+
+.event-card .card-img-top {
+  aspect-ratio: 16 / 10; /* Ensures all images are uniform */
+  object-fit: cover;
+}
+
+.event-card .card-title {
+  color: #212529;
+}
+
+.event-card .card-body {
+  padding: 1.5rem;
+}
+
+/* Date Badge on Image */
+.date-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 0.5rem;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.date-badge .day {
+  display: block;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #0d6efd;
+}
+
+.date-badge .month {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #6c757d;
+  letter-spacing: 1px;
+}
+
+/* Event Type Badge */
+.event-type-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(13, 110, 253, 0.9);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+
+/*
+--- State Styling (Loading, Empty) ---
+*/
+.empty-state {
+  padding: 5rem 0;
+}
+
+/* Skeleton loader card styles */
+.event-card-skeleton .card-img-top-skeleton {
+  aspect-ratio: 16 / 10;
+  background-color: #e9ecef;
+}
+
+.event-card-skeleton {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}

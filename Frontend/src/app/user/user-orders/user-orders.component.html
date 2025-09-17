@@ -1,0 +1,47 @@
+<div class="user-orders-container">
+  <h2>My Orders</h2>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <p>Loading your orders...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="loadUserOrders()" class="retry-btn">Retry</button>
+  </div>
+
+  <div *ngIf="!isLoading && !error && orders.length === 0" class="no-orders">
+    <p>You haven't placed any orders yet.</p>
+  </div>
+
+  <div *ngIf="!isLoading && !error && orders.length > 0" class="orders-list">
+    <div *ngFor="let order of orders" class="order-card">
+      <div class="order-header">
+        <div class="order-info">
+          <h3>Order #{{ order.id }}</h3>
+          <p class="order-date">Placed on: {{ order.createdDate | date:'medium' }}</p>
+        </div>
+        <div class="order-status">
+          <span [class]="getStatusClass(order.status)">{{ getStatusText(order.status) }}</span>
+        </div>
+      </div>
+
+      <div class="order-details">
+        <div class="order-summary">
+          <p><strong>Payment ID:</strong> {{ order.paymentId }}</p>
+          <p><strong>Total Amount:</strong> ${{ order.paymentAmount }}</p>
+        </div>
+
+        <div *ngIf="order.items && order.items.length > 0" class="order-items">
+          <h4>Order Items:</h4>
+          <div *ngFor="let item of order.items" class="order-item">
+            <p><strong>Event ID:</strong> {{ item.productId }}</p>
+            <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+            <p><strong>Unit Price:</strong> ${{ item.unitPrice }}</p>
+            <p><strong>Subtotal:</strong> ${{ item.quantity * item.unitPrice }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

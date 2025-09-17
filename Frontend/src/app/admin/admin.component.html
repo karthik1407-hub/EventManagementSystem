@@ -1,0 +1,148 @@
+<div class="admin-container">
+  <h1>Admin Dashboard</h1>
+  <div class="admin-sections">
+    <!-- Users Section -->
+    <section class="admin-section">
+      <div class="section-header" (click)="toggleSection('users')" [class.expanded]="expandedSections().has('users')">
+        <h2>Users ({{ userCount() }})</h2>
+        <span class="toggle-icon">{{ expandedSections().has('users') ? '▼' : '▶' }}</span>
+      </div>
+      <div class="section-content" *ngIf="expandedSections().has('users')">
+        <button class="add-btn" (click)="addUser()">Add User</button>
+        <ul class="data-list">
+          <li *ngFor="let user of users()" class="data-item">
+            <div class="item-info">
+              {{ user.name }} - {{ user.email }}
+            </div>
+            <div class="item-actions">
+        <button class="edit-btn" (click)="editUser(user)">Edit</button>
+        <button class="delete-btn" (click)="initiateDelete('user', user.userID.toString())">Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section class="admin-section">
+      <div class="section-header" (click)="toggleSection('feedback')" [class.expanded]="expandedSections().has('feedback')">
+        <h2>Feedback ({{ feedbackCount() }})</h2>
+        <span class="toggle-icon">{{ expandedSections().has('feedback') ? '▼' : '▶' }}</span>
+      </div>
+      <div class="section-content" *ngIf="expandedSections().has('feedback')">
+        <button class="add-btn" (click)="addFeedback()">Add Feedback</button>
+        <ul class="data-list">
+          <li *ngFor="let item of feedback()" class="data-item">
+            <div class="item-info">
+              {{ item.comments }} - {{ item.rating }}/5
+            </div>
+            <div class="item-actions">
+              <button class="edit-btn" (click)="editFeedback(item)">Edit</button>
+              <button class="delete-btn" (click)="initiateDelete('feedback', item.feedbackID)">Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Notifications Section -->
+    <section class="admin-section">
+      <div class="section-header" (click)="toggleSection('notifications')" [class.expanded]="expandedSections().has('notifications')">
+        <h2>Notifications ({{ notificationCount() }})</h2>
+        <span class="toggle-icon">{{ expandedSections().has('notifications') ? '▼' : '▶' }}</span>
+      </div>
+      <div class="section-content" *ngIf="expandedSections().has('notifications')">
+        <button class="add-btn" (click)="addNotification()">Add Notification</button>
+        <ul class="data-list">
+          <li *ngFor="let item of notifications()" class="data-item">
+            <div class="item-info">
+              {{ item.message }} - {{ item.sentTimestamp | date:'medium' }}
+            </div>
+            <div class="item-actions">
+              <button class="edit-btn" (click)="editNotification(item)">Edit</button>
+              <button class="delete-btn" (click)="initiateDelete('notification', item.notificationID)">Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Tickets Section -->
+    <section class="admin-section">
+      <div class="section-header" (click)="toggleSection('tickets')" [class.expanded]="expandedSections().has('tickets')">
+        <h2>Tickets ({{ ticketCount() }})</h2>
+        <span class="toggle-icon">{{ expandedSections().has('tickets') ? '▼' : '▶' }}</span>
+      </div>
+      <div class="section-content" *ngIf="expandedSections().has('tickets')">
+        <button class="add-btn" (click)="addTicket()">Add Ticket</button>
+        <ul class="data-list">
+          <li *ngFor="let item of tickets()" class="data-item">
+            <div class="item-info">
+              {{ item.eventID }} - {{ item.ticketID }}
+            </div>
+            <div class="item-actions">
+              <button class="edit-btn" (click)="editTicket(item)">Edit</button>
+              <button class="delete-btn" (click)="initiateDelete('ticket', item.ticketID)">Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="admin-section">
+      <div class="section-header" (click)="toggleSection('events')" [class.expanded]="expandedSections().has('events')">
+        <h2>Events ({{ eventCount() }})</h2>
+        <span class="toggle-icon">{{ expandedSections().has('events') ? '▼' : '▶' }}</span>
+      </div>
+      <div class="section-content" *ngIf="expandedSections().has('events')">
+        <button class="add-btn" (click)="addEvent()">Add Event</button>
+        <ul class="data-list">
+          <li *ngFor="let item of events()" class="data-item">
+            <div class="item-info">
+              {{ item.eventName }} - {{ item.eventDate | date:'fullDate' }}
+            </div>
+            <div class="item-actions">
+        <button class="edit-btn" (click)="editEvent(item)">Edit</button>
+        <button class="delete-btn" (click)="initiateDelete('event', item.eventID)">Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+   
+    <!-- <section class="admin-section">
+      <div class="section-header" (click)="toggleSection('payments')" [class.expanded]="expandedSections().has('payments')">
+        <h2>Payments ({{ paymentCount() }})</h2>
+        <span class="toggle-icon">{{ expandedSections().has('payments') ? '▼' : '▶' }}</span>
+      </div>
+      <div class="section-content" *ngIf="expandedSections().has('payments')">
+        <button class="add-btn" (click)="addPayment()">Add Payment</button>
+        <ul class="data-list">
+          <li *ngFor="let item of payments()" class="data-item">
+            <div class="item-info">
+              {{ item.amount | currency }} - {{ item.createdDate | date:'medium' }} - {{ item.status }}
+            </div>
+            <div class="item-actions">
+              <button class="edit-btn" (click)="editPayment(item)">Edit</button>
+              <button class="delete-btn" (click)="initiateDelete('payment', item.id)">Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div> -->
+
+  <!-- Delete Confirmation Modal -->
+  <div *ngIf="itemToDelete()" class="modal">
+    <div class="modal-content">
+      <p>Are you sure you want to delete this {{ itemToDelete()?.type }}?</p>
+      <div *ngIf="errorMessage()" class="error-message">{{ errorMessage() }}</div>
+      <div class="modal-actions">
+        <button class="cancel-btn" (click)="cancelDelete()">Cancel</button>
+        <button class="confirm-btn" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

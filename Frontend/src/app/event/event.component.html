@@ -1,0 +1,113 @@
+<div class="container-fluid event-page-container">
+  <div class="row">
+
+    <div class="col-lg-3 filter-sidebar">
+      <div class="sidebar-content">
+        <h4 class="fw-bold mb-4">Filters</h4>
+
+        <div class="filter-group">
+          <label for="search" class="form-label fw-medium">Search Event</label>
+          <div class="input-group">
+            <input type="text" id="search" class="form-control" placeholder="Event name..." [(ngModel)]="searchQuery">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label for="category" class="form-label fw-medium">Category</label>
+          <select class="form-select" id="category" [(ngModel)]="selectedCategory">
+            <option value="">All Categories</option>
+            <option value="Music">Music</option>
+            <option value="Tech">Tech</option>
+            <option value="Sports">Sports</option>
+            <option value="Business">Business</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="price" class="form-label fw-medium">Max Price: <span class="text-primary fw-bold">₹{{ priceRange | number }}</span></label>
+          <input type="range" class="form-range" id="price" min="0" max="5000000" step="500" [(ngModel)]="priceRange">
+        </div>
+
+        <div class="filter-group">
+            <label class="form-label fw-medium">Tags</label>
+            <div class="tag-list">
+              <div class="form-check" *ngFor="let tag of allTags">
+                <input class="form-check-input" type="checkbox" [value]="tag" [id]="tag" (change)="onTagChange(tag, $event)">
+                <label class="form-check-label" [for]="tag">{{ tag }}</label>
+              </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+          <button class="btn btn-primary w-100" (click)="applyFilters()">Apply Filter</button>
+        </div>
+
+        <div class="mt-4">
+            <button class="btn btn-outline-secondary w-100" (click)="resetFilters()">Reset Filters</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9 event-grid-main">
+      <div class="grid-header d-flex justify-content-between align-items-center mb-4">
+        <h5 class="mb-0">Showing <span class="text-primary fw-bold">{{ filteredEvents.length }}</span> results</h5>
+      </div>
+
+      <div *ngIf="isLoading" class="row">
+        <div class="col-lg-4 col-md-6 mb-4" *ngFor="let i of [1,2,3]">
+          <div class="card event-card-skeleton" aria-hidden="true">
+            <div class="card-img-top-skeleton"></div>
+            <div class="card-body">
+              <h5 class="card-title placeholder-glow"><span class="placeholder col-8"></span></h5>
+              <p class="card-text placeholder-glow"><span class="placeholder col-4"></span></p>
+              <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-12 mt-2"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && !errorMessage && filteredEvents.length === 0" class="text-center empty-state">
+        <i class="bi bi-calendar-x display-1 text-muted"></i>
+        <h3 class="mt-4">No Events Found</h3>
+        <p class="lead text-muted">Try adjusting your search or filter criteria.</p>
+      </div>
+      
+      <div *ngIf="!isLoading && !errorMessage && filteredEvents.length > 0" class="row">
+        <div class="col-lg-4 col-md-6 mb-4" *ngFor="let event of filteredEvents; let i = index" 
+             [style.animation-delay.ms]="i * 100">
+          <div class="card event-card h-100 shadow-sm">
+            <div class="card-img-container">
+              <img [src]="'https://localhost:7272/EventImages/' + event.eventImageUrl" class="card-img-top" [alt]="event.eventName">
+              <div class="date-badge">
+                <span class="day">{{ event.eventDate | date: 'd' }}</span>
+                <span class="month">{{ event.eventDate | date: 'MMM' }}</span>
+              </div>
+              <span class="badge event-type-badge">{{ event.eventType }}</span>
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title fw-bold">{{ event.eventName }}</h5>
+              <p class="card-text text-muted mb-3"><i class="bi bi-geo-alt-fill me-2"></i>{{ event.eventLocation }}</p>
+              <div class="mt-auto">
+                <button class="btn btn-primary w-100 mb-2" (click)="viewEventDetails(event.eventID)">
+                  <i class="bi bi-ticket-detailed-fill me-2"></i>View Details
+                </button>
+                <button class="btn btn-success w-100 mb-2" (click)="addToCart(event)">
+                  <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                </button>
+                <div *ngIf="isOrganizer && event.OrganizerID === getUserId()" class="d-flex gap-2">
+                  <button class="btn btn-warning flex-fill" (click)="editEvent(event.eventID)">
+                    <i class="bi bi-pencil me-1"></i>Edit
+                  </button>
+                  <button class="btn btn-danger flex-fill" (click)="deleteEvent(event.eventID)">
+                    <i class="bi bi-trash me-1"></i>Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

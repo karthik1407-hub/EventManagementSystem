@@ -1,0 +1,77 @@
+<div class="admin-orders-container">
+  <h2>Order Management</h2>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <p>Loading orders...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="loadAllOrders()" class="retry-btn">Retry</button>
+  </div>
+
+  <div *ngIf="!isLoading && !error && orders.length === 0" class="no-orders">
+    <p>No orders found.</p>
+  </div>
+
+  <div *ngIf="!isLoading && !error && orders.length > 0" class="orders-table-container">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>User Email</th>
+          <th>Status</th>
+          <th>Created Date</th>
+          <th>Payment Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders" class="order-row">
+          <td>{{ order.id }}</td>
+          <td>{{ order.email }}</td>
+          <td>
+            <span [class]="getStatusClass(order.status)">{{ getStatusText(order.status) }}</span>
+          </td>
+          <td>{{ order.createdDate | date:'medium' }}</td>
+          <td>${{ order.paymentAmount }}</td>
+          <td>
+            <button (click)="openStatusModal(order)" class="update-status-btn">Update Status</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Status Update Modal -->
+<div *ngIf="showStatusModal && selectedOrder" class="modal-overlay" (click)="closeStatusModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Update Order Status</h3>
+      <button (click)="closeStatusModal()" class="close-btn">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <p><strong>Order ID:</strong> {{ selectedOrder.id }}</p>
+      <p><strong>User:</strong> {{ selectedOrder.email }}</p>
+      <p><strong>Current Status:</strong> {{ getStatusText(selectedOrder.status) }}</p>
+
+      <div class="status-selection">
+        <label for="status-select">New Status:</label>
+        <select id="status-select" [(ngModel)]="selectedOrder.status" class="status-select">
+          <option *ngFor="let status of orderStatuses" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="closeStatusModal()" class="cancel-btn">Cancel</button>
+      <button (click)="updateOrderStatus(selectedOrder.id, selectedOrder.status)" class="update-btn" [disabled]="isLoading">
+        {{ isLoading ? 'Updating...' : 'Update Status' }}
+      </button>
+    </div>
+  </div>
+</div>

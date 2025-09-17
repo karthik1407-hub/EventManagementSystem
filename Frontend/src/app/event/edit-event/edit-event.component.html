@@ -1,0 +1,54 @@
+<div class="edit-event-container">
+  <h2>Edit Event</h2>
+
+  <form [formGroup]="editEventForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="eventName">Event Name:</label>
+      <input type="text" id="eventName" formControlName="eventName" required>
+    </div>
+
+    <div class="form-group">
+      <label for="eventType">Event Type:</label>
+      <input type="text" id="eventType" formControlName="eventType" required>
+    </div>
+
+    <div class="form-group">
+      <label for="eventLocation">Event Location:</label>
+      <input type="text" id="eventLocation" formControlName="eventLocation" required>
+    </div>
+
+    <div class="form-group">
+      <label for="eventDate">Event Date:</label>
+      <input type="datetime-local" id="eventDate" formControlName="eventDate" required>
+    </div>
+
+    <div class="form-group">
+      <label for="eventDescription">Event Description:</label>
+      <textarea id="eventDescription" formControlName="eventDescription" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="eventPrice">Event Price:</label>
+      <input type="number" id="eventPrice" formControlName="eventPrice" required>
+    </div>
+
+    <div class="form-group">
+      <label for="tags">Tags:</label>
+      <input type="text" id="tags" formControlName="tags">
+    </div>
+
+    <div class="form-group">
+      <label for="eventImage">Event Image:</label>
+      <input type="file" id="eventImage" (change)="onFileSelected($event)" accept="image/*">
+      <div *ngIf="imagePreview" class="image-preview">
+        <img [src]="imagePreview" alt="Event Image Preview">
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="loading">Update Event</button>
+  </form>
+
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="loading" class="loading">Updating event...</div>
+</div>

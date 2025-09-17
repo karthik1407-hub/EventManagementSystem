@@ -1,0 +1,11 @@
+<div class="hero-section text-white text-center">
+  <div class="container">
+    <h1 class="hero-title display-3 fw-bold mb-4">Discover Your Next Experience</h1>
+    <p class="hero-subtitle lead mb-5">
+      The ultimate platform for finding, booking, and managing events seamlessly.
+    </p>
+    <a *ngIf="isLoggedIn" routerLink="/event" class="btn btn-primary btn-lg rounded-pill px-5 py-3">Explore Events</a>
+    <a *ngIf="!isLoggedIn" routerLink="/login" class="btn btn-primary btn-lg rounded-pill px-5 py-3">Explore Events</a>
+  </div>
+</div>
+

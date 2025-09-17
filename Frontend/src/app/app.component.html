@@ -1,0 +1,51 @@
+<app-navbar></app-navbar>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="footer text-white pt-5 pb-4">
+  <div class="container text-center text-md-start">
+    <div class="row text-center text-md-start">
+
+      <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+        <h5 class="text-uppercase mb-4 fw-bold text-primary">EventPro</h5>
+        <p>
+          Your premier destination for discovering and managing events. From local meetups to global conferences, we connect you to your next great experience.
+        </p>
+      </div>
+
+      <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+        <h5 class="text-uppercase mb-4 fw-bold">Quick Links</h5>
+        <p><a routerLink="/event" class="footer-link">Events</a></p>
+        <p><a routerLink="/about" class="footer-link">About Us</a></p>
+        <p><a routerLink="/contact" class="footer-link">Contact</a></p>
+        <p><a routerLink="/faq" class="footer-link">FAQ</a></p>
+      </div>
+
+      <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
+        <h5 class="text-uppercase mb-4 fw-bold">Legal</h5>
+        <p><a routerLink="/privacy-policy" class="footer-link">Privacy Policy</a></p>
+        <p><a routerLink="/terms-of-service" class="footer-link">Terms of Service</a></p>
+      </div>
+
+      <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+        <h5 class="text-uppercase mb-4 fw-bold">Follow Us</h5>
+        <div class="social-icons">
+          <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+          
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row align-items-center">
+      <div class="col-md-12 text-center">
+        <p>&copy; 2025 EventPro. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>

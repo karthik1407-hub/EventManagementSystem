@@ -1,0 +1,83 @@
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h2 class="mb-0">Create a New Event</h2>
+          <p class="text-muted mb-0">Fill out the details below to publish your event.</p>
+        </div>
+        <div class="card-body p-4">
+
+          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+          <form [formGroup]="addEventForm" (ngSubmit)="onSubmit()" novalidate>
+            <h5 class="form-section-title">Event Details</h5>
+            <div class="mb-3">
+              <label for="eventName" class="form-label">Event Name</label>
+              <input type="text" formControlName="eventName" class="form-control" id="eventName">
+            </div>
+            <div class="mb-4">
+              <label for="eventDescription" class="form-label">Description</label>
+              <textarea formControlName="eventDescription" class="form-control" id="eventDescription" rows="4"></textarea>
+            </div>
+
+            <h5 class="form-section-title">Logistics & Pricing</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="eventType" class="form-label">Category</label>
+                <select formControlName="eventType" class="form-select" id="eventType">
+                  <option value="" disabled>Select a category...</option>
+                  <option value="Music">Music</option>
+                  <option value="Tech">Tech</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Business">Business</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="eventLocation" class="form-label">Location</label>
+                <input type="text" formControlName="eventLocation" class="form-control" id="eventLocation">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="eventDate" class="form-label">Date and Time</label>
+                <input type="datetime-local" formControlName="eventDate" class="form-control" id="eventDate">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="eventPrice" class="form-label">Price (₹)</label>
+                <input type="number" formControlName="eventPrice" class="form-control" id="eventPrice">
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="tags" class="form-label">Tags (comma-separated)</label>
+              <input type="text" formControlName="tags" class="form-control" id="tags" placeholder="e.g. Outdoor, Live Music, Family Friendly">
+            </div>
+
+            <h5 class="form-section-title">Media</h5>
+            <div class="mb-4">
+              <label class="form-label">Event Image</label>
+              <div class="image-upload-box text-center" (click)="fileInput.click()">
+                <div *ngIf="!imagePreview">
+                  <i class="bi bi-image-fill fs-1 text-muted"></i>
+                  <p class="text-muted mt-2">Click to upload an image</p>
+                </div>
+                <img *ngIf="imagePreview" [src]="imagePreview" class="image-preview" alt="Image Preview">
+              </div>
+              <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" accept="image/*">
+            </div>
+
+            <hr class="my-4">
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="loading || addEventForm.invalid || !selectedFile">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                Publish Event
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

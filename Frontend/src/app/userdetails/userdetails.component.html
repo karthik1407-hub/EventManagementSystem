@@ -1,0 +1,23 @@
+<form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Name:</label>
+      <input id="name" formControlName="name" type="text" />
+    </div>
+  
+    <div>
+      <label for="email">Email:</label>
+      <input id="email" formControlName="email" type="email" />
+    </div>
+  
+    <div>
+      <label for="contactNumber">Contact Number:</label>
+      <input id="contactNumber" formControlName="contactNumber" type="text" />
+    </div>
+  
+    <div>
+      <label for="roles">Roles:</label>
+      <input id="roles" formControlName="roles" type="text" />
+    </div>
+  
+    <button type="submit">Update User</button>
+  </form>

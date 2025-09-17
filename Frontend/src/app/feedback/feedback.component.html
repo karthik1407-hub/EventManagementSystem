@@ -1,0 +1,117 @@
+<div class="container my-4">
+  <!-- Submit/Edit Feedback Section -->
+  <div *ngIf="isUser || isOrganizer || isAdmin" class="card p-4 shadow-sm mb-4">
+    <h3 class="card-title mb-3">{{ editingFeedback ? 'Edit Feedback' : 'Submit Feedback' }}</h3>
+
+    <!-- Error Message Display -->
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="feedbackForm" (ngSubmit)="editingFeedback ? update() : submit()">
+      <div class="mb-3">
+        <label for="eventID" class="form-label">Event</label>
+        <select
+          formControlName="eventID"
+          class="form-select"
+          id="eventID"
+          [class.is-invalid]="feedbackForm.get('eventID')?.invalid && feedbackForm.get('eventID')?.touched"
+        >
+          <option value="" disabled>Select Event</option>
+          <option *ngFor="let event of events" [value]="event.eventID">{{ event.eventName }}</option>
+        </select>
+        <div class="invalid-feedback" *ngIf="feedbackForm.get('eventID')?.invalid && feedbackForm.get('eventID')?.touched">
+          Event is required.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="userID" class="form-label">User ID</label>
+        <ng-container *ngIf="isAdmin || isOrganizer; else readonlyUserId">
+          <select
+            formControlName="userID"
+            class="form-select"
+            id="userID"
+            [class.is-invalid]="feedbackForm.get('userID')?.invalid && feedbackForm.get('userID')?.touched"
+          >
+            <option value="" disabled>Select User</option>
+            <option *ngFor="let user of users" [value]="user.userID">{{ user.email }}</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="feedbackForm.get('userID')?.invalid && feedbackForm.get('userID')?.touched">
+            User ID is required.
+          </div>
+        </ng-container>
+        <ng-template #readonlyUserId>
+          <input
+            formControlName="userID"
+            class="form-control"
+            id="userID"
+            placeholder="User ID (auto-populated)"
+            readonly
+            [class.is-valid]="feedbackForm.get('userID')?.valid"
+          />
+        </ng-template>
+      </div>
+
+      <div class="mb-3">
+        <label for="rating" class="form-label">Rating (1-5)</label>
+        <input
+          formControlName="rating"
+          type="number"
+          class="form-control"
+          id="rating"
+          min="1"
+          max="5"
+          placeholder="Enter rating (1-5)"
+          [class.is-invalid]="feedbackForm.get('rating')?.invalid && feedbackForm.get('rating')?.touched"
+        />
+        <div class="invalid-feedback" *ngIf="feedbackForm.get('rating')?.invalid && feedbackForm.get('rating')?.touched">
+          Rating is required and must be between 1 and 5.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="comments" class="form-label">Comments</label>
+        <textarea
+          formControlName="comments"
+          class="form-control"
+          id="comments"
+          rows="3"
+          placeholder="Enter your comments"
+          [class.is-invalid]="feedbackForm.get('comments')?.invalid && feedbackForm.get('comments')?.touched"
+        ></textarea>
+        <div class="invalid-feedback" *ngIf="feedbackForm.get('comments')?.invalid && feedbackForm.get('comments')?.touched">
+          Comments are required.
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary me-2"
+        [disabled]="feedbackForm.invalid"
+      >
+        {{ editingFeedback ? 'Update Feedback' : 'Submit Feedback' }}
+      </button>
+      <button *ngIf="editingFeedback" type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- All Feedbacks Section -->
+  <div class="card p-4 shadow-sm">
+    <h4 class="card-title mb-3">All Feedbacks</h4>
+    <ul class="list-group">
+      <li *ngFor="let fb of feedbacks" class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ fb.rating }}/5</strong> - {{ fb.comments }}
+          <br />
+          <small class="text-muted">Event: {{ fb.eventID }} | User: {{ fb.userID }}</small>
+        </div>
+        <!-- Edit and Delete buttons -->
+        <div>
+          <button *ngIf="isAdmin || isOrganizer" class="btn btn-sm btn-warning me-2" (click)="edit(fb)">Edit</button>
+          <button *ngIf="isOrganizer" class="btn btn-sm btn-danger" (click)="delete(fb.feedbackID)">Delete</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

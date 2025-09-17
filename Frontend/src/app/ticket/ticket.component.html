@@ -1,0 +1,170 @@
+<div class="container mt-4">
+  <h2 class="mb-3">🎟️ Ticket List</h2>
+
+  <!-- Error Message Display -->
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div class="ticket-card-list mb-4">
+    <div class="ticket-card card p-3" *ngFor="let ticket of tickets" (click)="openTicketModal(ticket)" style="cursor:pointer;">
+      <div class="ticket-card-content">
+        <h5 class="card-title">Event: {{ ticket.event?.name || ticket.eventID }}</h5>
+        <p class="card-text">Booking Date: {{ ticket.bookingDate | date:'medium' }}</p>
+        <p class="card-text">Status: 
+          <span *ngIf="ticket.isCancelled" class="badge bg-danger">Cancelled</span>
+          <span *ngIf="!ticket.isCancelled && !isEventEnded(ticket)" class="badge bg-success">Active</span>
+          <span *ngIf="!ticket.isCancelled && isEventEnded(ticket)" class="badge bg-primary">Event Ended</span>
+        </p>
+      </div>
+      <div class="ticket-card-actions mt-2">
+        <button *ngIf="isOrganizer" class="btn btn-warning btn-sm me-2" (click)="editTicket(ticket); $event.stopPropagation();">Edit</button>
+        <button *ngIf="!isUser && !ticket.isCancelled && !isEventEnded(ticket)" class="btn btn-danger btn-sm me-2" (click)="cancelTicket(ticket); $event.stopPropagation();">Cancel</button>
+        <button *ngIf="ticket.isCancelled || isEventEnded(ticket)" class="btn btn-secondary btn-sm" 
+          [disabled]="!ticket.isCancelled && !isEventEnded(ticket)" 
+          title="You can only remove cancelled tickets or tickets for events that have ended."
+          (click)="removeTicket(ticket); $event.stopPropagation();">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Detail Modal -->
+  <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content ticket-modal">
+        <div class="ticket-card">
+          <div class="ticket-header text-center mb-4">
+            <h2 class="text-primary fw-bold">Event Ticket</h2>
+            <p class="lead">Your Entry Pass</p>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p><strong>Ticket ID:</strong> {{ selectedTicket?.ticketID }}</p>
+              <p><strong>Event:</strong> {{ selectedTicket?.event?.name }}</p>
+              <p><strong>Location:</strong> {{ selectedTicket?.event?.location }}</p>
+              <p><strong>Date:</strong> {{ selectedTicket?.event?.date | date:'fullDate' }}</p>
+              <p><strong>Time:</strong> {{ selectedTicket?.event?.date | date:'shortTime' }}</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <p><strong>Booked By:</strong> {{ loggedInUserName }}</p>
+              <p><strong>Booking Date:</strong> {{ selectedTicket?.bookingDate | date:'medium' }}</p>
+              <p><strong>Status:</strong>
+                <span *ngIf="selectedTicket?.isCancelled" class="badge bg-danger">Cancelled</span>
+                <span *ngIf="selectedTicket && !selectedTicket.isCancelled && !isEventEnded(selectedTicket)" class="badge bg-success">Active</span>
+                <span *ngIf="selectedTicket && !selectedTicket.isCancelled && isEventEnded(selectedTicket)" class="badge bg-primary">Event Ended</span>
+              </p>
+              <p><strong>Price:</strong> {{ selectedTicket?.event?.eventPrice | currency:'USD' }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="selectedTicket && !isEventEnded(selectedTicket) && !selectedTicket.isCancelled" class="ticket-footer text-center pt-3 border-top">
+            <p class="mb-1">Please present this ticket at the entrance.</p>
+            <p class="text-muted">Thank you for booking with us!</p>
+          </div>
+          <div *ngIf="selectedTicket && selectedTicket.isCancelled" class="ticket-footer text-center pt-3 border-top text-danger fw-bold">
+            <p class="mb-1">You have cancelled this Event.</p>
+          </div>
+
+          <button *ngIf="selectedTicket && !selectedTicket.isCancelled && !isEventEnded(selectedTicket)" class="btn btn-danger mt-3" (click)="cancelTicket(selectedTicket!) ; $event.stopPropagation();">Cancel Ticket</button>
+
+          <!-- Feedback Section -->
+          <div *ngIf="selectedTicket && !selectedTicket.isCancelled" class="feedback-section mt-4">
+            <div *ngIf="isEventEnded(selectedTicket)">
+              <p class="text-info">Event is ended. Kindly give your valuable feedback.</p>
+              <button
+                class="btn btn-primary"
+                [disabled]="selectedTicket.isCancelled"
+                (click)="onFeedbackButtonClick()"
+              >
+                {{ feedback ? 'Edit Feedback' : 'Give Feedback' }}
+              </button>
+              <div *ngIf="feedback && !isEditingFeedback" class="mt-3">
+                <h5>Your Feedback:</h5>
+                <p><strong>Rating:</strong> {{ feedback.rating }} / 5</p>
+                <p><strong>Comments:</strong> {{ feedback.comments }}</p>
+                <button class="btn btn-primary mt-2" (click)="isEditingFeedback = true">Edit Feedback</button>
+              </div>
+
+              <!-- Feedback Form -->
+              <form *ngIf="isEventEnded(selectedTicket) && isEditingFeedback" (ngSubmit)="submitFeedback()" #feedbackForm="ngForm" class="mt-3">
+                <div class="mb-3">
+                  <label for="rating" class="form-label">Rating (1-5)</label>
+                  <input
+                    type="number"
+                    id="rating"
+                    name="rating"
+                    class="form-control"
+                    [(ngModel)]="feedbackModel.rating"
+                    min="1"
+                    max="5"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="comments" class="form-label">Comments</label>
+                  <textarea
+                    id="comments"
+                    name="comments"
+                    class="form-control"
+                    [(ngModel)]="feedbackModel.comments"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn-success" [disabled]="feedbackForm.invalid">
+                  {{ feedback ? 'Update Feedback' : 'Submit Feedback' }}
+                </button>
+                <button type="button" class="btn btn-secondary ms-2" (click)="isEditingFeedback = false">Cancel</button>
+              </form>
+            </div>
+            <div *ngIf="!isEventEnded(selectedTicket)">
+              <p class="text-warning">You are allowed to give feedback once Event is completed.</p>
+              <button class="btn btn-primary" disabled>Give Feedback</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form *ngIf="isOrganizer || isAdmin" (ngSubmit)="editingTicket ? updateTicket() : createTicket()" #ticketForm="ngForm">
+    <div class="mb-3">
+      <label for="eventID" class="form-label">Event ID</label>
+      <input type="text" id="eventID" class="form-control" [(ngModel)]="newTicket.eventID" name="eventID" required />
+    </div>
+
+      <div class="mb-3">
+        <label for="userID" class="form-label">User ID</label>
+        <ng-container *ngIf="isAdmin || isOrganizer; else readonlyUserId">
+          <select
+            id="userID"
+            class="form-select"
+            [(ngModel)]="newTicket.userID"
+            name="userID"
+            required
+          >
+            <option value="" disabled>Select User</option>
+            <option *ngFor="let user of users" [value]="user.userID">{{ user.email }}</option>
+          </select>
+        </ng-container>
+        <ng-template #readonlyUserId>
+          <input type="text" id="userID" class="form-control" [(ngModel)]="newTicket.userID" name="userID" readonly />
+        </ng-template>
+      </div>
+
+      <div class="mb-3">
+        <label for="bookingDate" class="form-label">Booking Date</label>
+        <input type="date" id="bookingDate" class="form-control" [(ngModel)]="newTicket.bookingDate" name="bookingDate" required />
+      </div>
+
+      <div class="form-check mb-3">
+        <input type="checkbox" id="isCancelled" class="form-check-input" [(ngModel)]="newTicket.isCancelled" name="isCancelled" />
+        <label for="isCancelled" class="form-check-label">Is Cancelled</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary me-2">{{ editingTicket ? 'Update Ticket' : 'Create Ticket' }}</button>
+      <button *ngIf="editingTicket" type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+  </form>
+  </div>
+

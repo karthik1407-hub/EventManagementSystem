@@ -1,0 +1,55 @@
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+.image-container {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.image-container img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.admin-actions {
+    flex-shrink: 0; /* Prevents buttons from wrapping on smaller screens */
+}
+
+.key-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.detail-item i {
+    font-size: 2rem;
+    color: #0d6efd;
+}
+
+.detail-item span {
+    display: block;
+    color: #6c757d;
+}
+
+.description-section p {
+    line-height: 1.8;
+    color: #495057;
+}
+
+/* --- Sticky Panel for Booking/Actions --- */
+.sticky-panel {
+    position: sticky;
+    top: 2rem; /* Adjust based on your navbar height */
+}
