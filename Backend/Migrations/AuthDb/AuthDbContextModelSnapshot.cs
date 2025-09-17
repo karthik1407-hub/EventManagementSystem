@@ -166,15 +166,15 @@ namespace Event_Management_System.Migrations.AuthDb
                         {
                             Id = "f3d378fd-e54d-5f4c-9219-b2b2f92a017e",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4ddd19bf-cf7f-4422-8c20-903d046c8d20",
+                            ConcurrencyStamp = "f7dbaecb-ca1d-4b62-8373-ef2fa6ab2e8b",
                             Email = "eventsystem@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "EVENTSYSTEM@ADMIN.COM",
                             NormalizedUserName = "EVENTSYSTEM@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPFBsLydf7JWMbUFtJY4/1J+u48WxIdOYMvjz9HtbxkBMKrdgTGFIAq85vkrLRcW9A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEedkme9rs2n+5OOPSBbslDIXhYT+moZERSuW98EqODsuU+LmqFw0NquWvqIpthj+A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8ebf97c4-ba37-4c36-848d-d5f0eecaff7e",
+                            SecurityStamp = "72130b1a-1b8b-4afb-9ddf-a06d2dbf3006",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

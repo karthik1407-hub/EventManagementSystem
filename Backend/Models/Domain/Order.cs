@@ -31,10 +31,8 @@
     // Enum for order status
     public enum OrderStatus
     {
-        Pending,
-        Processing,
-        Confirmed,
-        Delivered,
-        Cancelled
+        Booked,
+        Cancelled,
+        Event_Ended
     }
 }

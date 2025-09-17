@@ -335,7 +335,7 @@ namespace Event_Management_System.Controllers
             {
                 UserId = UserId,
                 PaymentId = PaymentId,
-                Status = OrderStatus.Processing,
+                Status = OrderStatus.Booked,
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow
             };

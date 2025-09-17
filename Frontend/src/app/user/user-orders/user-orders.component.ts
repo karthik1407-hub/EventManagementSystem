@@ -17,6 +17,11 @@ export class UserOrdersComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserOrders();
+
+    // Listen for order status update events to refresh orders
+    window.addEventListener('orderStatusUpdated', () => {
+      this.loadUserOrders();
+    });
   }
 
   loadUserOrders(): void {
@@ -43,35 +48,35 @@ export class UserOrdersComponent implements OnInit {
 
   getStatusText(status: OrderStatus): string {
     switch (status) {
-      case OrderStatus.Processing:
-        return 'Processing';
-      case OrderStatus.Confirmed:
-        return 'Confirmed';
-      case OrderStatus.Shipped:
-        return 'Shipped';
-      case OrderStatus.Delivered:
-        return 'Delivered';
+      case OrderStatus.Booked:
+        return 'Booked';
       case OrderStatus.Cancelled:
         return 'Cancelled';
-      default:
-        return 'Unknown';
+      case OrderStatus.EventEnded:
+        return 'Event Ended';
+      // case OrderStatus.Delivered:
+      //   return 'Delivered';
+      // case OrderStatus.Cancelled:
+      //   return 'Cancelled';
+      // default:
+      //   return 'Unknown';
     }
   }
 
   getStatusClass(status: OrderStatus): string {
     switch (status) {
-      case OrderStatus.Processing:
-        return 'status-processing';
-      case OrderStatus.Confirmed:
-        return 'status-confirmed';
-      case OrderStatus.Shipped:
-        return 'status-shipped';
-      case OrderStatus.Delivered:
-        return 'status-delivered';
+      case OrderStatus.Booked:
+        return 'status-Booked';
       case OrderStatus.Cancelled:
-        return 'status-cancelled';
-      default:
-        return 'status-unknown';
+        return 'status-Cancelled';
+      case OrderStatus.EventEnded:
+        return 'Event-Ended';
+      // case OrderStatus.Delivered:
+      //   return 'status-delivered';
+      // case OrderStatus.Cancelled:
+      //   return 'status-cancelled';
+      // default:
+      //   return 'status-unknown';
     }
   }
 }

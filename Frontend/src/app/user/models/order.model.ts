@@ -30,11 +30,9 @@ export interface Payment {
 }
 
 export enum OrderStatus {
-  Processing = 0,
-  Confirmed = 1,
-  Shipped = 2,
-  Delivered = 3,
-  Cancelled = 4
+  Booked = 0,
+  Cancelled = 1,
+  EventEnded = 2
 }
 
 export enum PaymentStatus {

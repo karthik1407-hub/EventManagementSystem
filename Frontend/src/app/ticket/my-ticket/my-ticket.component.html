@@ -27,9 +27,8 @@
       <div class="col-md-6 text-md-end">
         <p><strong>Booked By:</strong> {{ ticket.user?.name || 'N/A' }}</p>
         <p><strong>Booking Date:</strong> {{ ticket.bookingDate | date:'medium' }}</p>
-        <p><strong>Status:</strong>
-          <span *ngIf="ticket.isCancelled" class="badge bg-danger">Cancelled</span>
-          <span *ngIf="!ticket.isCancelled" class="badge bg-success">Active</span>
+        <p *ngFor="let order of orders"><strong>Status:</strong>
+          <span [class]="getStatusClass(order.status)">{{ getStatusText(order.status) }}</span>
         </p>
         <p><strong>Price:</strong> {{ ticket.event?.eventPrice | currency:'USD' }}</p>
       </div>

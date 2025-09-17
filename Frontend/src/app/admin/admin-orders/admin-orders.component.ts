@@ -15,10 +15,9 @@ export class AdminOrdersComponent implements OnInit {
   showStatusModal: boolean = false;
 
   orderStatuses = [
-    { value: OrderStatus.Processing, label: 'Processing' },
-    { value: OrderStatus.Confirmed, label: 'Confirmed' },
-    { value: OrderStatus.Delivered, label: 'Delivered' },
-    { value: OrderStatus.Cancelled, label: 'Cancelled' }
+    { value: OrderStatus.Booked, label: 'Booked' },
+    { value: OrderStatus.Cancelled, label: 'Cancelled' },
+    { value: OrderStatus.EventEnded, label: 'Event Ended' }
   ];
 
   constructor(private orderService: OrderService) {}
@@ -75,6 +74,8 @@ export class AdminOrdersComponent implements OnInit {
         this.closeStatusModal();
         this.isLoading = false;
         alert('Order status updated successfully!');
+        // Notify user orders component to refresh
+        window.dispatchEvent(new CustomEvent('orderStatusUpdated'));
       },
       error: (err) => {
         this.error = 'Failed to update order status. Please try again.';
@@ -86,33 +87,27 @@ export class AdminOrdersComponent implements OnInit {
 
   getStatusText(status: OrderStatus): string {
     switch (status) {
-      case OrderStatus.Processing:
-        return 'Processing';
-      case OrderStatus.Confirmed:
-        return 'Confirmed';
-      case OrderStatus.Delivered:
-        return 'Delivered';
+      case OrderStatus.Booked:
+        return 'Booked';
       case OrderStatus.Cancelled:
         return 'Cancelled';
-      default:
-        return 'Unknown';
+      case OrderStatus.EventEnded:
+        return 'Event Ended';
+      // default:
+      //   return 'Unknown';
     }
   }
 
   getStatusClass(status: OrderStatus): string {
     switch (status) {
-      case OrderStatus.Processing:
-        return 'status-processing';
-      case OrderStatus.Confirmed:
-        return 'status-confirmed';
-      case OrderStatus.Shipped:
-        return 'status-shipped';
-      case OrderStatus.Delivered:
-        return 'status-delivered';
+      case OrderStatus.Booked:
+        return 'Booked';
       case OrderStatus.Cancelled:
-        return 'status-cancelled';
-      default:
-        return 'status-unknown';
+        return 'Cancelled';
+      case OrderStatus.EventEnded:
+        return 'Event Ended';
+      // default:
+      //   return 'status-unknown';
     }
   }
 }
