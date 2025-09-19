@@ -11,7 +11,6 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [EventComponent],
   imports: [
     CommonModule,
     FormsModule,

@@ -3,6 +3,8 @@ using Event_Management_System.Models.Domain;
 using Event_Management_System.Models.DTO;
 using Event_Management_System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Event_Management_System.Controllers
 {
@@ -19,12 +21,40 @@ namespace Event_Management_System.Controllers
 
         // GET: api/Feedback
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacks()
         {
-            var feedbacks = await _context.Feedbacks
+            // Get current user's ID from claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdClaim.Value);
+
+            // Get the user to check role
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserID == userId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            IQueryable<Feedback> query = _context.Feedbacks
                 .Include(f => f.User)
-                .Include(f => f.Event)
-                .ToListAsync();
+                .Include(f => f.Event);
+
+            if (user.Roles.Contains("Organizer"))
+            {
+                // Organizer: show feedbacks for their events
+                query = query.Where(f => f.Event.OrganizerID == userId);
+            }
+            else
+            {
+                // Regular user: show only their own feedbacks
+                query = query.Where(f => f.UserID == userId);
+            }
+
+            var feedbacks = await query.ToListAsync();
 
             return Ok(feedbacks);
         }
