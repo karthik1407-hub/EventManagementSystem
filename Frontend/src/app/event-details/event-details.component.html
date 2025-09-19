@@ -8,22 +8,24 @@
   <div *ngIf="event" class="container event-details-container">
     <div class="row">
 
-      <div class="col-lg-8">
+      <div class="image col-lg-8">
         <div class="image-container mb-4">
-          <img [src]="'https://localhost:7272/EventImages/' + event!.eventImageUrl" class="img-fluid" [alt]="event!.eventName">
+          <img [src]="'https://localhost:7272/EventImages/' + event!.eventImageUrl" class="img-fluid"
+            [alt]="event!.eventName">
         </div>
-        
+
         <div class="event-header d-flex justify-content-between align-items-start">
-            <div>
-                <span class="badge bg-primary-subtle text-primary-emphasis mb-2">{{ event!.eventType }}</span>
-                <h1 class="fw-bold">{{ event!.eventName }}</h1>
-            </div>
-            <div *ngIf="canManageEvent" class="admin-actions">
-              <button class="btn btn-outline-secondary me-2" (click)="editEvent()"><i class="bi bi-pencil-fill"></i> Edit</button>
-              <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
-                <i class="bi bi-trash-fill"></i> Delete
-              </button>
-            </div>
+          <div>
+            <span class="badge bg-primary-subtle text-primary-emphasis mb-2">{{ event!.eventType }}</span>
+            <h1 class="fw-bold">{{ event!.eventName }}</h1>
+          </div>
+          <div *ngIf="canManageEvent" class="admin-actions">
+            <button class="btn btn-outline-secondary me-2" (click)="editEvent()"><i class="bi bi-pencil-fill"></i>
+              Edit</button>
+            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
+              <i class="bi bi-trash-fill"></i> Delete
+            </button>
+          </div>
         </div>
         <hr>
 
@@ -57,7 +59,7 @@
         </div>
       </div>
 
-      <div class="col-lg-4">
+      <div class="buy col-lg-4">
         <div class="sticky-panel">
           <div class="card shadow">
             <div class="card-body">
@@ -67,7 +69,7 @@
                 <span class="fs-5">Price</span>
                 <span class="fs-4 fw-bold text-primary">₹{{ event!.eventPrice | number }}</span>
               </div>
-              
+
               <div *ngIf="!canManageEvent; else organizerView">
                 <button class="btn btn-primary btn-lg w-100" (click)="bookEvent()">
                   Book Ticket
@@ -75,7 +77,7 @@
               </div>
 
               <ng-template #organizerView>
-                 <p class="text-muted text-center small mt-3">Admin controls are available above.</p>
+                <p class="text-muted text-center small mt-3">Admin controls are available above.</p>
               </ng-template>
             </div>
           </div>

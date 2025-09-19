@@ -1,12 +1,15 @@
 /* --- Main Page Layout --- */
 .event-page-container {
   padding: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
 }
 
 /* --- Filter Sidebar Styling --- */
 .filter-sidebar {
-  background-color: #f8f9fa;
-  border-radius: 0.75rem;
+  background-color: #bec2c5;
+  border-radius: 0.75rem 0 0 0.75rem;
   padding: 1.5rem;
   height: fit-content;
   position: sticky;
@@ -28,7 +31,13 @@
 
 /* --- Event Grid & Card Animations --- */
 .event-grid-main {
+  background-color: #e0e0e0;
+  border-radius: 0 0.75rem 0.75rem 0;
   padding-left: 2rem;
+}
+
+.grid-header{
+    margin: 30px;
 }
 .event-card {
   border: none;

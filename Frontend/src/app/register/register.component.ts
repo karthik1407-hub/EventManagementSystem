@@ -31,6 +31,9 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   passwordStrength = ''; // Property to hold password strength
 
+  showPassword = false;
+  showConfirmPassword = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService
@@ -68,6 +71,14 @@ export class RegisterComponent implements OnInit {
     } else {
       this.passwordStrength = '';
     }
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   onSubmit() {

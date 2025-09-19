@@ -1,78 +1,67 @@
-<div class="login-page-wrapper">
-
-  <div class="form-container">
-    <div class="form-content">
-      <div class="text-center mb-5">
-        <h2 class="fw-bold display-6 text-primary">EventPro</h2>
-        <h3 class="mb-3 fw-light">Welcome Back!</h3>
-        <p class="text-muted">Sign in to continue to your account.</p>
+<div class="login-page-fullscreen">
+  <!-- Login form card -->
+  <div class="login-card">
+    <div class="card-body">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">EventPro</h2>
+        <h4 class="mb-3">Welcome Back</h4>
+        <p class="text-muted">Sign in to your account</p>
       </div>
 
       <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center mb-3">
-         <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
       </div>
-       <div *ngIf="successMessage" class="alert alert-success mt-3"> {{ successMessage }}</div>
+      <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
-          <label for="email" class="form-label">Email address</label>
+          <label for="email" class="form-label">Email</label>
           <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-            <input type="email" formControlName="email" class="form-control" id="email" placeholder="you@example.com"
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" formControlName="email" class="form-control" id="email" placeholder="your@email.com"
                    [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
           </div>
-          <div *ngIf="submitted && f['email'].errors" class="invalid-feedback d-block">
-            <div *ngIf="f['email'].errors['required']">Email is required.</div>
-            <div *ngIf="f['email'].errors['email']">Please enter a valid email.</div>
+          <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+            <div *ngIf="f['email'].errors['required']">Email required</div>
+            <div *ngIf="f['email'].errors['email']">Invalid email</div>
           </div>
         </div>
 
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
           <div class="input-group">
-             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
             <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" id="password" placeholder="••••••••"
                    [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
             <button type="button" class="input-group-text" (click)="togglePasswordVisibility()">
-              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
+              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
             </button>
           </div>
-          <div *ngIf="submitted && f['password'].errors" class="invalid-feedback d-block">
-            <div *ngIf="f['password'].errors['required']">Password is required.</div>
+          <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+            <div *ngIf="f['password'].errors['required']">Password required</div>
           </div>
         </div>
 
-        <!-- <div class="d-flex justify-content-end mb-4">
-            <a href="#" class="form-text text-decoration-none">Forgot Password?</a>
-        </div> -->
-
-        <div class="d-grid mb-4">
-          <button [disabled]="loading" class="btn btn-primary btn-lg shadow">
+        <div class="d-grid mb-3">
+          <button [disabled]="loading" class="btn btn-primary">
             <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
             Sign In
           </button>
         </div>
       </form>
 
-      <!-- <div class="divider my-4">OR</div>
-
-      <div class="d-grid gap-3">
-        <button class="btn btn-google d-flex align-items-center justify-content-center">
-            <i class="bi bi-google me-2"></i> Continue with Google
-        </button>
-      </div> -->
-
-      <div class="text-center mt-5">
-        <p class="text-muted">Don't have an account? <a routerLink="/register" class="fw-medium text-decoration-none">Register now</a></p>
+      <div class="text-center">
+        <p class="mb-0">New here? <a routerLink="/register" class="text-primary fw-bold">Create Account</a></p>
       </div>
     </div>
   </div>
 
-  <div class="visual-container">
-    <div class="overlay"></div>
-    <div class="visual-content text-center text-white">
-        <h1 class="display-4 fw-bold">Your Next Event Awaits</h1>
-        <p class="lead mt-3">Discover, book, and manage memorable experiences with EventPro.</p>
-    </div>
+  <!-- Image section with moving images -->
+  <div class="image-section">
+    <div class="moving-image" style="background-image: url('https://wallpaperbat.com/img/82598632-dj-picture.jpg');"></div>
+    <div class="moving-image" style="background-image: url('https://wallpaperbat.com/img/200577-indian-culture-wallpaper-top-free-indian-culture-background.jpg');"></div>
+    <div class="moving-image" style="background-image: url('https://wallpaperbat.com/img/943008-travel-adventure-picture-download-free-image.jpg');"></div>
+    <div class="moving-image" style="background-image: url('https://wallpaperbat.com/img/292398-paradise-relaxing-corner-mac-wallpaper-download.jpg');"></div>
+    <div class="moving-image" style="background-image: url('https://wallpaperbat.com/img/844463-eating-together-picture.jpg');"></div>
   </div>
 </div>

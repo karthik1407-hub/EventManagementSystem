@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Event_Management_System.Migrations.AuthDb
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250919074351_MigrationOne")]
+    [Migration("20250919095200_MigrationOne")]
     partial class MigrationOne
     {
         /// <inheritdoc />
@@ -169,15 +169,15 @@ namespace Event_Management_System.Migrations.AuthDb
                         {
                             Id = "f3d378fd-e54d-5f4c-9219-b2b2f92a017e",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fcae4f40-f1d8-4377-a931-89d09f0e851e",
+                            ConcurrencyStamp = "1e87ee9f-bb62-4414-8b2d-8477efc0c7f6",
                             Email = "eventsystem@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "EVENTSYSTEM@ADMIN.COM",
                             NormalizedUserName = "EVENTSYSTEM@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECpFlLy2+qDQol+OFzI//kHmJzMCvjuTn0vAGfJa7MmSsBF9or9BQrezKb+G3Jzs0A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMydR53KuFfXe+JZ2LkLLA0eO5hXQpKrx8GMeBaXH46IzB3VaDhW32XcLRrc+oiY0g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "429b26c8-db8c-46d9-bcd7-3e7bfc66dfb0",
+                            SecurityStamp = "ac755646-871a-414f-8d05-754a2686c5bc",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

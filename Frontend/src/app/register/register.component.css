@@ -1,55 +1,62 @@
 /*
---- Main Layout (from Login Page) ---
+--- Registration Page Layout based on Login Page ---
 */
-.login-page-wrapper {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-}
-
-.form-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background-color: #f8f9fa;
-}
-
-.form-content {
-  width: 100%;
-  max-width: 450px;
-}
-
-.visual-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: url('https://images.unsplash.com/photo-1527529482837-4698179dc6ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80') center center/cover no-repeat;
+.register-page-fullscreen {
   position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #f9fafb;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  padding: 2rem;
+  flex-direction: row;
 }
 
-/*
---- Branding Visual Styling (from Login Page) ---
-*/
-.visual-container .overlay {
+.image-section {
+  flex: 0 0 50%; /* 50% width */
+  height: auto;
+  overflow: hidden;
+  position: relative;
+  border-radius: 15px 0 0 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  background: url('https://images.unsplash.com/photo-1527529482837-4698179dc6ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center center/cover no-repeat;
+}
+
+.image-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, rgba(13, 110, 253, 0.6), rgba(43, 4, 119, 0.7));
+  border-radius: 15px 0 0 15px;
 }
 
-.visual-content {
-  position: relative;
-  z-index: 1;
+.register-card {
+  flex: 0 0 50%; /* 50% width */
+  max-width: 450px;
+  background: #ffffff;
+  border-radius: 0 15px 15px 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   padding: 2rem;
+  animation: cardFadeIn 1s ease-out;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /*
---- Form Styling (from Login Page) ---
+--- Form Styling ---
 */
 .input-group-text {
   background-color: #e9ecef;
@@ -58,84 +65,33 @@
 
 .form-control {
   min-height: 3rem;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
 }
 
-.invalid-feedback.d-block {
-    text-align: left;
-}
-
-.divider {
-  text-align: center;
-  color: #adb5bd;
-  position: relative;
-}
-.divider::before, .divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background-color: #dee2e6;
-}
-.divider::before { left: 0; }
-.divider::after { right: 0; }
-
-.btn-google {
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-  color: #495057;
-  transition: background-color 0.3s ease;
-}
-
-.btn-google:hover {
-  background-color: #f1f3f5;
-  border-color: #ced4da;
+.invalid-feedback {
+  font-size: 0.875rem;
 }
 
 /*
---- Password Strength Meter (for Register Page) ---
+--- Responsive Design ---
 */
-.password-strength-meter {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 25px;
-}
-
-.strength-bar {
-  flex: 1;
-  height: 8px;
-  background-color: #e9ecef;
-  border-radius: 4px;
-  transition: all 0.3s ease-in-out;
-}
-
-.strength-text {
-  font-size: 0.8rem;
-  font-weight: 500;
-  width: 60px;
-  text-align: right;
-  color: #6c757d;
-  transition: color 0.3s ease-in-out;
-}
-
-.strength-bar.weak { background-color: #dc3545; }
-.strength-text.weak { color: #dc3545; }
-
-.strength-bar.medium { background-color: #fd7e14; }
-.strength-text.medium { color: #fd7e14; }
-
-.strength-bar.strong { background-color: #198754; }
-.strength-text.strong { color: #198754; }
-
-/*
---- Responsive Design (from Login Page) ---
-*/
-@media (max-width: 992px) {
-  .visual-container {
-    display: none;
+@media (max-width: 768px) {
+  .register-page-fullscreen {
+    flex-direction: column;
+    padding: 1rem;
   }
-  .form-container {
-    flex-basis: 100%;
+  .image-section, .register-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+    height: auto;
+  }
+  .image-section {
+    height: 300px;
+    margin-bottom: 1rem;
+    border-radius: 15px;
+  }
+  .register-card {
+    border-radius: 15px;
   }
 }

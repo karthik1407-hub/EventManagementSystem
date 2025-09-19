@@ -8,7 +8,7 @@
         <div class="filter-group">
           <label for="search" class="form-label fw-medium">Search Event</label>
           <div class="input-group">
-            <input type="text" id="search" class="form-control" placeholder="Event name..." [(ngModel)]="searchQuery">
+            <input type="text" id="search" class="form-control" placeholder="Event name..." (keyup)="applyFilters()" [(ngModel)]="searchQuery">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
           </div>
         </div>
