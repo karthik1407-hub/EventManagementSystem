@@ -54,7 +54,19 @@ namespace Event_Management_System.Controllers
                 query = query.Where(f => f.UserID == userId);
             }
 
-            var feedbacks = await query.ToListAsync();
+            var feedbacks = await query
+                .Select(f => new
+                {
+                    f.FeedbackID,
+                    f.Rating,
+                    f.Comments,
+                    f.SubmittedTimestamp,
+                    UserEmail = f.User.Email,
+                    EventName = f.Event.EventName,
+                    f.EventID,
+                    f.UserID
+                })
+                .ToListAsync();
 
             return Ok(feedbacks);
         }
