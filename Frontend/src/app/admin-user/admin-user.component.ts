@@ -25,7 +25,7 @@ export class AdminUserComponent implements OnInit {
   isLoading = signal(true);
   errorMessage = signal('');
   showUserForm = signal(false);
-  editingUser = signal<number | null>(null);
+  editingUser = signal<string | null>(null);
   userForm!: FormGroup;
 
   ngOnInit(): void {
@@ -43,15 +43,12 @@ export class AdminUserComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const editId = params['edit'];
       if (editId) {
-        const userId = parseInt(editId, 10);
-        if (!isNaN(userId)) {
-          this.editUserById(userId);
-        }
+        this.editUserById(editId);
       }
     });
   }
 
-  private editUserById(userId: number): void {
+  private editUserById(userId: string): void {
     const user = this.users().find(u => u.userID === userId);
     if (user) {
       this.showEditUserForm(user);

@@ -46,32 +46,7 @@ namespace EventManagementSystem.Data
 
             builder.Entity<IdentityRole>().HasData(roles);
 
-            // Create an Admin User
-            var adminUserId = "f3d378fd-e54d-5f4c-9219-b2b2f92a017e";
-            var admin = new IdentityUser()
-            {
-                Id = adminUserId,
-                UserName = "admin",
-                Email = "eventsystem@admin.com",
-                NormalizedEmail = "EVENTSYSTEM@ADMIN.COM",
-                NormalizedUserName = "EVENTSYSTEM@ADMIN.COM"
-            };
 
-            admin.PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(admin, "Admin@123");
-
-            builder.Entity<IdentityUser>().HasData(admin);
-
-            // Assign Admin role to Admin user
-            var adminRoles = new List<IdentityUserRole<string>>()
-            {
-                new()
-                {
-                    UserId = adminUserId,
-                    RoleId = adminRoleId
-                }
-            };
-
-            builder.Entity<IdentityUserRole<string>>().HasData(adminRoles);
         }
     }
 }

@@ -1,23 +1,15 @@
 import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../environments/environment';
-import { UserService } from '../user/services/user.service';
 import { User } from '../user/models/user.model';
 
 // --- Interfaces for better type safety ---
-// Using imported User model from user service
-interface Feedback {
-  feedbackID: string;
-  comments: string;
-  rating: number;
-  userEmail: string;
-  eventName: string;
-  eventID: string;
-  userID: string;
-}
+import { Feedback } from '../feedback/models/feedback.model';
+import { Event } from '../event/models/event.model';
+
 interface Notification {
   notificationID: string;
   message: string;
@@ -29,11 +21,6 @@ interface Ticket {
   userID?: string;
   bookingDate?: string;
   isCancelled?: boolean;
-}
-interface Event {
-  eventID: string;
-  eventName: string;
-  eventDate: string;
 }
 interface Payment {
   id: string;
@@ -48,7 +35,7 @@ interface Payment {
 
 @Component({
   selector: 'app-admin',
-  templateUrl: './admin.component.html', // You will need to adjust your template to use signals
+  templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
@@ -61,7 +48,6 @@ export class AdminComponent implements OnInit {
   private readonly API_URL = environment.apiUrl;
 
   // --- State Management with Signals ---
-  // Using WritableSignal for reactive state management.
   users: WritableSignal<User[]> = signal([]);
   feedback: WritableSignal<Feedback[]> = signal([]);
   notifications: WritableSignal<Notification[]> = signal([]);
@@ -82,11 +68,9 @@ export class AdminComponent implements OnInit {
   activeSection = signal('');
   expandedSections: WritableSignal<Set<string>> = signal(new Set());
 
-  // For safer deletions, we'll store the item to be deleted.
   itemToDelete = signal<{ type: string, id: string } | null>(null);
 
   // --- Form State Management ---
-  // Forms for create/edit operations
   userForm: FormGroup | null = null;
   feedbackForm: FormGroup | null = null;
   notificationForm: FormGroup | null = null;
@@ -94,7 +78,6 @@ export class AdminComponent implements OnInit {
   eventForm: FormGroup | null = null;
   paymentForm: FormGroup | null = null;
 
-  // Form visibility states
   showUserForm = signal(false);
   showFeedbackForm = signal(false);
   showNotificationForm = signal(false);
@@ -102,7 +85,6 @@ export class AdminComponent implements OnInit {
   showEventForm = signal(false);
   showPaymentForm = signal(false);
 
-  // Edit mode states
   editingUser = signal<number | null>(null);
   editingFeedback = signal<string | null>(null);
   editingNotification = signal<string | null>(null);
@@ -112,12 +94,22 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCounts();
-    // Expand feedback section by default to show feedback data
     this.expandedSections.update(set => set.add('feedback'));
     this.loadSectionData('feedback');
+    this.loadSectionData('users');
+    this.loadSectionData('events');
   }
 
-  // --- UI Interaction ---
+  getUserName(userId: string): string {
+    const user = this.users().find(u => u.userID === userId);
+    return user ? user.email : userId;
+  }
+
+  getEventName(eventId: string): string {
+    const event = this.events().find(e => e.eventID === eventId);
+    return event ? event.eventName : eventId;
+  }
+
   toggleSection(section: string): void {
     const expanded = this.expandedSections();
     if (expanded.has(section)) {
@@ -130,8 +122,6 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  // --- Navigation Methods ---
-  // These methods navigate to other components to handle creation/editing.
   addUser(): void { this.router.navigate(['/admin/users']); }
   editUser(user: User): void { this.router.navigate(['/admin/users'], { queryParams: { edit: user.userID } }); }
 
@@ -140,7 +130,6 @@ export class AdminComponent implements OnInit {
 
   addNotification(): void { this.router.navigate(['/notifications']); }
   editNotification(notification: Notification): void { this.router.navigate(['/notifications'], { queryParams: { edit: notification.notificationID } });}
-
 
   addTicket(): void { this.router.navigate(['/tickets']); }
   editTicket(ticket: Ticket): void { this.router.navigate(['/tickets'], { queryParams: { edit: ticket.ticketID } }); }
@@ -151,51 +140,19 @@ export class AdminComponent implements OnInit {
   addPayment(): void { this.router.navigate(['/payment']); }
   editPayment(payment: Payment): void { this.router.navigate(['/payment'], { queryParams: { edit: payment.id } });}
 
-
-  // --- Data Loading ---
-  private getAuthHeaders(): HttpHeaders {
-    const userString = localStorage.getItem('user');
-    console.log('User string from localStorage:', userString); // Log the raw user string
-
-    if (!userString) {
-      console.warn('No user found in localStorage. Returning empty headers.');
-      return new HttpHeaders();
-    }
-
-    try {
-      const user = JSON.parse(userString);
-      console.log('Parsed user object:', user); // Log the parsed user object
-
-      if (user?.token) {
-        const headers = new HttpHeaders({ 'Authorization': `Bearer ${user.token}` });
-        console.log('Auth headers created:', headers); // Log the created headers
-        return headers;
-      } else {
-        console.warn('User object found, but no token. Returning empty headers.');
-        return new HttpHeaders();
-      }
-    } catch (e) {
-      console.error('Error parsing user from localStorage:', e);
-      return new HttpHeaders();
-    }
-  }
-
   loadCounts(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
-    const headers = this.getAuthHeaders();
 
-    // Load counts for all sections
     forkJoin({
-      users: this.http.get<User[]>(`${this.API_URL}/api/Users`, { headers }),
-      feedback: this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`, { headers }),
-      notifications: this.http.get<Notification[]>(`${this.API_URL}/api/Notification`, { headers }),
-      tickets: this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`, { headers }),
-      events: this.http.get<Event[]>(`${this.API_URL}/api/Event`, { headers }),
-      payments: this.http.get<Payment[]>(`${this.API_URL}/api/Payment`, { headers })
+      users: this.http.get<User[]>(`${this.API_URL}/api/Users`),
+      feedback: this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`),
+      notifications: this.http.get<Notification[]>(`${this.API_URL}/api/Notification`),
+      tickets: this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`),
+      events: this.http.get<Event[]>(`${this.API_URL}/api/Event`),
+      payments: this.http.get<Payment[]>(`${this.API_URL}/api/Payment`)
     }).subscribe({
       next: (data) => {
-        // Set counts
         this.userCount.set(data.users.length);
         this.feedbackCount.set(data.feedback.length);
         this.notificationCount.set(data.notifications.length);
@@ -214,10 +171,9 @@ export class AdminComponent implements OnInit {
   }
 
   loadSectionData(section: string): void {
-    const headers = this.getAuthHeaders();
     switch (section) {
       case 'users':
-        this.http.get<User[]>(`${this.API_URL}/api/Users`, { headers }).subscribe({
+        this.http.get<User[]>(`${this.API_URL}/api/Users`).subscribe({
           next: (data) => {
             this.users.set(data);
             this.userCount.set(data.length);
@@ -226,7 +182,7 @@ export class AdminComponent implements OnInit {
         });
         break;
       case 'feedback':
-        this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`, { headers }).subscribe({
+        this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`).subscribe({
           next: (data) => {
             console.log('Feedback data received:', data);
             this.feedback.set(data);
@@ -238,7 +194,7 @@ export class AdminComponent implements OnInit {
         });
         break;
       case 'notifications':
-        this.http.get<Notification[]>(`${this.API_URL}/api/Notification`, { headers }).subscribe({
+        this.http.get<Notification[]>(`${this.API_URL}/api/Notification`).subscribe({
           next: (data) => {
             this.notifications.set(data);
             this.notificationCount.set(data.length);
@@ -247,7 +203,7 @@ export class AdminComponent implements OnInit {
         });
         break;
       case 'tickets':
-        this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`, { headers }).subscribe({
+        this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`).subscribe({
           next: (data) => {
             this.tickets.set(data);
             this.ticketCount.set(data.length);
@@ -256,7 +212,7 @@ export class AdminComponent implements OnInit {
         });
         break;
       case 'events':
-        this.http.get<Event[]>(`${this.API_URL}/api/Event`, { headers }).subscribe({
+        this.http.get<Event[]>(`${this.API_URL}/api/Event`).subscribe({
           next: (data) => {
             this.events.set(data);
             this.eventCount.set(data.length);
@@ -265,7 +221,7 @@ export class AdminComponent implements OnInit {
         });
         break;
       case 'payments':
-        this.http.get<Payment[]>(`${this.API_URL}/api/Payment`, { headers }).subscribe({
+        this.http.get<Payment[]>(`${this.API_URL}/api/Payment`).subscribe({
           next: (data) => {
             this.payments.set(data);
             this.paymentCount.set(data.length);
@@ -279,19 +235,16 @@ export class AdminComponent implements OnInit {
   loadAllData(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
-    const headers = this.getAuthHeaders();
 
-    // Use forkJoin to handle multiple HTTP requests concurrently.
     forkJoin({
-      users: this.http.get<User[]>(`${this.API_URL}/api/Users`, { headers }),
-      feedback: this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`, { headers }),
-      notifications: this.http.get<Notification[]>(`${this.API_URL}/api/Notification`, { headers }),
-      tickets: this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`, { headers }),
-      events: this.http.get<Event[]>(`${this.API_URL}/api/Event`, { headers }),
-      payments: this.http.get<Payment[]>(`${this.API_URL}/api/Payment`, { headers })
+      users: this.http.get<User[]>(`${this.API_URL}/api/Users`),
+      feedback: this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`),
+      notifications: this.http.get<Notification[]>(`${this.API_URL}/api/Notification`),
+      tickets: this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`),
+      events: this.http.get<Event[]>(`${this.API_URL}/api/Event`),
+      payments: this.http.get<Payment[]>(`${this.API_URL}/api/Payment`)
     }).subscribe({
       next: (data) => {
-        // Set all data signals at once
         this.users.set(data.users);
         this.feedback.set(data.feedback);
         this.notifications.set(data.notifications);
@@ -309,29 +262,14 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  // --- Deletion Logic ---
-
-  /**
-   * Sets an item to be deleted. This is the first step in the confirmation process.
-   * In your HTML, you would call this on the initial delete button click.
-   * @param type - A string like 'user', 'feedback' to identify the list.
-   * @param id - The unique identifier of the item.
-   */
   initiateDelete(type: string, id: string): void {
     this.itemToDelete.set({ type, id });
   }
 
-  /**
-   * Cancels the deletion process.
-   */
   cancelDelete(): void {
     this.itemToDelete.set(null);
   }
 
-  /**
-   * Confirms and executes the deletion. This would be called by a "Confirm Delete" button
-   * that is only visible when `itemToDelete()` is not null.
-   */
   confirmDelete(): void {
     const item = this.itemToDelete();
     if (!item) return;
@@ -344,7 +282,6 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    // Add Guid validation for id
     const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     if (!guidRegex.test(id)) {
       console.error(`Delete failed: Invalid GUID format for id ${id}`);
@@ -353,10 +290,8 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    const headers = this.getAuthHeaders();
     let apiUrl = `${this.API_URL}/api/`;
 
-    // Determine the correct API endpoint and local data signal to update
     let signalToUpdate: WritableSignal<any[]>;
     switch (type) {
       case 'user':
@@ -376,7 +311,6 @@ export class AdminComponent implements OnInit {
         signalToUpdate = this.tickets;
         break;
       case 'event':
-        // Note: The ID for event might be different based on your API design
         apiUrl += `Event/${id}`;
         signalToUpdate = this.events;
         break;
@@ -390,52 +324,24 @@ export class AdminComponent implements OnInit {
         return;
     }
 
-    this.http.delete(apiUrl, { headers }).subscribe({
+    this.http.delete(apiUrl).subscribe({
       next: () => {
-        // --- IMPORTANT: Update the local state directly ---
-        // This is much more efficient than reloading all data from the server.
-        // This logic now correctly handles items with different ID properties.
         signalToUpdate.update(currentItems => currentItems.filter(i => {
           if (type === 'user') return i.userID !== id;
           if (type === 'event') return i.eventID !== id;
           return i.id !== id;
         }));
         console.log(`${type} with id ${id} deleted successfully.`);
-        this.itemToDelete.set(null); // Clear the item to hide the confirmation dialog
+        this.itemToDelete.set(null);
       },
       error: (err) => {
         console.error(`Failed to delete ${type}`, err);
         this.errorMessage.set(`Failed to delete the selected ${type}.`);
-        this.itemToDelete.set(null); // Also clear on error
+        this.itemToDelete.set(null);
       }
     });
   }
 
-  // --- CRUD Methods ---
-
-  // ===== USER CRUD =====
-  // Removed user CRUD methods to move to separate UserComponent
-  showAddUserForm(): void {
-    this.router.navigate(['/user']);
-  }
-  
-  showEditUserForm(user: User): void {
-    this.router.navigate(['/user'], { queryParams: { edit: user.userID } });
-  }
-
-  hideUserForm(): void {
-    // No longer needed here
-  }
-
-  private initializeUserForm(user?: User): void {
-    // No longer needed here
-  }
-
-  saveUser(): void {
-    // No longer needed here
-  }
-
-  // ===== FEEDBACK CRUD =====
   showAddFeedbackForm(): void {
     this.initializeFeedbackForm();
     this.showFeedbackForm.set(true);
@@ -468,14 +374,12 @@ export class AdminComponent implements OnInit {
     }
 
     const formData = this.feedbackForm.value;
-    // Convert rating back to number for API
     formData.rating = parseInt(formData.rating, 10);
-    const headers = this.getAuthHeaders();
     const isEditing = this.editingFeedback() !== null;
 
     if (isEditing) {
       const feedbackId = this.editingFeedback();
-      this.http.put(`${this.API_URL}/api/Feedback/${feedbackId}`, formData, { headers }).subscribe({
+      this.http.put(`${this.API_URL}/api/Feedback/${feedbackId}`, formData).subscribe({
         next: (updatedFeedback: any) => {
           this.feedback.update(feedback =>
             feedback.map(f => f.feedbackID === feedbackId ? updatedFeedback : f)
@@ -489,7 +393,7 @@ export class AdminComponent implements OnInit {
         }
       });
     } else {
-      this.http.post(`${this.API_URL}/api/Feedback`, formData, { headers }).subscribe({
+      this.http.post(`${this.API_URL}/api/Feedback`, formData).subscribe({
         next: (newFeedback: any) => {
           this.feedback.update(feedback => [...feedback, newFeedback]);
           this.hideFeedbackForm();
@@ -504,7 +408,6 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  // ===== NOTIFICATION CRUD =====
   showAddNotificationForm(): void {
     this.initializeNotificationForm();
     this.showNotificationForm.set(true);
@@ -536,12 +439,11 @@ export class AdminComponent implements OnInit {
     }
 
     const formData = this.notificationForm.value;
-    const headers = this.getAuthHeaders();
     const isEditing = this.editingNotification() !== null;
 
     if (isEditing) {
       const notificationId = this.editingNotification();
-      this.http.put(`${this.API_URL}/api/Notification/${notificationId}`, formData, { headers }).subscribe({
+      this.http.put(`${this.API_URL}/api/Notification/${notificationId}`, formData).subscribe({
         next: (updatedNotification: any) => {
           this.notifications.update(notifications =>
             notifications.map(n => n.notificationID === notificationId ? updatedNotification : n)
@@ -555,7 +457,7 @@ export class AdminComponent implements OnInit {
         }
       });
     } else {
-      this.http.post(`${this.API_URL}/api/Notification`, formData, { headers }).subscribe({
+      this.http.post(`${this.API_URL}/api/Notification`, formData).subscribe({
         next: (newNotification: any) => {
           this.notifications.update(notifications => [...notifications, newNotification]);
           this.hideNotificationForm();
@@ -570,7 +472,6 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  // ===== TICKET CRUD =====
   showAddTicketForm(): void {
     this.initializeTicketForm();
     this.showTicketForm.set(true);
@@ -605,12 +506,11 @@ export class AdminComponent implements OnInit {
     }
 
     const formData = this.ticketForm.value;
-    const headers = this.getAuthHeaders();
     const isEditing = this.editingTicket() !== null;
 
     if (isEditing) {
       const ticketId = this.editingTicket();
-      this.http.put(`${this.API_URL}/api/Ticket/${ticketId}`, formData, { headers }).subscribe({
+      this.http.put(`${this.API_URL}/api/Ticket/${ticketId}`, formData).subscribe({
         next: (updatedTicket: any) => {
           this.tickets.update(tickets =>
             tickets.map(t => t.ticketID === ticketId ? updatedTicket : t)
@@ -624,7 +524,7 @@ export class AdminComponent implements OnInit {
         }
       });
     } else {
-      this.http.post(`${this.API_URL}/api/Ticket`, formData, { headers }).subscribe({
+      this.http.post(`${this.API_URL}/api/Ticket`, formData).subscribe({
         next: (newTicket: any) => {
           this.tickets.update(tickets => [...tickets, newTicket]);
           this.hideTicketForm();
@@ -639,7 +539,6 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  // ===== PAYMENT CRUD =====
   showAddPaymentForm(): void {
     this.initializePaymentForm();
     this.showPaymentForm.set(true);
@@ -675,12 +574,11 @@ export class AdminComponent implements OnInit {
     }
 
     const formData = this.paymentForm.value;
-    const headers = this.getAuthHeaders();
     const isEditing = this.editingPayment() !== null;
 
     if (isEditing) {
       const paymentId = this.editingPayment();
-      this.http.put(`${this.API_URL}/api/Payment/${paymentId}`, formData, { headers }).subscribe({
+      this.http.put(`${this.API_URL}/api/Payment/${paymentId}`, formData).subscribe({
         next: (updatedPayment: any) => {
           this.payments.update(payments =>
             payments.map(p => p.id === paymentId ? updatedPayment : p)
@@ -694,7 +592,7 @@ export class AdminComponent implements OnInit {
         }
       });
     } else {
-      this.http.post(`${this.API_URL}/api/Payment/payment`, formData, { headers }).subscribe({
+      this.http.post(`${this.API_URL}/api/Payment/payment`, formData).subscribe({
         next: (newPayment: any) => {
           this.payments.update(payments => [...payments, newPayment]);
           this.hidePaymentForm();

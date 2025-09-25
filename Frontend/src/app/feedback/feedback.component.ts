@@ -192,4 +192,14 @@ export class FeedbackComponent implements OnInit {
     this.editingFeedback = null;
     this.resetForm();
   }
+
+  getEventName(eventId: string): string {
+    const event = this.events.find(e => e.eventID === eventId);
+    return event ? event.eventName : eventId;
+  }
+
+  getUserName(userId: string): string {
+    const user = this.users.find(u => u.userID === userId);
+    return user ? user.email : userId;
+  }
 }

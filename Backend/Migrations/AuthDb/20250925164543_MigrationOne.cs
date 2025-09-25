@@ -168,16 +168,6 @@ namespace Event_Management_System.Migrations.AuthDb
                     { "3c333333-3333-3333-3333-333333333333", "3c333333-3333-3333-3333-333333333333", "Attendee", "ATTENDEE" }
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "f3d378fd-e54d-5f4c-9219-b2b2f92a017e", 0, "fba242c7-035c-426c-9624-719ace66aab0", "eventsystem@admin.com", false, false, null, "EVENTSYSTEM@ADMIN.COM", "EVENTSYSTEM@ADMIN.COM", "AQAAAAIAAYagAAAAEGTK647cQkovlA8NU0bgioH1y96D52P8WG7R8M6rLjg3GR1HpJbM2YCzGtjEBxUqOw==", null, false, "1513c88c-8768-4ba6-b248-a00244edfa67", false, "admin" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "1a111111-1111-1111-1111-111111111111", "f3d378fd-e54d-5f4c-9219-b2b2f92a017e" });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",

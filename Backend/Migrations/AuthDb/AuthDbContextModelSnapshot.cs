@@ -160,24 +160,6 @@ namespace Event_Management_System.Migrations.AuthDb
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "f3d378fd-e54d-5f4c-9219-b2b2f92a017e",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "fba242c7-035c-426c-9624-719ace66aab0",
-                            Email = "eventsystem@admin.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "EVENTSYSTEM@ADMIN.COM",
-                            NormalizedUserName = "EVENTSYSTEM@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGTK647cQkovlA8NU0bgioH1y96D52P8WG7R8M6rLjg3GR1HpJbM2YCzGtjEBxUqOw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "1513c88c-8768-4ba6-b248-a00244edfa67",
-                            TwoFactorEnabled = false,
-                            UserName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -240,13 +222,6 @@ namespace Event_Management_System.Migrations.AuthDb
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "f3d378fd-e54d-5f4c-9219-b2b2f92a017e",
-                            RoleId = "1a111111-1111-1111-1111-111111111111"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

@@ -24,7 +24,7 @@
     </section>
 
     <!-- Feedback Section -->
-    <!-- <section class="admin-section">
+    <section class="admin-section">
       <div class="section-header" (click)="toggleSection('feedback')" [class.expanded]="expandedSections().has('feedback')">
         <h2>Feedback ({{ feedbackCount() }})</h2>
         <span class="toggle-icon">{{ expandedSections().has('feedback') ? '▼' : '▶' }}</span>
@@ -34,7 +34,7 @@
         <ul class="data-list">
           <li *ngFor="let item of feedback()" class="data-item">
             <div class="item-info">
-              <strong>User:</strong> {{ item.userEmail }} | <strong>Event:</strong> {{ item.eventName }}<br>
+              <strong>User:</strong> {{ getUserName(item.userID) }} | <strong>Event:</strong> {{ getEventName(item.eventID) }}<br>
               <strong>Rating:</strong> {{ item.rating }}/5 | <strong>Comments:</strong> {{ item.comments }}
             </div>
             <div class="item-actions">
@@ -44,7 +44,7 @@
           </li>
         </ul>
       </div>
-    </section> -->
+    </section>
 
     <!-- Notifications Section -->
     <section class="admin-section">

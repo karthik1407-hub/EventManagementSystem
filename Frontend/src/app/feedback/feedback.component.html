@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <!-- <div class="mb-3">
+      <div class="mb-3">
         <label for="userID" class="form-label">User ID</label>
         <ng-container *ngIf="isAdmin || isOrganizer; else readonlyUserId">
           <select
@@ -51,7 +51,7 @@
             [class.is-valid]="feedbackForm.get('userID')?.valid"
           />
         </ng-template>
-      </div> -->
+      </div>
 
       <div class="mb-3">
         <label for="rating" class="form-label">Rating (1-5)</label>
@@ -104,10 +104,10 @@
         <div>
           <strong>{{ fb.rating }}/5</strong> - {{ fb.comments }}
           <br />
-          <small class="text-muted">Event: {{ fb.eventID }} | User: {{ fb.userID }}</small>
+          <small class="text-muted">Event: {{ getEventName(fb.eventID) }} | User: {{ getUserName(fb.userID) }}</small>
         </div>
         <!-- Edit and Delete buttons -->
-        <div>
+        <div> 
           <button *ngIf="isAdmin || isOrganizer" class="btn btn-sm btn-warning me-2" (click)="edit(fb)">Edit</button>
           <button *ngIf="isOrganizer" class="btn btn-sm btn-danger" (click)="delete(fb.feedbackID)">Delete</button>
         </div>
