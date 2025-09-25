@@ -74,7 +74,6 @@
               <p class="text-info">Event is ended. Kindly give your valuable feedback.</p>
               <button
                 class="btn btn-primary"
-                [disabled]="selectedTicket.isCancelled"
                 (click)="onFeedbackButtonClick()"
               >
                 {{ feedback ? 'Edit Feedback' : 'Give Feedback' }}
@@ -118,10 +117,7 @@
                 <button type="button" class="btn btn-secondary ms-2" (click)="isEditingFeedback = false">Cancel</button>
               </form>
             </div>
-            <div *ngIf="!isEventEnded(selectedTicket)">
-              <p class="text-warning">You are allowed to give feedback once Event is completed.</p>
-              <button class="btn btn-primary" disabled>Give Feedback</button>
-            </div>
+
           </div>
         </div>
       </div>
