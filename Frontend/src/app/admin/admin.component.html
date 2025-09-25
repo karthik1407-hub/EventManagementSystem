@@ -4,7 +4,7 @@
     <!-- Users Section -->
     <section class="admin-section">
       <div class="section-header" (click)="toggleSection('users')" [class.expanded]="expandedSections().has('users')">
-        <h2>Users ({{ userCount() }})</h2>
+        <h2>Users </h2>
         <span class="toggle-icon">{{ expandedSections().has('users') ? '▼' : '▶' }}</span>
       </div>
       <div class="section-content" *ngIf="expandedSections().has('users')">
@@ -26,11 +26,11 @@
     <!-- Feedback Section -->
     <section class="admin-section">
       <div class="section-header" (click)="toggleSection('feedback')" [class.expanded]="expandedSections().has('feedback')">
-        <h2>Feedback ({{ feedbackCount() }})</h2>
+        <h2>Feedback </h2>
         <span class="toggle-icon">{{ expandedSections().has('feedback') ? '▼' : '▶' }}</span>
       </div>
       <div class="section-content" *ngIf="expandedSections().has('feedback')">
-        <button class="add-btn" (click)="addFeedback()">Add Feedback</button>
+        <button class="add-btn" (click)="addFeedback()">View Feedbacks</button>
         <ul class="data-list">
           <li *ngFor="let item of feedback()" class="data-item">
             <div class="item-info">
@@ -48,7 +48,7 @@
     <!-- Notifications Section -->
     <section class="admin-section">
       <div class="section-header" (click)="toggleSection('notifications')" [class.expanded]="expandedSections().has('notifications')">
-        <h2>Notifications ({{ notificationCount() }})</h2>
+        <h2>Notifications </h2>
         <span class="toggle-icon">{{ expandedSections().has('notifications') ? '▼' : '▶' }}</span>
       </div>
       <div class="section-content" *ngIf="expandedSections().has('notifications')">
@@ -70,7 +70,7 @@
     <!-- Tickets Section -->
     <section class="admin-section">
       <div class="section-header" (click)="toggleSection('tickets')" [class.expanded]="expandedSections().has('tickets')">
-        <h2>Tickets ({{ ticketCount() }})</h2>
+        <h2>Tickets</h2>
         <span class="toggle-icon">{{ expandedSections().has('tickets') ? '▼' : '▶' }}</span>
       </div>
       <div class="section-content" *ngIf="expandedSections().has('tickets')">
@@ -92,7 +92,7 @@
     <!-- Events Section -->
     <section class="admin-section">
       <div class="section-header" (click)="toggleSection('events')" [class.expanded]="expandedSections().has('events')">
-        <h2>Events ({{ eventCount() }})</h2>
+        <h2>Events </h2>
         <span class="toggle-icon">{{ expandedSections().has('events') ? '▼' : '▶' }}</span>
       </div>
       <div class="section-content" *ngIf="expandedSections().has('events')">

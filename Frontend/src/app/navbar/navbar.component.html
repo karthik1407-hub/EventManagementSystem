@@ -48,7 +48,7 @@
          <li class="nav-item" *ngIf="isOrganizer()">
             <a class="nav-link" routerLink="/add-event" routerLinkActive="active">Add Event</a>
          </li>
-         <li class="nav-item" *ngIf="isOrganizer() || isAdmin()">
+         <li class="nav-item" *ngIf="isOrganizer() ">
             <a class="nav-link" routerLink="/admin/orders" routerLinkActive="active">Order Management</a>
          </li>
          <li class="nav-item" *ngIf="isUser()">
