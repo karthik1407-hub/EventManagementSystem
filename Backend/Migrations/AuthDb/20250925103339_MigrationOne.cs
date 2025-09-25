@@ -171,7 +171,7 @@ namespace Event_Management_System.Migrations.AuthDb
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "f3d378fd-e54d-5f4c-9219-b2b2f92a017e", 0, "1e87ee9f-bb62-4414-8b2d-8477efc0c7f6", "eventsystem@admin.com", false, false, null, "EVENTSYSTEM@ADMIN.COM", "EVENTSYSTEM@ADMIN.COM", "AQAAAAIAAYagAAAAEMydR53KuFfXe+JZ2LkLLA0eO5hXQpKrx8GMeBaXH46IzB3VaDhW32XcLRrc+oiY0g==", null, false, "ac755646-871a-414f-8d05-754a2686c5bc", false, "admin" });
+                values: new object[] { "f3d378fd-e54d-5f4c-9219-b2b2f92a017e", 0, "fba242c7-035c-426c-9624-719ace66aab0", "eventsystem@admin.com", false, false, null, "EVENTSYSTEM@ADMIN.COM", "EVENTSYSTEM@ADMIN.COM", "AQAAAAIAAYagAAAAEGTK647cQkovlA8NU0bgioH1y96D52P8WG7R8M6rLjg3GR1HpJbM2YCzGtjEBxUqOw==", null, false, "1513c88c-8768-4ba6-b248-a00244edfa67", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

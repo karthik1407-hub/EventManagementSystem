@@ -19,7 +19,7 @@
         <li class="nav-item">
             <a class="nav-link" routerLink="/event" routerLinkActive="active">Events</a>
         </li>
-        <li class="nav-item" *ngIf="isOrganizer() || isAdmin()">
+        <li class="nav-item" *ngIf="isOrganizer()">
           <a class="nav-link" routerLink="/feedback" routerLinkActive="active">Feedback</a>
         </li>
         <li class="nav-item" *ngIf="isUser()">

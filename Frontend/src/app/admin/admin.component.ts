@@ -13,6 +13,10 @@ interface Feedback {
   feedbackID: string;
   comments: string;
   rating: number;
+  userEmail: string;
+  eventName: string;
+  eventID: string;
+  userID: string;
 }
 interface Notification {
   notificationID: string;
@@ -108,6 +112,9 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCounts();
+    // Expand feedback section by default to show feedback data
+    this.expandedSections.update(set => set.add('feedback'));
+    this.loadSectionData('feedback');
   }
 
   // --- UI Interaction ---
@@ -147,11 +154,30 @@ export class AdminComponent implements OnInit {
 
   // --- Data Loading ---
   private getAuthHeaders(): HttpHeaders {
-    // This logic is okay, but consider using an HttpInterceptor for a more robust solution.
     const userString = localStorage.getItem('user');
-    if (!userString) return new HttpHeaders();
-    const user = JSON.parse(userString);
-    return user?.token ? new HttpHeaders({ 'Authorization': `Bearer ${user.token}` }) : new HttpHeaders();
+    console.log('User string from localStorage:', userString); // Log the raw user string
+
+    if (!userString) {
+      console.warn('No user found in localStorage. Returning empty headers.');
+      return new HttpHeaders();
+    }
+
+    try {
+      const user = JSON.parse(userString);
+      console.log('Parsed user object:', user); // Log the parsed user object
+
+      if (user?.token) {
+        const headers = new HttpHeaders({ 'Authorization': `Bearer ${user.token}` });
+        console.log('Auth headers created:', headers); // Log the created headers
+        return headers;
+      } else {
+        console.warn('User object found, but no token. Returning empty headers.');
+        return new HttpHeaders();
+      }
+    } catch (e) {
+      console.error('Error parsing user from localStorage:', e);
+      return new HttpHeaders();
+    }
   }
 
   loadCounts(): void {
@@ -192,37 +218,58 @@ export class AdminComponent implements OnInit {
     switch (section) {
       case 'users':
         this.http.get<User[]>(`${this.API_URL}/api/Users`, { headers }).subscribe({
-          next: (data) => this.users.set(data),
+          next: (data) => {
+            this.users.set(data);
+            this.userCount.set(data.length);
+          },
           error: (err) => console.error('Failed to load users', err)
         });
         break;
       case 'feedback':
         this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`, { headers }).subscribe({
-          next: (data) => this.feedback.set(data),
-          error: (err) => console.error('Failed to load feedback', err)
+          next: (data) => {
+            console.log('Feedback data received:', data);
+            this.feedback.set(data);
+            this.feedbackCount.set(data.length);
+          },
+          error: (err) => {
+            console.error('Failed to load feedback', err);
+          }
         });
         break;
       case 'notifications':
         this.http.get<Notification[]>(`${this.API_URL}/api/Notification`, { headers }).subscribe({
-          next: (data) => this.notifications.set(data),
+          next: (data) => {
+            this.notifications.set(data);
+            this.notificationCount.set(data.length);
+          },
           error: (err) => console.error('Failed to load notifications', err)
         });
         break;
       case 'tickets':
         this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`, { headers }).subscribe({
-          next: (data) => this.tickets.set(data),
+          next: (data) => {
+            this.tickets.set(data);
+            this.ticketCount.set(data.length);
+          },
           error: (err) => console.error('Failed to load tickets', err)
         });
         break;
       case 'events':
         this.http.get<Event[]>(`${this.API_URL}/api/Event`, { headers }).subscribe({
-          next: (data) => this.events.set(data),
+          next: (data) => {
+            this.events.set(data);
+            this.eventCount.set(data.length);
+          },
           error: (err) => console.error('Failed to load events', err)
         });
         break;
       case 'payments':
         this.http.get<Payment[]>(`${this.API_URL}/api/Payment`, { headers }).subscribe({
-          next: (data) => this.payments.set(data),
+          next: (data) => {
+            this.payments.set(data);
+            this.paymentCount.set(data.length);
+          },
           error: (err) => console.error('Failed to load payments', err)
         });
         break;
@@ -662,4 +709,3 @@ export class AdminComponent implements OnInit {
     }
   }
 }
-

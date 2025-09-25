@@ -43,7 +43,12 @@ namespace Event_Management_System.Controllers
                 .Include(f => f.User)
                 .Include(f => f.Event);
 
-            if (user.Roles.Contains("Organizer"))
+            if (user.Roles.Contains("Admin"))
+            {
+                // Admin: show all feedbacks
+                // No additional filtering needed
+            }
+            else if (user.Roles.Contains("Organizer"))
             {
                 // Organizer: show feedbacks for their events
                 query = query.Where(f => f.Event.OrganizerID == userId);
