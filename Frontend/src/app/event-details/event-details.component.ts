@@ -4,7 +4,7 @@ import { EventService } from '../event/services/event.service';
 import { Event } from '../event/models/event.model';
 import { AuthService } from '../auth.service';
 import { Modal } from 'bootstrap';
-import { CartService, OrderBasketDto, OrderBasketItemDto } from '../cart/services/cart.service'; // Added
+import { CartService, OrderBasketDto, OrderBasketItemDto, CreateOrderBasketItemDto } from '../cart/services/cart.service'; // Added
 
 @Component({
   selector: 'app-event-details',
@@ -61,40 +61,36 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
     });
   }
 
-    bookEvent(): void {
-    const user = this.authService.userValue;
-    if (!this.event || !user) {
-      // Handle case where event or user is not available
+  addToCart(event: Event): void {
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      alert('You must be logged in to add items to the cart.');
+      this.router.navigate(['/login']);
       return;
     }
 
-    // Create a temporary OrderBasketItemDto for the current event
-    const item: OrderBasketItemDto = {
-      id: 'temp-item-' + Date.now(), // Temporary ID for the item
-      orderBasketId: 'temp-basket-' + Date.now(), // Temporary ID for the basket
-      eventId: this.event.eventID,
-      quantity: 1, // Assuming 1 ticket per booking for now
-      unitPrice: this.event.eventPrice,
-      addedDate: new Date().toISOString()
-    };
-
-    // Create a temporary OrderBasketDto
-    const tempBasket: OrderBasketDto = {
-      id: 'temp-basket-' + Date.now(), // Temporary ID for the basket
-      userId: user.id,
-      createdDate: new Date().toISOString(),
-      updatedDate: new Date().toISOString(),
-      items: [item]
-    };
-
-    // Prepare events map for the payment component
-    const eventsMap: { [key: string]: Event } = {};
-    eventsMap[this.event.eventID] = this.event;
-
-    this.router.navigate(['/payment'], {
-      state: {
-        basket: tempBasket,
-        events: eventsMap
+    this.cartService.getOrCreateOrderBasket(userId).subscribe({
+      next: (basket) => {
+        const dto: CreateOrderBasketItemDto = {
+          orderBasketId: basket.id,
+          productId: event.eventID,
+          quantity: 1,
+          unitPrice: event.eventPrice
+        };
+        this.cartService.addToCart(dto).subscribe({
+          next: (response) => {
+            alert('Event added to cart successfully!');
+            this.router.navigate(['/cart']);
+          },
+          error: (error) => {
+            console.error('Error adding to cart:', error);
+            alert('Failed to add event to cart. Please try again.');
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error getting or creating cart:', error);
+        alert('Failed to get or create cart. Please try again.');
       }
     });
   }

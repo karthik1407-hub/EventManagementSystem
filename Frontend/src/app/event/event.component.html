@@ -92,9 +92,7 @@
                 <button class="btn btn-primary w-100 mb-2" (click)="viewEventDetails(event.eventID)">
                   <i class="bi bi-ticket-detailed-fill me-2"></i>View Details
                 </button>
-                <button class="btn btn-success w-100 mb-2" (click)="addToCart(event)">
-                  <i class="bi bi-cart-plus me-2"></i>Add to Cart
-                </button>
+
                 <div *ngIf="isOrganizer && event.OrganizerID === getUserId()" class="d-flex gap-2">
                   <button class="btn btn-warning flex-fill" (click)="editEvent(event.eventID)">
                     <i class="bi bi-pencil me-1"></i>Edit

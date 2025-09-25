@@ -94,39 +94,7 @@ export class EventComponent implements OnInit {
     this.router.navigate(['/events/details', eventID]);
   }
 
-  addToCart(event: Event): void {
-    const user = this.authService.userValue;
-    if (!user) {
-      alert('Please log in to add items to cart.');
-      return;
-    }
 
-    // First, get or create the order basket
-    this.cartService.getOrCreateOrderBasket(user.id).subscribe({
-      next: (basket) => {
-        // Add item to basket
-        const dto = {
-          orderBasketId: basket.id,
-          productId: event.eventID,
-          quantity: 1, // Default quantity
-          unitPrice: event.eventPrice
-        };
-        this.cartService.addToCart(dto).subscribe({
-          next: () => {
-            alert('Event added to cart successfully!');
-          },
-          error: (err) => {
-            console.error('Error adding to cart:', err);
-            alert('Failed to add event to cart.');
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error getting basket:', err);
-        alert('Failed to access cart.');
-      }
-    });
-  }
 
   editEvent(eventID: string): void {
     this.router.navigate(['/event/edit', eventID]);
