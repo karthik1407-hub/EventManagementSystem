@@ -104,11 +104,7 @@ export class RegisterComponent implements OnInit {
         this.submitted = false; // Reset submitted state
       },
       error: (error) => {
-        if (error.status === 409) { // 409 Conflict is a better status for "already exists"
-          this.errorMessage = 'An account with this email already exists.';
-        } else {
-          this.errorMessage = 'Something went wrong during registration. Please try again.';
-        }
+        this.errorMessage = error.error.errors?.['']?.[0] || error.error.message || 'An unexpected error occurred. Please try again later.';
       }
     });    
   }

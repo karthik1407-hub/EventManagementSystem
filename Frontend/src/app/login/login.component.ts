@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
       // The 'error' handler is for failed responses
       error: (err) => {
         // Set the error message to be displayed in the template
-        this.errorMessage = "Email or password is incorrect. Please try again.";
+        this.errorMessage = err.error.errors?.['']?.[0] || err.error.message || "An unexpected error occurred. Please try again later.";
         console.error(err); // Log the actual error for debugging
       }
     });
