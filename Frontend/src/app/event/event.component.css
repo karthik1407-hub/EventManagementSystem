@@ -1,82 +1,152 @@
 /* --- Main Page Layout --- */
 .event-page-container {
   padding: 2rem;
-  /* display: flex;
-  flex-wrap: wrap; */
-  flex-direction: row;
+  background-color: #f8f9fa;
 }
 
 /* --- Filter Sidebar Styling --- */
 .filter-sidebar {
-  background-color: #bec2c5;
-  border-radius: 0.75rem 0 0 0.75rem;
-  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 2rem;
   height: fit-content;
   position: sticky;
   top: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+
 .filter-group {
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 1.5rem;
 }
-.filter-group:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 0;
+
+.form-label {
+  color: #495057;
 }
-.tag-list .form-check {
-  margin-bottom: 0.5rem;
+
+.form-control, .form-select {
+  border-radius: 0.5rem;
+  border: 1px solid #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }
 
 /* --- Event Grid & Card Animations --- */
 .event-grid-main {
-  background-color: #e0e0e0;
-  border-radius: 0 0.75rem 0.75rem 0;
   padding-left: 2rem;
 }
 
-.grid-header{
-    margin: 30px;
+.grid-header {
+  margin-bottom: 1.5rem;
 }
+
 .event-card {
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
   animation: fade-in-up 0.6s ease-out forwards;
   opacity: 0;
 }
+
 .event-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.12) !important;
 }
+
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(25px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- Premium Card Content --- */
 .card-img-container { position: relative; }
+
 .event-card .card-img-top {
   aspect-ratio: 16 / 10;
   object-fit: cover;
 }
+
 .date-badge {
   position: absolute; top: 1rem; left: 1rem;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 0.5rem; text-align: center;
-  padding: 0.5rem 0.75rem; font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 0.75rem;
+  text-align: center;
+  padding: 0.6rem 0.8rem;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
 }
-.date-badge .day { display: block; font-size: 1.5rem; line-height: 1; color: #0d6efd; }
-.date-badge .month { display: block; font-size: 0.8rem; text-transform: uppercase; color: #6c757d; }
-.event-type-badge { position: absolute; top: 1rem; right: 1rem; background-color: #0d6efd; }
+
+.date-badge .day {
+  display: block;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #007bff;
+}
+
+.date-badge .month {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #6c757d;
+}
+
+.event-type-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #007bff;
+  color: white;
+  padding: 0.5em 0.8em;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  color: #6c757d;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
 
 /* --- Skeleton & Empty State Styling --- */
 .empty-state { padding: 5rem 0; }
+
 .event-card-skeleton .card-img-top-skeleton {
   aspect-ratio: 16 / 10;
   background-color: #e9ecef;
 }
-.event-card-skeleton { border-radius: 0.75rem; overflow: hidden; }
+
+.event-card-skeleton {
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
