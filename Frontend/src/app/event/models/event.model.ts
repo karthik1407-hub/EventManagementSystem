@@ -8,5 +8,5 @@ export interface Event {
     eventPrice: number;
     eventImageUrl: string;
     tags: string[];
-    OrganizerID: string;
+    organizerID: string;
 }

@@ -63,6 +63,14 @@ namespace Event_Management_System.Controllers
             return Ok(existingEvent);
         }
 
+        [HttpGet("by-organizer/{organizerId}")]
+        [Authorize]
+        public async Task<IActionResult> GetEventsByOrganizer(Guid organizerId)
+        {
+            var events = await _dbContext.Events.Where(e => e.OrganizerID == organizerId).ToListAsync();
+            return Ok(events);
+        }
+
         [HttpPost]
         
         public async Task<IActionResult> CreateEvent([FromForm] CreateEventDto createEventDto)

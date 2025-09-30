@@ -44,4 +44,9 @@ export class EventService {
     const headers = this.getAuthHeaders();
     return this.http.delete(`${this.apiUrl}/${id}`, { headers });
   }
+
+  getEventsByOrganizer(organizerId: string): Observable<Event[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Event[]>(`${this.apiUrl}/by-organizer/${organizerId}`, { headers });
+  }
 }

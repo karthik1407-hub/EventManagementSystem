@@ -13,6 +13,7 @@ import { CartService, OrderBasketDto, OrderBasketItemDto, CreateOrderBasketItemD
 })
 export class EventDetailsComponent implements OnInit, AfterViewInit {
   event: Event | null = null;
+  otherEventsByOrganizer: Event[] = [];
   isLoading: boolean = false;
   isDeleting: boolean = false;
   errorMessage: string = '';
@@ -32,18 +33,20 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
     // Check if user is an Event Organizer
     this.canManageEvent = (userRole === 'Event Organizer');
 
-    const eventId = this.route.snapshot.paramMap.get('id');
-    if (eventId) {
-      this.fetchEventDetails(eventId);
-    } else {
-      this.errorMessage = 'Event ID not provided.';
-    }
+    this.route.paramMap.subscribe(params => {
+      const eventId = params.get('id');
+      if (eventId) {
+        this.fetchEventDetails(eventId);
+      } else {
+        this.errorMessage = 'Event ID not provided.';
+      }
+    });
   }
 
   canManageThisEvent(): boolean {
     if (!this.canManageEvent || !this.event) return false;
     const userId = this.authService.getUserId();
-    return this.event.OrganizerID === userId;
+    return this.event.organizerID === userId;
   }
 
   ngAfterViewInit(): void {
@@ -56,8 +59,34 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   fetchEventDetails(id: string): void {
     this.isLoading = true;
     this.eventService.getEventById(id).subscribe({
-      next: (data) => { this.event = data; this.isLoading = false; },
-      error: (err) => { this.errorMessage = 'Failed to load event details.'; this.isLoading = false; }
+      next: (data) => {
+        console.log('Fetched event details:', data);
+        this.event = data;
+        this.isLoading = false;
+        if (this.event && this.event.organizerID) {
+          this.loadOtherEventsByOrganizer(this.event.organizerID, this.event.eventID);
+        } else {
+          console.error('organizerID is undefined in event data:', this.event);
+        }
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load event details.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadOtherEventsByOrganizer(organizerId: string, currentEventId: string): void {
+    this.eventService.getEventsByOrganizer(organizerId).subscribe({
+      next: (events) => {
+        console.log('Fetched other events by organizer:', events);
+        // Filter out the current event from the list
+        this.otherEventsByOrganizer = events.filter(e => e.eventID !== currentEventId);
+        console.log('Filtered other events:', this.otherEventsByOrganizer);
+      },
+      error: (err) => {
+        console.error('Failed to load other events by organizer:', err);
+      }
     });
   }
 
