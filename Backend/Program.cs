@@ -18,6 +18,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
@@ -68,7 +69,7 @@ builder.Services.AddScoped<IEventImageRepository, EventImageRepository>();
 
 // ✅ Register repositories
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-builder.Services.AddScoped<IEventImageRepository, EventImageRepository>();
+
 
 // ✅ Add Identity
 builder.Services.AddIdentityCore<IdentityUser>()

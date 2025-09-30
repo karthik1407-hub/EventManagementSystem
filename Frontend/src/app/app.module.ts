@@ -33,7 +33,8 @@ import { AuthInterceptor } from './auth.interceptor';
 import { CartComponent } from './cart/cart.component';
 import { MyTicketComponent } from './ticket/my-ticket/my-ticket.component';
 
-import { AboutUsComponent } from './about-us/about-us/about-us.component';
+import { AboutUsComponent } from './about-us/about-us.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { AboutUsComponent } from './about-us/about-us/about-us.component';
     CartComponent,
     MyTicketComponent,
 
-    AboutUsComponent
+    AboutUsComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

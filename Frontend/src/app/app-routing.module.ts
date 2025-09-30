@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 // Core Components
 import { HomeComponent } from './home/home.component';
+import { AboutUsComponent } from './about-us/about-us.component';
 
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -40,6 +41,7 @@ const routes: Routes = [
   
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  {path: 'about-us', component: AboutUsComponent},
 
   // Protected Routes
   { path: 'user', component: UserComponent, canActivate: [AuthGuard] },

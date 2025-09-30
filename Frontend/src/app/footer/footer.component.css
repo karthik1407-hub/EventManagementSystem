@@ -1,0 +1,17 @@
+.footer {
+  background: #efecec;
+  color: #c1b4b4cc;
+  text-align: center;
+  padding: 1rem 0;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+
+}
+.footer-section{
+  background-color: rgb(89, 91, 94);
+}
+.icon {
+  color: #fff;
+  transition: color 0.3s ease;
+}

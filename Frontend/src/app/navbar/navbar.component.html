@@ -22,6 +22,9 @@
         <li class="nav-item" *ngIf="isOrganizer()">
           <a class="nav-link" routerLink="/feedback" routerLinkActive="active">Feedback</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/Frontend/src/app/home/home.component.html/#aboutUs">About Us</a>
+        </li>
         <li class="nav-item" *ngIf="isUser()">
           <div class="dropdown">
             <button class="btn btn-link nav-link position-relative" type="button" id="notificationDropdown" (click)="toggleNotificationsDropdown($event)" aria-expanded="false">
