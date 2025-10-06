@@ -82,8 +82,8 @@ app-root {
   height: 40px;
   margin: 0 0.5rem;
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.7);
-  background: #dcdddf;
+  color: rgba(22, 19, 19, 0.7);
+  background: #f2f4f6;
   border-radius: 50%;
   text-decoration: none;
   transition: all 0.3s ease;
@@ -91,6 +91,6 @@ app-root {
 
 .social-icon:hover {
   background: #0d6efd; /* Primary color on hover */
-  color: #fff;
+  color: #1c1b1b;
   transform: translateY(-3px);
 }

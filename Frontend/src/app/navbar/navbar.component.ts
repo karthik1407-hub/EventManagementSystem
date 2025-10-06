@@ -32,12 +32,25 @@ export class NavbarComponent implements OnInit, OnDestroy {
       map(user => user ? user.email : null)
     );
 
+    // Subscribe to notification count observable for reactive updates
+    this.subscription.add(
+      this.notificationService.notificationCount$.subscribe(count => {
+        this.notificationCount = count;
+      })
+    );
+
+    // Subscribe to basket observable for reactive cart count updates
+    this.subscription.add(
+      this.cartService.basket$.subscribe(basket => {
+        this.cartItemCount = basket && basket.items ? basket.items.reduce((sum, item) => sum + item.quantity, 0) : 0;
+      })
+    );
+
     // Load notification count and cart item count if user is logged in
     this.subscription.add(
       this.isLoggedIn$.subscribe(isLoggedIn => {
         if (isLoggedIn && this.isUser()) {
           this.loadNotifications(); // Changed to load all notifications
-          this.loadCartItemCount();
         }
       })
     );
@@ -92,26 +105,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
           console.error('Failed to load notifications', err);
           this.notifications = [];
           this.notificationCount = 0;
-        }
-      })
-    );
-  }
-
-  /**
-   * Loads the cart item count for the current user.
-   */
-  private loadCartItemCount(): void {
-    const user = this.authService.userValue;
-    if (!user) return;
-
-    this.subscription.add(
-      this.cartService.getOrCreateOrderBasket(user.id).subscribe({
-        next: (basket) => {
-          this.cartItemCount = basket.items ? basket.items.length : 0;
-        },
-        error: (err) => {
-          console.error('Failed to load cart item count', err);
-          this.cartItemCount = 0;
         }
       })
     );

@@ -8,12 +8,21 @@
 
 .navbar.bg-dark {
     /* A modern dark background gradient instead of flat black */
-    background: linear-gradient(to right, #232526, #414345) !important;
+    background: linear-gradient(to right, #82939b, #697784) !important;
+}
+
+.navbar:hover{
+    color: #82939b;
 }
 
 .navbar-brand {
+    padding-left: 20px;
     letter-spacing: 1.5px;
     font-size: 1.25rem;
+}
+.nav-item{
+    padding: 5px;
+    margin: 10px;
 }
 
 .nav-link {
@@ -72,6 +81,7 @@
 }
 
 .dropdown-item {
+    padding: 20px;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 

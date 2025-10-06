@@ -1,0 +1,240 @@
+.profile-container {
+  display: flex;
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.profile-sidebar {
+  width: 280px;
+  border-right: 1px solid #e0e0e0;
+  padding: 30px 20px;
+  box-sizing: border-box;
+}
+
+.user-info {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.avatar img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #007bff;
+}
+
+.avatar-letter {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  font-size: 48px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #4a90e2, #357ABD);
+  border-radius: 50%;
+  margin-bottom: 15px;
+  user-select: none;
+  text-transform: uppercase;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border: 2px solid #2c6bb2;
+  letter-spacing: 2px;
+}
+
+.user-name-email h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.user-name-email p {
+  margin: 5px 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.profile-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-nav ul li {
+  margin-bottom: 20px;
+}
+
+.profile-nav ul li a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.profile-nav ul li a i {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.profile-nav ul li a.active,
+.profile-nav ul li a:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.profile-main {
+  flex: 1;
+  padding: 30px 40px;
+  box-sizing: border-box;
+}
+
+.profile-main h2 {
+  margin-top: 0;
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+}
+
+.profile-details {
+  max-width: 500px;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.profile-row label {
+  font-weight: 600;
+  color: #555;
+}
+
+.profile-row span {
+  color: #333;
+}
+
+input[type="text"],
+input[type="email"] {
+  width: 60%;
+  padding: 6px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn-save, .btn-edit {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  display: inline-block;
+}
+
+.btn-save:hover, .btn-edit:hover {
+  background-color: #0056b3;
+}
+
+.orders-section {
+  margin-top: 40px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.loading {
+  font-style: italic;
+  color: #666;
+}
+
+/* Additional attractive effects */
+
+.profile-container {
+  transition: box-shadow 0.3s ease;
+}
+
+.profile-container:hover {
+  box-shadow: 0 12px 36px rgba(0, 123, 255, 0.3);
+}
+
+.profile-sidebar {
+  background: #f8f9fa;
+  transition: background-color 0.3s ease;
+}
+
+.profile-sidebar:hover {
+  background: #e9ecef;
+}
+
+.profile-nav ul li a {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.profile-nav ul li a.active {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.6);
+  font-weight: 700;
+}
+
+.profile-nav ul li a:hover {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  font-weight: 600;
+}
+
+.btn-save, .btn-edit {
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+  font-weight: 600;
+}
+
+.btn-save:hover, .btn-edit:hover {
+  box-shadow: 0 6px 14px rgba(0, 86, 179, 0.6);
+  transform: translateY(-2px);
+}
+
+.profile-main h2 {
+  color: #007bff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.profile-row label {
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #0056b3;
+}
+
+.profile-row span {
+  font-weight: 600;
+  color: #212529;
+}
+
+input[type="text"],
+input[type="email"] {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+  outline: none;
+}

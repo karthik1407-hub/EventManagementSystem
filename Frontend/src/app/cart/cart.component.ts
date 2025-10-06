@@ -87,6 +87,9 @@ export class CartComponent implements OnInit {
     this.cartService.updateCartItem(item.id, dto).subscribe({
       next: (updated) => {
         item.quantity = updated.quantity;
+        if (this.basket) {
+          this.cartService.setBasket(this.basket);
+        }
       },
       error: (err) => {
         console.error('Error updating quantity:', err);
@@ -100,6 +103,7 @@ export class CartComponent implements OnInit {
       next: () => {
         if (this.basket) {
           this.basket.items = this.basket.items.filter(item => item.id !== itemId);
+          this.cartService.setBasket(this.basket);
         }
       },
       error: (err) => {

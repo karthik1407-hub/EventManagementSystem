@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Notification, CreateNotificationDto } from '../models/notification.model';
 import { environment } from 'src/app/environments/environment';
@@ -10,6 +10,9 @@ import { environment } from 'src/app/environments/environment';
 })
 export class NotificationService {
   private apiUrl = `${environment.apiUrl}/api/Notification`;
+
+  private notificationCountSubject = new BehaviorSubject<number>(0);
+  notificationCount$ = this.notificationCountSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -53,5 +56,9 @@ export class NotificationService {
   delete(id: string): Observable<void> {
     const headers = this.getAuthHeaders();
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+  }
+
+  setNotificationCount(count: number): void {
+    this.notificationCountSubject.next(count);
   }
 }

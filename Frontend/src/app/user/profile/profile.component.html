@@ -1,57 +1,82 @@
-<div class="container mt-5">
-  <div class="col-12 col-md-6 col-lg-4 mx-auto">
-    <h1>User Profile</h1>
-    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div *ngIf="profile">
-      <p><strong>Email:</strong> {{ profile.email }}</p>
-      <p><strong>Roles:</strong> {{ profile.roles }}</p>
-      <p><strong>ID</strong> {{ profile.userID }}</p>
-     
-     
-      <div>
-        <strong>Token:</strong>
-        <pre class="bg-light p-2 mb-2" style="white-space: pre-wrap; word-break: break-all;">{{ token }}</pre>
-        <button class="btn btn-sm btn-outline-secondary" (click)="copyToken()">Copy</button>
-        <span *ngIf="copied" class="ms-2 text-success">Copied!</span>
+<div class="profile-container">
+  <div class="profile-sidebar">
+    <div class="user-info">
+      <div class="avatar">
+        <span class="avatar-letter">{{ profile?.name ? profile.name.charAt(0).toUpperCase() : '?' }}</span>
       </div>
-      <!-- Show/Hide Orders Button -->
-       <button class="btn btn-primary mt-3" (click)="toggleOrders()">
-        {{ ordersVisible ? 'Hide Orders' : 'Show Orders' }}
-      </button>
-     
+      <div class="user-name-email">
+        <h3>{{ profile?.name || (profile?.email ? profile.email.split('@')[0] : 'Your name') }}</h3>
+        <p>{{ profile?.email }}</p>
+      </div>
     </div>
+    <nav class="profile-nav">
+      <ul>
+        <li><a href="#" [class.active]="!ordersVisible" (click)="$event.preventDefault(); showOrders()"><i class="fa fa-user"></i> My Profile</a></li>
+        <li><a href="#" [class.active]="ordersVisible" (click)="$event.preventDefault(); toggleOrders()"><i class="fa fa-list"></i> My Orders</a></li>
+        <li><a href="#" (click)="onLogout()"><i class="fa fa-sign-out-alt"></i> Log Out</a></li>
+      </ul>
+    </nav>
   </div>
 
-  <!-- Orders Section -->
-    <div class="col-12 col-md-8 col-lg-6 mx-auto mt-5" *ngIf="ordersVisible">
-    <h2>Order History</h2>
-    <div *ngIf="ordersLoading" class="my-3">
-      <span class="spinner-border spinner-border-sm"></span> Loading orders...
+  <div class="profile-main">
+    <h2>User Profile</h2>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="profile && !ordersVisible" class="profile-details">
+      <div class="profile-row" *ngIf="!editMode">
+        <label>Name</label>
+        <span>{{ profile.name }}</span>
+      </div>
+      <div class="profile-row" *ngIf="editMode">
+        <label>Name</label>
+        <input [(ngModel)]="editProfile.name" [value]="profile.name" />
+      </div>
+      <div class="profile-row" *ngIf="!editMode">
+        <label>Email account</label>
+        <span>{{ profile.email }}</span>
+      </div>
+      <div class="profile-row" *ngIf="editMode">
+        <label>Email account</label>
+        <input [(ngModel)]="editProfile.email" [value]="profile.email" />
+      </div>
+      <div class="profile-row" *ngIf="!editMode">
+        <label>Contact</label>
+        <span>{{ profile.contactNumber || 'Add number' }}</span>
+      </div>
+      <div class="profile-row" *ngIf="editMode">
+        <label>Contact</label>
+        <input [(ngModel)]="editProfile.contactNumber" [value]="profile.contactNumber" />
+      </div>
+      <div class="profile-row">
+        <label>Role</label>
+        <span>{{ profile.roles }}</span>
+      </div>
+      <button *ngIf="editMode" class="btn-save" (click)="saveProfile()">Save Change</button>
+      <button *ngIf="!editMode" class="btn-edit" (click)="toggleEdit()">Edit</button>
     </div>
-    <div *ngIf="ordersError" class="alert alert-danger">{{ ordersError }}</div>
-    <table *ngIf="orders.length > 0" class="table table-bordered table-striped mt-3">
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Status</th>
-          <th>Created</th>
-          <th>Updated</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let order of orders">
-          <td>{{ order.id }}</td>
-          <td>{{ order.statusString }}</td>
-          <td>{{ order.createdDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-          <td>{{ order.updatedDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div *ngIf="!ordersLoading && orders.length === 0" class="alert alert-info mt-3">
-      No orders found.
+
+    <div *ngIf="ordersVisible" class="orders-section">
+      <h3>My Booking</h3>
+      <div *ngIf="ordersLoading" class="loading">Loading orders...</div>
+      <div *ngIf="ordersError" class="alert alert-danger">{{ ordersError }}</div>
+      <table *ngIf="orders.length > 0" class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td>{{ order.id }}</td>
+            <td>{{ order.statusString }}</td>
+            <td>{{ order.createdDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>{{ order.updatedDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!ordersLoading && orders.length === 0" class="alert alert-info">No orders found.</div>
     </div>
   </div>
-  
-    
-  
 </div>

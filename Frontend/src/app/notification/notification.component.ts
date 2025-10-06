@@ -5,6 +5,7 @@ import { NotificationService } from './services/notification.service';
 import { AuthService } from '../auth.service';
 import { EventService } from '../event/services/event.service';
 import { UserService } from '../user/services/user.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-notification',
@@ -89,7 +90,10 @@ export class NotificationComponent implements OnInit {
 
   loadNotifications(): void {
     this.service.getAll().subscribe({
-      next: (data) => this.notifications = data,
+      next: (data) => {
+        this.notifications = data;
+        this.service.setNotificationCount(data.length);
+      },
       error: (err) => {
         console.error('Failed to load notifications', err);
         this.errorMessage = 'Failed to load notifications.';
