@@ -12,7 +12,7 @@ namespace Event_Management_System.Models.Domain
         public string Message { get; set; }
         public DateTime SentTimestamp { get; set; }
 
-        public User User { get; set; }
+        public UserDto User { get; set; }
         public Event Event { get; set; }
     }
 

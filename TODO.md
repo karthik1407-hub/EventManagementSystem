@@ -1,4 +1,8 @@
-- [x] Add GetEventsByOrganizer endpoint in Backend/Controllers/EventController.cs
-- [ ] Add getEventsByOrganizer method in Frontend/src/app/event/services/event.service.ts
-- [ ] Update EventDetailsComponent to fetch and display other events in Frontend/src/app/event-details/event-details.component.ts
-- [ ] Update HTML template in Frontend/src/app/event-details/event-details.component.html to show other events
+# TODO: Update Add Event Page CSS
+
+- [x] Update card styling with gradient background and enhanced shadows
+- [x] Style form labels and inputs with modern looks and focus transitions
+- [x] Enhance image upload box with attractive hover effects and animations
+- [x] Add transitions and animations to the submit button
+- [x] Add entrance animations for form sections
+- [x] Ensure responsiveness and test the styles

@@ -1,105 +1,151 @@
-.card {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
+.payment-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+.credit-card {
+  background: #1a1a1a;
+  color: white;
+  border-radius: 12px;
+  padding: 40px 30px;
+  margin-bottom: 30px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  font-weight: 600;
+  width: 320px;
+  height: 200px;
+  font-size: 1.2rem;
 }
 
-.img-fluid {
-    border-radius: 10px;
+.chip {
+  width: 40px;
+  height: 30px;
+  background: linear-gradient(135deg, #d4d4d4, #a0a0a0);
+  border-radius: 6px;
+  position: absolute;
+  top: 20px;
+  left: 30px;
 }
 
-.btn {
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
+.visa-logo {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 1.5px;
 }
 
-.btn:hover {
-    transform: translateY(-1px);
+.card-number {
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  white-space: nowrap;
+  /* overflow: hidden;
+  text-overflow: ellipsis; */
+  max-width: 100%;
+  display: block;
 }
 
-.btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
+.card-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
+.card-holder label,
+.expires label {
+  font-weight: 400;
+  font-size: 0.7rem;
+  color: #bbb;
 }
 
-.form-control {
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+.card-holder div,
+.expires div {
+  font-weight: 700;
+  margin-top: 4px;
 }
 
-.form-control:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+.payment-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
 }
 
-.alert {
-    border-radius: 8px;
-    border: none;
+.payment-form input[type="text"],
+.payment-form input[type="password"],
+.payment-form select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }
 
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
+.payment-form input[type="text"]:focus,
+.payment-form input[type="password"]:focus,
+.payment-form select:focus {
+  border-color: #4a6cf7;
+  outline: none;
 }
 
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
+.expiration-cvv {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.container {
-    max-width: 800px;
+.expiration {
+  flex: 2;
+  display: flex;
+  gap: 10px;
 }
 
-h3 {
-    color: #343a40;
-    font-weight: 600;
+.expiration select {
+  flex: 1;
 }
 
-/* Payment status specific styles */
-.payment-success {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    margin: 20px 0;
+.cvv {
+  flex: 1;
 }
 
-.payment-failed {
-    background: linear-gradient(135deg, #dc3545, #fd7e14);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    margin: 20px 0;
+.payment-form button {
+  width: 100%;
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 15px;
-    }
+.payment-form button:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
 
-    .card {
-        margin: 10px 0;
-    }
-
-    .btn {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+.payment-form button:hover:not(:disabled) {
+  background-color: #3a54d1;
 }

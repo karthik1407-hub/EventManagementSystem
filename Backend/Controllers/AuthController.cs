@@ -144,7 +144,7 @@ namespace Event_Management_System.Controllers
                     if (roleResult.Succeeded)
                     {
                         // Create a corresponding entry in the User domain model
-                        var user = new User
+                        var user = new UserDto
                         {
                             UserID = Guid.Parse(identityUser.Id),
                             Name = username,

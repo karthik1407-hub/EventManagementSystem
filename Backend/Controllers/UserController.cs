@@ -81,7 +81,7 @@ namespace Event_Management_System.Controllers
         [HttpPost]
         public ActionResult<UserDTO> CreateUser(UserDTO userDto)
         {
-            var user = new User
+            var user = new UserDto
             {
                 UserID = Guid.NewGuid(),
                 Name = userDto.Name,

@@ -23,7 +23,11 @@ export class PaymentComponent implements OnInit {
 
   // New properties for card details
   cardNumber: string = '';
-  expiryDate: string = '';
+  cardHolder: string = '';
+  expiryMonth: string = '';
+  expiryYear: string = '';
+  months: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+  years: string[] = [];
   cvv: string = '';
 
   constructor(
@@ -36,6 +40,11 @@ export class PaymentComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     this.basket = navigation?.extras?.state?.['basket'] as OrderBasketDto;
     this.events = navigation?.extras?.state?.['events'] as { [key: string]: Event };
+
+    const currentYear = new Date().getFullYear();
+    for (let i = 0; i < 10; i++) {
+      this.years.push((currentYear + i).toString());
+    }
   }
 
   ngOnInit(): void {
@@ -50,17 +59,39 @@ export class PaymentComponent implements OnInit {
     }
   }
 
+  getMaskedCardNumber(): string {
+    if (!this.cardNumber) {
+      return '#### #### #### ####';
+    }
+    const len = this.cardNumber.length;
+    if (len <= 8) {
+      return this.cardNumber;
+    }
+    if (len <= 12) {
+      return this.cardNumber.substring(0, 4) + ' ' + this.cardNumber.substring(4, len) + ' ' + '####';
+    }
+    if (len <= 16) {
+      return this.cardNumber.substring(0, 4) + ' ' + this.cardNumber.substring(4, 8) + ' ' + '#### ' + this.cardNumber.substring(len - 4, len);
+    }
+    return this.cardNumber;
+  }
+
   getTotalAmount(): number {
     if (!this.basket?.items) return 0;
     return this.basket.items.reduce((total, item) => total + (item.unitPrice * item.quantity), 0);
   }
 
   processPayment(paymentForm: any): void {
-    if (!this.basket || !this.basket.items || this.basket.items.length === 0) return;
+    console.log('payment form details', paymentForm.value);
+    if (!this.basket || !this.basket.items || this.basket.items.length === 0) {
+      console.log('basket is empty');
+      return;
+    }
 
     paymentForm.submitted = true;
-    if (!this.cardNumber || this.cardNumber.length < 16 || !this.expiryDate || !this.cvv || this.cvv.length < 3) {
+    if (!this.cardNumber || this.cardNumber.length < 16 || !this.expiryMonth || !this.expiryYear || !this.cvv || this.cvv.length < 3 || !paymentForm.form.valid) {
       this.paymentError = 'Please fill in valid payment details.';
+      console.log('payment form is invalid', paymentForm.form.errors);
       return;
     }
 
@@ -90,7 +121,7 @@ export class PaymentComponent implements OnInit {
           this.basket.items.forEach(item => {
             // 1. Create Ticket
             const createTicketDto: CreateTicketDto = {
-              eventID: item.eventId, // Changed to item.eventId
+              eventID: item.eventId,
               userID: userId,
               bookingDate: bookingDate,
               isCancelled: false
@@ -101,13 +132,13 @@ export class PaymentComponent implements OnInit {
                 console.log('Ticket created:', ticket);
 
                 // 2. Send Notification
-                const eventName = this.events[item.eventId]?.eventName || 'Unknown Event'; // Changed to eventName
+                const eventName = this.events[item.eventId]?.eventName || 'Unknown Event';
                 const notificationMessage = `Your ticket for "${eventName}" has been successfully booked! Ticket ID: ${ticket.ticketID}`;
 
                 const createNotificationDto: CreateNotificationDto = {
                   userID: userId,
-                  eventID: item.eventId, // Changed to item.eventId
-                  ticketID: ticket.ticketID, // Use the newly created ticket ID
+                  eventID: item.eventId,
+                  ticketID: ticket.ticketID,
                   message: notificationMessage,
                   sentTimestamp: new Date().toISOString()
                 };
@@ -122,7 +153,6 @@ export class PaymentComponent implements OnInit {
           });
         }
 
-        // Navigate to user profile or orders page
         this.router.navigate(['/user/profile']);
       },
       error: (err: any) => {

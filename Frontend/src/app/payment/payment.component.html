@@ -1,103 +1,64 @@
-<div class="container my-5" *ngIf="basket && basket.items && basket.items.length > 0">
-  <div class="card p-4 shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4">Confirm Your Order</h2>
-      <div class="row">
-        <div class="col-md-8">
-          <h5>Order Items</h5>
-          <div *ngFor="let item of basket.items" class="card mb-3">
-            <div class="row g-0">
-              <div class="col-md-4 text-center">
-                <img [src]="'https://localhost:7272/EventImages/' + events[item.eventId].eventImageUrl"
-                     class="img-fluid rounded" alt="{{ events[item.eventId].eventName }}"
-                     style="max-height: 120px;">
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h6 class="card-title">{{ events[item.eventId].eventName }}</h6>
-                  <p class="card-text text-muted">{{ events[item.eventId].eventType }}</p>
-                  <p class="card-text">
-                    <small class="text-muted">
-                      Location: {{ events[item.eventId].eventLocation }}<br>
-                      Date: {{ events[item.eventId].eventDate | date: 'fullDate' }}
-                    </small>
-                  </p>
-                  <p class="card-text">
-                    Quantity: {{ item.quantity }} × ${{ item.unitPrice }} = ${{ item.quantity * item.unitPrice }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+<div class="payment-container" style="display: flex; gap: 40px; justify-content: center; align-items: flex-start;">
+  <div>
+    <div class="credit-card">
+      <div class="chip"></div>
+      <div class="visa-logo">VISA</div>
+    <div class="card-number">
+      {{ getMaskedCardNumber() }}
+    </div>
+      <div class="card-details">
+        <div class="card-holder">
+          <label>Card Holder</label>
+          <div>{{ cardHolder ? cardHolder.toUpperCase() : 'FULL NAME' }}</div>
         </div>
-        <div class="col-md-4">
-          <div class="card p-3 mb-3">
-            <h5>Payment Details</h5>
-            <form #paymentForm="ngForm" novalidate>
-              <div class="mb-3">
-                <label for="cardNumber" class="form-label">Card Number</label>
-                <input type="text" id="cardNumber" class="form-control" name="cardNumber" [(ngModel)]="cardNumber" required minlength="16" maxlength="19" pattern="\\d{16,19}" placeholder="Enter card number" />
-                <div *ngIf="paymentForm.submitted && (!cardNumber || cardNumber.length < 16)" class="text-danger small">
-                  Please enter a valid card number (16-19 digits).
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="expiryDate" class="form-label">Expiry Date (MM/YY)</label>
-                  <input type="text" id="expiryDate" class="form-control" name="expiryDate" [(ngModel)]="expiryDate" required pattern="^(0[1-9]|1[0-2])\\/\\d{2}$" placeholder="MM/YY" />
-                  <div *ngIf="paymentForm.submitted && !expiryDate" class="text-danger small">
-                    Please enter expiry date in MM/YY format.
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="cvv" class="form-label">CVV</label>
-                  <input type="password" id="cvv" class="form-control" name="cvv" [(ngModel)]="cvv" required minlength="3" maxlength="4" pattern="\\d{3,4}" placeholder="CVV" />
-                  <div *ngIf="paymentForm.submitted && (!cvv || cvv.length < 3)" class="text-danger small">
-                    Please enter a valid CVV (3 or 4 digits).
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="card">
-            <div class="card-body">
-              <h5>Order Summary</h5>
-              <hr>
-              <div class="d-flex justify-content-between">
-                <span>Total Amount:</span>
-                <strong>${{ getTotalAmount() }}</strong>
-              </div>
-
-              <!-- Payment Success Message -->
-              <div *ngIf="paymentSuccess" class="payment-success mt-3">
-                <h6>✅ Payment Successful!</h6>
-                <p class="small">Your order has been placed successfully.</p>
-              </div>
-
-              <!-- Payment Error Message -->
-              <div *ngIf="paymentError" class="payment-failed mt-3">
-                <h6>❌ Payment Failed</h6>
-                <p class="small">{{ paymentError }}</p>
-              </div>
-
-              <!-- Payment Button -->
-              <button
-                class="btn btn-primary btn-lg mt-3 w-100"
-                (click)="processPayment(paymentForm)"
-                [disabled]="paymentSuccess || isLoading"
-              >
-                {{ isLoading ? 'Processing...' : paymentSuccess ? 'Payment Completed' : 'Pay Now' }}
-              </button>
-            </div>
-          </div>
+        <div class="expires">
+          <label>Expires</label><br>
+          <div>{{ expiryMonth && expiryYear ? expiryMonth + '/' + expiryYear.slice(2) : 'MM/YY' }}</div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="container my-5 text-center" *ngIf="!basket || !basket.items || basket.items.length === 0">
-  <p class="lead text-danger">No items in cart for payment.</p>
-  <a routerLink="/cart" class="btn btn-secondary me-2">Go to Cart</a>
-  <a routerLink="/event" class="btn btn-primary">Browse Events</a>
+    <form #paymentForm="ngForm" novalidate class="payment-form" style="max-width: 350px;">
+      <label for="cardNumber">Card Number</label>
+      <input type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber" required minlength="16" maxlength="19" placeholder="Enter card number" />
+
+      <label for="cardHolder">Card Holders</label>
+      <input type="text" id="cardHolder" name="cardHolder" [(ngModel)]="cardHolder" required placeholder="Enter card holder name" />
+
+      <div class="expiration-cvv" style="display: flex; gap: 10px; align-items: center;">
+        <div class="expiration" style="flex: 2; display: flex; gap: 10px;">
+          <label for="expiryMonth">Expiration Date</label>
+          <select id="expiryMonth" name="expiryMonth" [(ngModel)]="expiryMonth" required>
+            <option value="" disabled>Month</option>
+            <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+          </select>
+          <select id="expiryYear" name="expiryYear" [(ngModel)]="expiryYear" required>
+            <option value="" disabled>Year</option>
+            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+          </select>
+        </div>
+        <div class="cvv" style="flex: 1;">
+          <label for="cvv">CVV</label>
+          <input type="password" id="cvv" name="cvv" [(ngModel)]="cvv" required minlength="3" maxlength="4" placeholder="CVV" />
+        </div>
+      </div>
+
+      <button type="button"  (click)="processPayment(paymentForm)" style="width: 100%; margin-top: 20px;">Pay</button>
+    </form>
+  </div>
+
+  <div class="cart-summary" *ngIf="basket && basket.items && basket.items.length > 0" style="max-width: 350px;">
+    <h3>Order Items</h3>
+    <div *ngFor="let item of basket.items" class="order-item" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+      <img [src]="'https://localhost:7272/EventImages/' + events[item.eventId]?.eventImageUrl" alt="{{ events[item.eventId]?.eventName }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 6px;" />
+      <div>
+        <div class="item-name" style="font-weight: 600;">{{ events[item.eventId]?.eventName || 'Unknown Event' }}</div>
+        <div class="item-quantity">Qty: {{ item.quantity }}</div>
+        <div class="item-price">${{ item.unitPrice }}</div>
+      </div>
+    </div>
+    <div class="total-amount" style="font-weight: 700; font-size: 1.1rem;">
+      Total Amount: ${{ getTotalAmount() }}
+    </div>
+  </div>
 </div>

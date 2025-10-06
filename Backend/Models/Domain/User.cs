@@ -2,7 +2,7 @@
 
 namespace Event_Management_System.Models.Domain
 {
-    public class User
+    public class UserDto
     {
         [Key]
         public Guid UserID { get; set; }

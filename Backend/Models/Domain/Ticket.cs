@@ -10,7 +10,7 @@ namespace Event_Management_System.Models.Domain
         public Event Event { get; set; }
 
         public Guid UserID { get; set; }
-        public User User { get; set; }
+        public UserDto User { get; set; }
 
         public DateTime BookingDate { get; set; }
         public bool IsCancelled { get; set; }

@@ -19,7 +19,7 @@ namespace Event_Management_System.Models.Domain
 
         public Guid OrganizerID { get; set; }
         
-        public User Organizer { get; set; }
+        public UserDto Organizer { get; set; }
 
         // Navigation properties
         public ICollection<Ticket> Tickets { get; set; }
