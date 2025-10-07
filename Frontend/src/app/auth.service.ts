@@ -20,7 +20,7 @@ export class AuthService {
   public isLoggedIn$: Observable<boolean>;
 
   constructor(private router: Router, private http: HttpClient) {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     const initialUser = storedUser ? JSON.parse(storedUser) : null;
     this.userSubject = new BehaviorSubject<User | null>(initialUser);
     this.user$ = this.userSubject.asObservable();
@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     this.userSubject.next(null);
     this.router.navigate(['/login']);
   }
@@ -90,7 +90,7 @@ export class AuthService {
   private handleAuthentication(email: string, token: string): void {
     const id = this.getUserIdFromToken(token);
     const userData: User = { email, token, id };
-    localStorage.setItem('user', JSON.stringify(userData));
+    sessionStorage.setItem('user', JSON.stringify(userData));
     this.userSubject.next(userData);
     this.router.navigate(['/']);
   }

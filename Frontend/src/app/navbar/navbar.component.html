@@ -22,10 +22,7 @@
         <li class="nav-item" *ngIf="isOrganizer()">
           <a class="nav-link" routerLink="/feedback" routerLinkActive="active">Feedback</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/Frontend/src/app/home/home.component.html/#aboutUs">About Us</a>
-        </li>
-        <li class="nav-item" *ngIf="isUser()">
+         <li class="nav-item" *ngIf="isUser()">
           <div class="dropdown">
             <button class="btn btn-link nav-link position-relative" type="button" id="notificationDropdown" (click)="toggleNotificationsDropdown($event)" aria-expanded="false">
               <i class="bi bi-bell"></i>
@@ -45,6 +42,7 @@
             </ul>
           </div>
         </li>
+        
         <li class="nav-item" *ngIf="isAdmin()">
             <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin Panel</a>
         </li>
@@ -52,7 +50,7 @@
             <a class="nav-link" routerLink="/add-event" routerLinkActive="active">Add Event</a>
          </li>
          <li class="nav-item" *ngIf="isOrganizer() ">
-            <a class="nav-link" routerLink="/admin/orders" routerLinkActive="active">Order Management</a>
+            <a class="nav-link" routerLink="/admin/orders" routerLinkActive="active">Booking Management</a>
          </li>
          <li class="nav-item" *ngIf="isUser()">
             <a class="nav-link position-relative" routerLink="/cart" routerLinkActive="active">
@@ -63,6 +61,9 @@
               </span>
             </a>
          </li>
+         <li class="nav-item">
+          <a class="nav-link" href="/Frontend/src/app/home/home.component.html/#aboutUs">About Us</a>
+        </li>
       </ul>
 
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">

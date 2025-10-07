@@ -57,7 +57,7 @@ export class AdminUserComponent implements OnInit {
 
   // --- Data Loading ---
   private getAuthHeaders(): HttpHeaders {
-    const userString = localStorage.getItem('user');
+    const userString = sessionStorage.getItem('user');
     if (!userString) return new HttpHeaders();
     const user = JSON.parse(userString);
     return user?.token ? new HttpHeaders({ 'Authorization': `Bearer ${user.token}` }) : new HttpHeaders();

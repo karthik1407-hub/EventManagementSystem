@@ -79,12 +79,6 @@
           <div *ngIf="selectedTicket && !selectedTicket.isCancelled" class="feedback-section mt-4">
             <div *ngIf="isEventEnded(selectedTicket)">
               <p class="text-info">Event is ended. Kindly give your valuable feedback.</p>
-              <button
-                class="btn btn-primary"
-                (click)="onFeedbackButtonClick()"
-              >
-                {{ feedback ? 'Edit Feedback' : 'Give Feedback' }}
-              </button>
               <div *ngIf="feedback && !isEditingFeedback" class="mt-3">
                 <h5>Your Feedback:</h5>
                 <p><strong>Rating:</strong> {{ feedback.rating }} / 5</p>

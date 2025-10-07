@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit {
   constructor(private http: HttpClient, private cookieService: CookieService, private authService: AuthService) {}
 
   ngOnInit() {
-    const userString = localStorage.getItem('user');
+    const userString = sessionStorage.getItem('user');
     if (userString) {
       const user = JSON.parse(userString);
       this.userId = user.id || user.userId || user.UserID;

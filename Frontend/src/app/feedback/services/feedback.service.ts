@@ -21,7 +21,7 @@ export class FeedbackService {
   constructor(private http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
     const token = user.token;
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,

@@ -177,7 +177,7 @@ h1, h2, h3, h4, h5, h6 {
   object-fit: cover;
   border-radius: 50%;
   margin: -60px auto 0;
-  border: 4px solid #ffffff;
+  border: 4px solid #b6b0b0;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   transition: transform 0.4s ease; /* Zoom effect for image */
 }
@@ -189,11 +189,11 @@ h1, h2, h3, h4, h5, h6 {
 .team-social a {
   font-size: 1.2rem;
   transition: color 0.3s ease;
-  color: var(--primary-color);
+  color: black;
 }
  
 .team-social a:hover {
-  color: var(--accent-color); /* Use accent color on hover */
+  color: black; /* Use accent color on hover */
 }
  
 /* CTA Section */
@@ -294,7 +294,7 @@ h1, h2, h3, h4, h5, h6 {
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
 }
- 
+/*  
 .team-member .card img:nth-child(1) {
     content: url('https://images.unsplash.com/photo-1531746020795-82e3da960f4d?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
 }
@@ -310,3 +310,8 @@ h1, h2, h3, h4, h5, h6 {
 .team-member .card img:nth-child(5) {
     content: url('https://images.unsplash.com/photo-1620803513689-53e30f14840e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
 }
+
+.proIcon{
+  color: var(--primary-color);
+  padding: 20px;
+} */

@@ -33,7 +33,7 @@ export class UserComponent implements OnInit {
   constructor(private http: HttpClient, private cookieService: CookieService) {}
  
   ngOnInit() {
-    const userString = localStorage.getItem('user');
+    const userString = sessionStorage.getItem('user');
     if (userString) {
       const user = JSON.parse(userString);
       const token = user.token;
