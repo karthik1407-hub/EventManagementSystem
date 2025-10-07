@@ -1,8 +1,7 @@
-# TODO: Update Add Event Page CSS
-
-- [x] Update card styling with gradient background and enhanced shadows
-- [x] Style form labels and inputs with modern looks and focus transitions
-- [x] Enhance image upload box with attractive hover effects and animations
-- [x] Add transitions and animations to the submit button
-- [x] Add entrance animations for form sections
-- [x] Ensure responsiveness and test the styles
+- [x] Modify event.component.ts to add isAdmin property and set it in ngOnInit
+- [x] Modify event.component.html to change the *ngIf condition for Edit/Delete buttons to include isAdmin
+- [x] Modify event-details.component.ts to allow admins to manage events
+- [x] Modify event-details.component.html to use canManageThisEvent() for showing Edit/Delete buttons
+- [x] Update add-event.component.html to include new category options grouped by type
+- [x] Update event.component.html filter to include new category options
+- [x] Add scroll option to admin panel sections when data increases

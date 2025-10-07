@@ -30,8 +30,8 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const userRole = this.authService.getUserRole();
-    // Check if user is an Event Organizer
-    this.canManageEvent = (userRole === 'Event Organizer');
+    // Check if user is an Event Organizer or Admin
+    this.canManageEvent = (userRole === 'Event Organizer' || userRole === 'Admin');
 
     this.route.paramMap.subscribe(params => {
       const eventId = params.get('id');
@@ -45,6 +45,8 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
 
   canManageThisEvent(): boolean {
     if (!this.canManageEvent || !this.event) return false;
+    const userRole = this.authService.getUserRole();
+    if (userRole === 'Admin') return true;
     const userId = this.authService.getUserId();
     return this.event.organizerID === userId;
   }

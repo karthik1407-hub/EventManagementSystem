@@ -20,27 +20,46 @@
 
     <form #paymentForm="ngForm" novalidate class="payment-form" style="max-width: 350px;">
       <label for="cardNumber">Card Number</label>
-      <input type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber" required minlength="16" maxlength="19" placeholder="Enter card number" />
+      <input type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber" required minlength="16" maxlength="19" pattern="^\d{16,19}$" placeholder="Enter card number" #cardNumberField="ngModel" />
+      <div *ngIf="cardNumberField.invalid && (cardNumberField.dirty || cardNumberField.touched)" class="error-message">
+        <div *ngIf="cardNumberField.errors?.['required']">Card number is required.</div>
+        <div *ngIf="cardNumberField.errors?.['minlength']">Card number must be at least 16 digits.</div>
+        <div *ngIf="cardNumberField.errors?.['pattern']">Card number must be 16 to 19 digits.</div>
+      </div>
 
       <label for="cardHolder">Card Holders</label>
-      <input type="text" id="cardHolder" name="cardHolder" [(ngModel)]="cardHolder" required placeholder="Enter card holder name" />
+      <input type="text" id="cardHolder" name="cardHolder" [(ngModel)]="cardHolder" required placeholder="Enter card holder name" #cardHolderField="ngModel" />
+      <div *ngIf="cardHolderField.invalid && (cardHolderField.dirty || cardHolderField.touched)" class="error-message">
+        <div *ngIf="cardHolderField.errors?.['required']">Card holder name is required.</div>
+      </div>
 
       <div class="expiration-cvv" style="display: flex; gap: 10px; align-items: center;">
         <div class="expiration" style="flex: 2; display: flex; gap: 10px;">
           <label for="expiryMonth">Expiration Date</label>
-          <select id="expiryMonth" name="expiryMonth" [(ngModel)]="expiryMonth" required>
-            <option value="" disabled>Month</option>
+          <select id="expiryMonth" name="expiryMonth" [(ngModel)]="expiryMonth" required #expiryMonthField="ngModel">
+            <option value="" disabled selected>Month</option>
             <option *ngFor="let month of months" [value]="month">{{ month }}</option>
           </select>
-          <select id="expiryYear" name="expiryYear" [(ngModel)]="expiryYear" required>
-            <option value="" disabled>Year</option>
+          <select id="expiryYear" name="expiryYear" [(ngModel)]="expiryYear" required #expiryYearField="ngModel">
+            <option value="" disabled selected>Year</option>
             <option *ngFor="let year of years" [value]="year">{{ year }}</option>
           </select>
         </div>
         <div class="cvv" style="flex: 1;">
           <label for="cvv">CVV</label>
-          <input type="password" id="cvv" name="cvv" [(ngModel)]="cvv" required minlength="3" maxlength="4" placeholder="CVV" />
+          <input type="password" id="cvv" name="cvv" [(ngModel)]="cvv" required minlength="3" maxlength="4" pattern="\d{3,4}" placeholder="CVV" #cvvField="ngModel" />
         </div>
+      </div>
+      <div *ngIf="expiryMonthField.invalid && (expiryMonthField.dirty || expiryMonthField.touched)" class="error-message">
+        <div *ngIf="expiryMonthField.errors?.['required']">Expiry month is required.</div>
+      </div>
+      <div *ngIf="expiryYearField.invalid && (expiryYearField.dirty || expiryYearField.touched)" class="error-message">
+        <div *ngIf="expiryYearField.errors?.['required']">Expiry year is required.</div>
+      </div>
+      <div *ngIf="cvvField.invalid && (cvvField.dirty || cvvField.touched)" class="error-message">
+        <div *ngIf="cvvField.errors?.['required']">CVV is required.</div>
+        <div *ngIf="cvvField.errors?.['minlength']">CVV must be at least 3 digits.</div>
+        <div *ngIf="cvvField.errors?.['pattern']">CVV must be 3 to 4 digits.</div>
       </div>
 
       <button type="button"  (click)="processPayment(paymentForm)" style="width: 100%; margin-top: 20px;">Pay</button>

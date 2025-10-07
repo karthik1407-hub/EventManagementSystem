@@ -16,6 +16,7 @@ export class EventComponent implements OnInit {
   errorMessage: string = '';
   isLoading: boolean = false;
   isOrganizer: boolean = false;
+  isAdmin: boolean = false;
 
   searchQuery: string = '';
   selectedCategory: string = '';
@@ -40,6 +41,7 @@ export class EventComponent implements OnInit {
 
   ngOnInit(): void {
     this.isOrganizer = this.authService.getUserRole() === 'Event Organizer';
+    this.isAdmin = this.authService.getUserRole() === 'Admin';
     if (this.isLoggedIn()) {
       this.fetchEvents();
     }

@@ -7,25 +7,32 @@
   </div>
 
   <div class="ticket-card-list mb-4">
-    <div class="ticket-card card p-3" *ngFor="let ticket of tickets" (click)="openTicketModal(ticket)" style="cursor:pointer;">
-      <div class="ticket-card-content">
-        <h5 class="card-title">Event: {{ ticket.event?.name || ticket.eventID }}</h5>
-        <p class="card-text">Booking Date: {{ ticket.bookingDate | date:'medium' }}</p>
-        <p class="card-text">Status: 
-          <span *ngIf="ticket.isCancelled" class="badge bg-danger">Cancelled</span>
-          <span *ngIf="!ticket.isCancelled && !isEventEnded(ticket)" class="badge bg-success">Active</span>
-          <span *ngIf="!ticket.isCancelled && isEventEnded(ticket)" class="badge bg-primary">Event Ended</span>
-        </p>
+    <ng-container *ngIf="tickets.length > 0; else noTickets">
+      <div class="ticket-card card p-3" *ngFor="let ticket of tickets" (click)="openTicketModal(ticket)" style="cursor:pointer;">
+        <div class="ticket-card-content">
+          <h5 class="card-title">Event: {{ ticket.event?.name || ticket.eventID }}</h5>
+          <p class="card-text">Booking Date: {{ ticket.bookingDate | date:'medium' }}</p>
+          <p class="card-text">Status: 
+            <span *ngIf="ticket.isCancelled" class="badge bg-danger">Cancelled</span>
+            <span *ngIf="!ticket.isCancelled && !isEventEnded(ticket)" class="badge bg-success">Active</span>
+            <span *ngIf="!ticket.isCancelled && isEventEnded(ticket)" class="badge bg-primary">Event Ended</span>
+          </p>
+        </div>
+        <div class="ticket-card-actions mt-2">
+          <button *ngIf="isOrganizer" class="btn btn-warning btn-sm me-2" (click)="editTicket(ticket); $event.stopPropagation();">Edit</button>
+          <button *ngIf="!isUser && !ticket.isCancelled && !isEventEnded(ticket)" class="btn btn-danger btn-sm me-2" (click)="cancelTicket(ticket); $event.stopPropagation();">Cancel</button>
+          <button *ngIf="ticket.isCancelled || isEventEnded(ticket)" class="btn btn-secondary btn-sm" 
+            [disabled]="!ticket.isCancelled && !isEventEnded(ticket)" 
+            title="You can only remove cancelled tickets or tickets for events that have ended."
+            (click)="removeTicket(ticket); $event.stopPropagation();">Remove</button>
+        </div>
       </div>
-      <div class="ticket-card-actions mt-2">
-        <button *ngIf="isOrganizer" class="btn btn-warning btn-sm me-2" (click)="editTicket(ticket); $event.stopPropagation();">Edit</button>
-        <button *ngIf="!isUser && !ticket.isCancelled && !isEventEnded(ticket)" class="btn btn-danger btn-sm me-2" (click)="cancelTicket(ticket); $event.stopPropagation();">Cancel</button>
-        <button *ngIf="ticket.isCancelled || isEventEnded(ticket)" class="btn btn-secondary btn-sm" 
-          [disabled]="!ticket.isCancelled && !isEventEnded(ticket)" 
-          title="You can only remove cancelled tickets or tickets for events that have ended."
-          (click)="removeTicket(ticket); $event.stopPropagation();">Remove</button>
+    </ng-container>
+    <ng-template #noTickets>
+      <div class="text-center p-4">
+        <p>No tickets available.</p>
       </div>
-    </div>
+    </ng-template>
   </div>
 
   <!-- Ticket Detail Modal -->

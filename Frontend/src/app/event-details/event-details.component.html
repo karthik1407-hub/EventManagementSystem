@@ -19,7 +19,7 @@
             <span class="badge bg-primary-subtle text-primary-emphasis mb-2">{{ event!.eventType }}</span>
             <h1 class="fw-bold">{{ event!.eventName }}</h1>
           </div>
-          <div *ngIf="canManageEvent" class="admin-actions">
+          <div *ngIf="canManageThisEvent()" class="admin-actions">
             <button class="btn btn-outline-secondary me-2" (click)="editEvent()"><i class="bi bi-pencil-fill"></i>
               Edit</button>
             <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
@@ -87,7 +87,7 @@
                 <span class="fs-4 fw-bold text-primary">₹{{ event!.eventPrice | number }}</span>
               </div>
 
-              <div *ngIf="!canManageEvent; else organizerView">
+              <div *ngIf="!canManageThisEvent(); else organizerView">
                 <button class="btn btn-primary btn-lg w-100" (click)="addToCart(event)">
                   Add to Cart
                 </button>
