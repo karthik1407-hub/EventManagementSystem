@@ -5,4 +5,5 @@ export interface Feedback {
   rating: number;
   comments: string;
   submittedTimestamp: string;
+  reply?: string; // Organizer's reply to the feedback
 }

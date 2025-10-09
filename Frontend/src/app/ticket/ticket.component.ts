@@ -24,7 +24,6 @@ export class TicketComponent implements OnInit {
   };
   events: EventModel[] = []; // Add events list for selection
   users: UserModel[] = []; // Add users list for selection
-  feedbacks: Feedback[] = []; // Add feedbacks list
   errorMessage: string = '';
   isUser: boolean = false;
   isOrganizer: boolean = false;
@@ -32,9 +31,10 @@ export class TicketComponent implements OnInit {
   editingTicket: Ticket | null = null;
 
   selectedTicket: Ticket | null = null; // New property for modal
-  feedback: Feedback | null = null; // Feedback for selected ticket
+  feedbacks: Feedback[] = []; // Feedbacks for selected ticket
   feedbackModel: { rating: number; comments: string } = { rating: 5, comments: '' }; // Model for feedback form
-  isEditingFeedback: boolean = false; // Track if feedback form is in edit mode
+  showFeedbackForm: boolean = false; // Track if feedback form is shown
+  editingFeedback: Feedback | null = null; // Feedback being edited, null for new
 
   @Output() ticketStatusChanged = new EventEmitter<Ticket>();
 
@@ -66,16 +66,9 @@ export class TicketComponent implements OnInit {
   openTicketModal(ticket: Ticket): void {
     this.selectedTicket = ticket;
     this.loadFeedbackForTicket(ticket);
-    this.isEditingFeedback = false; // Reset edit mode on modal open
-    // Initialize feedbackModel for form
-    if (this.feedback) {
-      this.feedbackModel = {
-        rating: this.feedback.rating,
-        comments: this.feedback.comments
-      };
-    } else {
-      this.feedbackModel = { rating: 5, comments: '' };
-    }
+    this.showFeedbackForm = false; // Reset form
+    this.editingFeedback = null;
+    this.feedbackModel = { rating: 5, comments: '' };
     // Use Bootstrap modal JS to show modal
     const modalElement = document.getElementById('ticketModal');
     if (modalElement) {
@@ -86,21 +79,12 @@ export class TicketComponent implements OnInit {
   }
 
   loadFeedbackForTicket(ticket: Ticket): void {
-    this.feedback = null;
+    this.feedbacks = [];
     this.feedbackService.getAll().subscribe({
-      next: (feedbacks) => {
-        this.feedback = feedbacks.find(
+      next: (allFeedbacks) => {
+        this.feedbacks = allFeedbacks.filter(
           (f) => f.eventID === ticket.eventID && f.userID === ticket.userID
-        ) || null;
-        // Initialize feedbackModel for form
-        if (this.feedback) {
-          this.feedbackModel = {
-            rating: this.feedback.rating,
-            comments: this.feedback.comments
-          };
-        } else {
-          this.feedbackModel = { rating: 5, comments: '' };
-        }
+        );
       },
       error: (err) => {
         console.error('Failed to load feedbacks', err);
@@ -118,22 +102,36 @@ export class TicketComponent implements OnInit {
     return now > eventDateTime;
   }
 
-  onFeedbackButtonClick(): void {
+  addNewFeedback(): void {
     if (!this.selectedTicket) return;
     if (!this.isEventEnded(this.selectedTicket)) {
       alert('You are allowed to give feedback once Event is done.');
       return;
     }
-    this.isEditingFeedback = true;
+    this.showFeedbackForm = true;
+    this.editingFeedback = null;
+    this.feedbackModel = { rating: 5, comments: '' };
+  }
+
+  editFeedback(fb: Feedback): void {
+    this.showFeedbackForm = true;
+    this.editingFeedback = fb;
+    this.feedbackModel = { rating: fb.rating, comments: fb.comments };
+  }
+
+  cancelFeedbackForm(): void {
+    this.showFeedbackForm = false;
+    this.editingFeedback = null;
+    this.feedbackModel = { rating: 5, comments: '' };
   }
 
   submitFeedback(): void {
     if (!this.selectedTicket) return;
 
-    if (this.feedback) {
+    if (this.editingFeedback) {
       // Update existing feedback
       const feedbackDto = {
-        feedbackID: this.feedback.feedbackID,
+        feedbackID: this.editingFeedback.feedbackID,
         eventID: this.selectedTicket.eventID,
         userID: this.selectedTicket.userID,
         rating: this.feedbackModel.rating,
@@ -141,11 +139,12 @@ export class TicketComponent implements OnInit {
         submittedTimestamp: new Date().toISOString()
       };
       console.log('Updating feedback with DTO:', feedbackDto);
-      this.feedbackService.update(this.feedback.feedbackID, feedbackDto).subscribe({
+      this.feedbackService.update(this.editingFeedback.feedbackID, feedbackDto).subscribe({
         next: () => {
           alert('Feedback updated successfully.');
           this.loadFeedbackForTicket(this.selectedTicket!);
-          this.isEditingFeedback = false; // Exit edit mode after update
+          this.showFeedbackForm = false;
+          this.editingFeedback = null;
         },
         error: (err) => {
           console.error('Failed to update feedback', err);
@@ -165,11 +164,27 @@ export class TicketComponent implements OnInit {
         next: () => {
           alert('Feedback submitted successfully.');
           this.loadFeedbackForTicket(this.selectedTicket!);
-          this.isEditingFeedback = false; // Exit edit mode after submit
+          this.showFeedbackForm = false;
+          this.editingFeedback = null;
         },
         error: (err) => {
           console.error('Failed to submit feedback', err);
           alert('Failed to submit feedback. Please try again.');
+        }
+      });
+    }
+  }
+
+  deleteFeedback(fb: Feedback): void {
+    if (confirm('Are you sure you want to delete this feedback?')) {
+      this.feedbackService.delete(fb.feedbackID).subscribe({
+        next: () => {
+          alert('Feedback deleted successfully.');
+          this.loadFeedbackForTicket(this.selectedTicket!);
+        },
+        error: (err) => {
+          console.error('Failed to delete feedback', err);
+          alert('Failed to delete feedback. Please try again.');
         }
       });
     }

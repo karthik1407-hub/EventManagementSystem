@@ -1,123 +1,165 @@
+/* New styles for feedback section for Admin and Organizer */
 
-:root {
-    --background-color: #f0f2f5;
-    --primary-color: #4a90e2;
-    --text-color: #333;
-    --border-radius: 15px;
-    --shadow-light: rgba(255, 255, 255, 0.9);
-    --shadow-dark: rgba(0, 0, 0, 0.15);
-    --neumorphic-shadow: 
-        -6px -6px 12px var(--shadow-light),
-        6px 6px 12px var(--shadow-dark);
-    --neumorphic-inset-shadow: 
-        inset -6px -6px 12px var(--shadow-light),
-        inset 6px 6px 12px var(--shadow-dark);
-}
-
-.container {
-    background-color: var(--background-color);
+.feedback-section {
+    background: linear-gradient(135deg, #a19ba8 0%, #9fa3ab 100%);
     padding: 2rem;
-    border-radius: var(--border-radius);
+    border-radius: 20px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(115, 114, 118, 0.721);
+    transition: box-shadow 0.4s ease, transform 0.4s ease;
+    max-width: 900px;
+    margin: 0 auto 2rem auto;
 }
 
-.card {
-    background-color: var(--background-color);
-    border: none;
-    border-radius: var(--border-radius);
-    box-shadow: var(--neumorphic-shadow);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    transition: all 0.3s ease-in-out;
-}
-
-.card:hover {
+.feedback-section:hover {
+    box-shadow: 0 12px 30px rgba(163, 157, 177, 0.7);
     transform: translateY(-5px);
-    box-shadow: 
-        -8px -8px 16px var(--shadow-light),
-        8px 8px 16px var(--shadow-dark);
 }
 
-.card-title {
-    color: var(--primary-color);
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.form-label {
-    color: var(--text-color);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.form-control, .form-select {
-    background-color: var(--background-color);
-    border: none;
-    border-radius: var(--border-radius);
-    box-shadow: var(--neumorphic-inset-shadow);
-    padding: 1rem;
-    color: var(--text-color);
-    transition: all 0.3s ease-in-out;
-}
-
-.form-control:focus, .form-select:focus {
-    outline: none;
-    box-shadow: 
-        inset -4px -4px 8px var(--shadow-light),
-        inset 4px 4px 8px var(--shadow-dark),
-        0 0 0 2px var(--primary-color);
-}
-
-.btn {
-    border-radius: var(--border-radius);
-    padding: 0.8rem 1.5rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border: none;
-    box-shadow: var(--neumorphic-shadow);
-    transition: all 0.3s ease-in-out;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #357abd;
-    box-shadow: 
-        -4px -4px 8px var(--shadow-light),
-        4px 4px 8px var(--shadow-dark);
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
-.list-group-item {
-    background-color: var(--background-color);
-    border: none;
-    border-radius: var(--border-radius);
-    box-shadow: var(--neumorphic-shadow);
+.feedback-section h5, .feedback-section h3, .feedback-section h4 {
+    color: #f0e6ff;
+    font-weight: 700;
     margin-bottom: 1rem;
-    padding: 1.5rem;
-    transition: all 0.3s ease-in-out;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    letter-spacing: 1.2px;
 }
 
-.list-group-item:hover {
+.feedback-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius:10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(127, 126, 130, 0.925);
+    backdrop-filter: blur(10px);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.feedback-card:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(114, 111, 122, 0.864);
     transform: scale(1.02);
-    box-shadow: 
-        -8px -8px 16px var(--shadow-light),
-        8px 8px 16px var(--shadow-dark);
 }
 
-.alert {
+.feedback-card p {
+    margin: 0.3rem 0;
+    font-size: 1.1rem;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.feedback-buttons button {
+    margin-right: 0.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.feedback-buttons button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(101, 41, 255, 0.7);
+}
+
+.feedback-form {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
     border-radius: var(--border-radius);
-    box-shadow: var(--neumorphic-shadow);
+    box-shadow: 0 6px 25px rgba(101, 41, 255, 0.4);
+    backdrop-filter: blur(15px);
+    transition: box-shadow 0.4s ease, transform 0.4s ease;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.feedback-form:hover {
+    box-shadow: 0 10px 35px rgba(101, 41, 255, 0.7);
+    transform: translateY(-5px);
+}
+
+.feedback-form label {
+    color: #e0d7ff;
+    font-weight: 600;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: var(--border-radius);
+    color: white;
+    padding: 0.8rem;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+    transition: background 0.3s ease;
+}
+
+.feedback-form input:focus,
+.feedback-form textarea:focus {
+    background: rgba(255, 255, 255, 0.5);
+    outline: none;
+}
+
+.feedback-form button {
+    margin-top: 1rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    padding: 0.8rem 2rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feedback-form button:hover {
+    background-color: #3a5bdc;
+    box-shadow: 0 0 25px rgba(58, 91, 220, 0.9);
+}
+
+/* Styles for feedback pop-up modal */
+
+.feedback-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.feedback-popup {
+    background: rgb(188, 175, 175);
+    color: #333;
+    padding: 2rem;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.feedback-popup h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #2575fc;
+}
+
+.feedback-popup p {
+    margin: 0.5rem 0;
+}
+
+.feedback-popup button {
+    margin-top: 1rem;
+}
+
+.feedback-popup .btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.feedback-popup .btn-danger:hover {
+    background-color: #c82333;
+}
+
+.feedback-popup .btn-secondary {
+    margin-left: 1rem;
 }

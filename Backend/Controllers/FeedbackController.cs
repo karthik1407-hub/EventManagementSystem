@@ -143,11 +143,49 @@ namespace Event_Management_System.Controllers
 
         // DELETE: api/Feedback/{id}
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteFeedback(Guid id)
         {
-            var feedback = await _context.Feedbacks.FindAsync(id);
+            var feedback = await _context.Feedbacks
+                .Include(f => f.Event)
+                .FirstOrDefaultAsync(f => f.FeedbackID == id);
             if (feedback == null)
                 return NotFound();
+
+            // Get current user's ID from claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdClaim.Value);
+
+            // Get the user to check role
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserID == userId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            // Check permissions: Admin can delete any, Organizer can delete feedbacks on their events, User can delete their own
+            bool canDelete = false;
+            if (user.Roles.Contains("Admin"))
+            {
+                canDelete = true;
+            }
+            else if (user.Roles.Contains("Organizer") && feedback.Event.OrganizerID == userId)
+            {
+                canDelete = true;
+            }
+            else if (feedback.UserID == userId)
+            {
+                canDelete = true;
+            }
+
+            if (!canDelete)
+            {
+                return Forbid();
+            }
 
             _context.Feedbacks.Remove(feedback);
             await _context.SaveChangesAsync();

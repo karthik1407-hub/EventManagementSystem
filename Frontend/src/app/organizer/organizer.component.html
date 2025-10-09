@@ -1,0 +1,111 @@
+<div class="container mt-4">
+  <h2>Organizer Panel</h2>
+
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'events'" (click)="setActiveTab('events')">Events</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'feedback'" (click)="setActiveTab('feedback')">Feedback</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'tickets'" (click)="setActiveTab('tickets')">Tickets</a>
+    </li>
+  </ul>
+
+  <div class="tab-content mt-3">
+    <!-- Events Tab -->
+    <div *ngIf="activeTab === 'events'" class="tab-pane active">
+      <h4>Your Events</h4>
+      <div class="row">
+        <div class="col-md-4 d-flex" *ngFor="let event of events">
+          <div class="card mb-3">
+            <img [src]="'http://localhost:5247/EventImages/' + event.eventImageUrl" class="card-img-top" alt="Event Image">
+            <div class="card-body">
+              <h5 class="card-title">{{ event.eventName }}</h5>
+              <p class="card-text">{{ event.eventDescription }}</p>
+              <p><strong>Type:</strong> {{ event.eventType }}</p>
+              <p><strong>Location:</strong> {{ event.eventLocation }}</p>
+              <p><strong>Date:</strong> {{ event.eventDate | date }}</p>
+              <p><strong>Price:</strong> ${{ event.eventPrice }}</p>
+              <button class="btn btn-primary" (click)="onEventClick(event)">View Bookings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Event Details -->
+      <div *ngIf="selectedEvent" class="mt-4 event-bookings">
+        <h5>Bookings for {{ selectedEvent.eventName }}</h5>
+        <p><strong>Total Bookings:</strong> {{ eventBookings.length }}</p>
+        <div *ngIf="isLoading" class="loading">Loading...</div>
+        <table class="table table-striped" *ngIf="!isLoading">
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>User Email</th>
+              <th>Booking Date</th>
+              <th>Cancelled</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of eventBookings">
+              <td>{{ booking.user?.name }}</td>
+              <td>{{ booking.user?.email }}</td>
+              <td>{{ booking.bookingDate | date }}</td>
+              <td>{{ booking.isCancelled ? 'Yes' : 'No' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Feedback Tab -->
+    <div *ngIf="activeTab === 'feedback'" class="tab-pane active">
+      <h4>Feedback for Your Events</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>User Email</th>
+            <th>Rating</th>
+            <th>Comments</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let feedback of feedbacks">
+            <td>{{ feedback.eventName }}</td>
+            <td>{{ feedback.userEmail }}</td>
+            <td>{{ feedback.rating }}/5</td>
+            <td>{{ feedback.comments }}</td>
+            <td>{{ feedback.submittedTimestamp | date }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tickets Tab -->
+    <div *ngIf="activeTab === 'tickets'" class="tab-pane active">
+      <h4>Tickets for Your Events</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>User Email</th>
+            <th>Booking Date</th>
+            <th>Cancelled</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of tickets">
+            <td>{{ ticket.event?.eventName }}</td>
+            <td>{{ ticket.user?.email || 'Loading...' }}</td>
+            <td>{{ ticket.bookingDate | date }}</td>
+            <td>{{ ticket.isCancelled ? 'Yes' : 'No' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

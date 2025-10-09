@@ -79,15 +79,22 @@
           <div *ngIf="selectedTicket && !selectedTicket.isCancelled" class="feedback-section mt-4">
             <div *ngIf="isEventEnded(selectedTicket)">
               <p class="text-info">Event is ended. Kindly give your valuable feedback.</p>
-              <div *ngIf="feedback && !isEditingFeedback" class="mt-3">
-                <h5>Your Feedback:</h5>
-                <p><strong>Rating:</strong> {{ feedback.rating }} / 5</p>
-                <p><strong>Comments:</strong> {{ feedback.comments }}</p>
-                <button class="btn btn-primary mt-2" (click)="isEditingFeedback = true">Edit Feedback</button>
+              <div *ngIf="feedbacks.length > 0 && !showFeedbackForm" class="mt-3">
+                <h5>Your Feedbacks:</h5>
+                <div *ngFor="let fb of feedbacks" class="mb-2 border p-2 rounded">
+                  <p><strong>Rating:</strong> {{ fb.rating }} / 5</p>
+                  <p><strong>Comments:</strong> {{ fb.comments }}</p>
+                  <button class="btn btn-primary btn-sm me-2" (click)="editFeedback(fb)">Edit</button>
+                  <button *ngIf="isUser || isOrganizer || isAdmin" class="btn btn-danger btn-sm" (click)="deleteFeedback(fb)">Delete</button>
+                </div>
+                <button class="btn btn-success mt-2" (click)="addNewFeedback()">Add Feedback</button>
+              </div>
+              <div *ngIf="feedbacks.length === 0 && !showFeedbackForm" class="mt-3">
+                <button class="btn btn-success" (click)="addNewFeedback()">Give Feedback</button>
               </div>
 
               <!-- Feedback Form -->
-              <form *ngIf="isEventEnded(selectedTicket) && isEditingFeedback" (ngSubmit)="submitFeedback()" #feedbackForm="ngForm" class="mt-3">
+              <form *ngIf="showFeedbackForm" (ngSubmit)="submitFeedback()" #feedbackForm="ngForm" class="mt-3">
                 <div class="mb-3">
                   <label for="rating" class="form-label">Rating (1-5)</label>
                   <input
@@ -113,12 +120,11 @@
                   ></textarea>
                 </div>
                 <button type="submit" class="btn btn-success" [disabled]="feedbackForm.invalid">
-                  {{ feedback ? 'Update Feedback' : 'Submit Feedback' }}
+                  {{ editingFeedback ? 'Update Feedback' : 'Submit Feedback' }}
                 </button>
-                <button type="button" class="btn btn-secondary ms-2" (click)="isEditingFeedback = false">Cancel</button>
+                <button type="button" class="btn btn-secondary ms-2" (click)="cancelFeedbackForm()">Cancel</button>
               </form>
             </div>
-
           </div>
         </div>
       </div>

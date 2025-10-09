@@ -1,6 +1,6 @@
 <div class="container my-4">
   <!-- Submit/Edit Feedback Section -->
-  <div *ngIf="isUser || isOrganizer || isAdmin" class="card p-4 mb-4">
+  <div *ngIf="isUser || isOrganizer || isAdmin" class="feedback-section mb-4">
     <h3 class="card-title mb-3">{{ editingFeedback ? 'Edit Feedback' : 'Submit Feedback' }}</h3>
 
     <!-- Error Message Display -->
@@ -8,7 +8,7 @@
       {{ errorMessage }}
     </div>
 
-    <form [formGroup]="feedbackForm" (ngSubmit)="editingFeedback ? update() : submit()">
+    <form [formGroup]="feedbackForm" (ngSubmit)="editingFeedback ? update() : submit()" class="feedback-form">
       <div class="mb-3">
         <label for="eventID" class="form-label">Event</label>
         <select
@@ -99,21 +99,26 @@
   </div>
 
   <!-- All Feedbacks Section -->
-  <div class="card p-4">
+  <div class="feedback-section">
     <h4 class="card-title mb-3">All Feedbacks</h4>
     <ul class="list-group">
-      <li *ngFor="let fb of feedbacks" class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <strong>{{ fb.rating }}/5</strong> - {{ fb.comments }}
-          <br />
-          <small class="text-muted">Event: {{ getEventName(fb.eventID) }} | User: {{ getUserName(fb.userID) }}</small>
-        </div>
-        <!-- Edit and Delete buttons -->
-        <div> 
-          <button *ngIf="isAdmin || isOrganizer" class="btn btn-sm btn-warning me-2" (click)="edit(fb)">Edit</button>
-          <button *ngIf="isOrganizer" class="btn btn-sm btn-danger" (click)="delete(fb.feedbackID)">Delete</button>
-        </div>
+      <li *ngFor="let fb of feedbacks" class="feedback-card" (click)="openFeedbackPopup(fb)" style="cursor:pointer;">
+        <h5 class="mb-1">{{ getEventName(fb.eventID) }}</h5>
+        <p class="mb-1"><strong>{{ fb.rating }}/5</strong></p>
       </li>
     </ul>
+  </div>
+
+  <!-- Feedback Detail Pop-up -->
+  <div *ngIf="showFeedbackPopup && selectedFeedback" class="feedback-popup-overlay" (click)="closeFeedbackPopup()">
+    <div class="feedback-popup" (click)="$event.stopPropagation()">
+      <h4>{{ getEventName(selectedFeedback.eventID) }}</h4>
+      <p><strong>Rating:</strong> {{ selectedFeedback.rating }}/5</p>
+      <p><strong>Comments:</strong> {{ selectedFeedback.comments }}</p>
+      <p><strong>User:</strong> {{ getUserName(selectedFeedback.userID) }}</p>
+      <p><strong>Submitted:</strong> {{ selectedFeedback.submittedTimestamp | date:'medium' }}</p>
+      <button class="btn btn-danger" (click)="delete(selectedFeedback.feedbackID); closeFeedbackPopup()">Delete Feedback</button>
+      <button class="btn btn-secondary ms-2" (click)="closeFeedbackPopup()">Close</button>
+    </div>
   </div>
 </div>

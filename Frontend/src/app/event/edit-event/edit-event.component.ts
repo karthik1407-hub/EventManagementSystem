@@ -33,6 +33,7 @@ export class EditEventComponent implements OnInit {
       eventDate: ['', Validators.required],
       eventDescription: ['', [Validators.required, Validators.maxLength(1000)]],
       eventPrice: ['', [Validators.required, Validators.min(0)]],
+      eventImage:['', [Validators.required], Validators.pattern(/.*\.(jpg|jpeg|png|gif)$/i)],
       tags: ['']
     });
 
@@ -52,6 +53,7 @@ export class EditEventComponent implements OnInit {
           eventDate: event.eventDate,
           eventDescription: event.eventDescription,
           eventPrice: event.eventPrice,
+          eventImage: event.eventImageUrl,
           tags: event.tags ? event.tags.join(', ') : ''
         });
         this.imagePreview = event.eventImageUrl ? '/EventImages/' + event.eventImageUrl : null;

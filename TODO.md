@@ -1,7 +1,12 @@
-- [x] Modify event.component.ts to add isAdmin property and set it in ngOnInit
-- [x] Modify event.component.html to change the *ngIf condition for Edit/Delete buttons to include isAdmin
-- [x] Modify event-details.component.ts to allow admins to manage events
-- [x] Modify event-details.component.html to use canManageThisEvent() for showing Edit/Delete buttons
-- [x] Update add-event.component.html to include new category options grouped by type
-- [x] Update event.component.html filter to include new category options
-- [x] Add scroll option to admin panel sections when data increases
+# Organizer Panel Implementation TODO
+
+## Completed
+- [x] Analyze backend and frontend structure
+- [x] Create plan and get user approval
+- [x] Create organizer component files (organizer.component.ts, .html, .css)
+- [x] Implement organizer.component.ts with API calls for events, feedbacks, tickets
+- [x] Design organizer.component.html with tabs for Events, Feedback, Tickets
+- [x] Style organizer.component.css
+
+## Pending
+- [ ] Test the panel functionality

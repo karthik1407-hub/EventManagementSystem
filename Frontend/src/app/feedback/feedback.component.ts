@@ -11,6 +11,7 @@ import { Event } from '../event/models/event.model';
 @Component({
   selector: 'app-feedback',
   templateUrl: './feedback.component.html',
+  styleUrls: ['./feedback.component.css']
 })
 export class FeedbackComponent implements OnInit {
   feedbacks: Feedback[] = [];
@@ -22,6 +23,10 @@ export class FeedbackComponent implements OnInit {
   isOrganizer: boolean = false;
   isAdmin: boolean = false;
   editingFeedback: Feedback | null = null;
+
+  // New properties for pop-up modal
+  selectedFeedback: Feedback | null = null;
+  showFeedbackPopup: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -201,5 +206,50 @@ export class FeedbackComponent implements OnInit {
   getUserName(userId: string): string {
     const user = this.users.find(u => u.userID === userId);
     return user ? user.email : userId;
+  }
+
+  // New method to open feedback pop-up
+  openFeedbackPopup(feedback: Feedback): void {
+    this.selectedFeedback = feedback;
+    this.showFeedbackPopup = true;
+  }
+
+  // New method to close feedback pop-up
+  closeFeedbackPopup(): void {
+    this.selectedFeedback = null;
+    this.showFeedbackPopup = false;
+  }
+
+  // New method to check if current user can delete the feedback
+  canDeleteFeedback(feedback: Feedback): boolean {
+    if (!feedback) return false;
+    const currentUserId = this.authService.getUserId();
+    if (!currentUserId) return false;
+
+    console.log('Checking delete permission for user:', currentUserId);
+    console.log('User roles:', { isAdmin: this.isAdmin, isOrganizer: this.isOrganizer, isUser: this.isUser });
+    console.log('Feedback:', feedback);
+
+    if (this.isAdmin) {
+      console.log('User is admin: permission granted');
+      return true;
+    }
+
+    if (this.isOrganizer) {
+      const event = this.events.find(e => e.eventID === feedback.eventID);
+      console.log('Organizer event:', event);
+      const permission = event?.organizerID === currentUserId;
+      console.log('Organizer permission:', permission);
+      return permission;
+    }
+
+    if (this.isUser) {
+      const permission = feedback.userID === currentUserId;
+      console.log('User permission:', permission);
+      return permission;
+    }
+
+    console.log('Permission denied');
+    return false;
   }
 }

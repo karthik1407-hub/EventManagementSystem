@@ -34,6 +34,7 @@ import { CartComponent } from './cart/cart.component';
 // Ticket Feature
 import { TicketComponent } from './ticket/ticket.component'; // ✅ NEW
 import { MyTicketComponent } from './ticket/my-ticket/my-ticket.component';
+import { OrganizerComponent } from './organizer/organizer.component';
 
 
 const routes: Routes = [
@@ -63,6 +64,8 @@ const routes: Routes = [
   { path: 'tickets', component: TicketComponent, canActivate: [AuthGuard] }, // ✅ Ticket list
   { path: 'my-ticket/:id', component: MyTicketComponent, canActivate: [AuthGuard] }, // Ticket detail
 
+  // Organizer Route
+  { path: 'organizer', component: OrganizerComponent, canActivate: [AuthGuard], data: { roles: ['Event Organizer'] } },
 
   // Public Event Routes
   { path: 'event', component: EventComponent },

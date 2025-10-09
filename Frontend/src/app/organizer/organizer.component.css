@@ -1,0 +1,187 @@
+/* Tab navigation with smooth transitions */
+.nav-tabs .nav-link {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  background: none;
+  color: #6c757d;
+  position: relative;
+  font-weight: 500;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #007bff;
+  transform: translateY(-2px);
+}
+
+.nav-tabs .nav-link.active {
+  color: #007bff;
+  background: none;
+  border-bottom: 2px solid #007bff;
+  font-weight: bold;
+}
+
+.nav-tabs .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 2px;
+  background: #007bff;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Card animations */
+.card {
+  height: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(0);
+  border: 1px solid #dee2e6;
+  border-radius: 10px; /* Rounded corners for cards */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+  border-color: #007bff;
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  border-top-left-radius: 10px; /* Match card's rounded corners */
+  border-top-right-radius: 10px;
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+/* Button effects */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Table animations */
+.table {
+  animation: fadeIn 0.5s ease;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+  transition: background-color 0.3s ease;
+}
+
+.table thead {
+  background-color: #e9ecef;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0,0,0,.05);
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+  transform: scale(1.01);
+}
+
+/* Tab content fade in */
+.tab-content {
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading animation */
+.loading {
+  animation: pulse 1.5s infinite;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #6c757d;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Event bookings section */
+.event-bookings {
+  animation: slideDown 0.4s ease;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
+/* Organizer Panel Style */
+:host {
+  display: block;
+  background-color: #f8f9fa; /* Light grey background */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+h2, h4 {
+  color: #343a40;
+  font-weight: 600;
+  margin-bottom: 20px;
+}

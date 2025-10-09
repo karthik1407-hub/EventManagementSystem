@@ -35,6 +35,7 @@ import { MyTicketComponent } from './ticket/my-ticket/my-ticket.component';
 
 import { AboutUsComponent } from './about-us/about-us.component';
 import { FooterComponent } from './footer/footer.component';
+import { OrganizerComponent } from './organizer/organizer.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { FooterComponent } from './footer/footer.component';
     MyTicketComponent,
 
     AboutUsComponent,
-    FooterComponent
+    FooterComponent,
+    OrganizerComponent
   ],
   imports: [
     BrowserModule,

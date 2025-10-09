@@ -69,9 +69,9 @@
   <div class="cart-summary" *ngIf="basket && basket.items && basket.items.length > 0" style="max-width: 350px;">
     <h3>Order Items</h3>
     <div *ngFor="let item of basket.items" class="order-item" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
-      <img [src]="'https://localhost:7272/EventImages/' + events[item.eventId]?.eventImageUrl" alt="{{ events[item.eventId]?.eventName }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 6px;" />
+      <img [src]="'https://localhost:7272/EventImages/' + events[item.eventId].eventImageUrl" alt="{{ events[item.eventId].eventName }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 6px;" />
       <div>
-        <div class="item-name" style="font-weight: 600;">{{ events[item.eventId]?.eventName || 'Unknown Event' }}</div>
+        <div class="item-name" style="font-weight: 600;">{{ events[item.eventId].eventName || 'Unknown Event' }}</div>
         <div class="item-quantity">Qty: {{ item.quantity }}</div>
         <div class="item-price">${{ item.unitPrice }}</div>
       </div>
