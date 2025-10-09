@@ -9,6 +9,7 @@ interface CreateFeedbackDto {
   rating: number;
   comments: string;
   submittedTimestamp: string;
+  reply?: string; // Optional reply field for organizer response
 }
 import { environment } from 'src/app/environments/environment';
 

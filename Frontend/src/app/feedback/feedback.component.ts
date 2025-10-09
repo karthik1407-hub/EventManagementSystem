@@ -27,6 +27,8 @@ export class FeedbackComponent implements OnInit {
   // New properties for pop-up modal
   selectedFeedback: Feedback | null = null;
   showFeedbackPopup: boolean = false;
+  replyText: string = '';
+  editingReply: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -44,10 +46,44 @@ export class FeedbackComponent implements OnInit {
     });
   }
 
+  cancelReply(): void {
+    this.editingReply = false;
+    this.replyText = '';
+  }
+
+  openReplyForm(): void {
+    this.editingReply = true;
+    this.replyText = '';
+  }
+
+  submitReply(): void {
+    if (!this.selectedFeedback || !this.replyText.trim()) return;
+
+    const updatedFeedback = {
+      ...this.selectedFeedback,
+      reply: this.replyText.trim(),
+      submittedTimestamp: new Date().toISOString()
+    };
+
+    this.service.update(this.selectedFeedback.feedbackID, updatedFeedback).subscribe({
+      next: () => {
+        alert('Reply submitted successfully.');
+        this.loadFeedbacks();
+        this.editingReply = false;
+        this.replyText = '';
+        this.closeFeedbackPopup();
+      },
+      error: (err) => {
+        console.error('Failed to submit reply', err);
+        alert('Failed to submit reply. Please try again.');
+      }
+    });
+  }
+
   ngOnInit(): void {
-    this.isUser = this.authService.getUserRole() === 'user';
-    this.isOrganizer = this.authService.getUserRole() === 'organizer';
-    this.isAdmin = this.authService.getUserRole() === 'admin';
+    this.isUser = this.authService.getUserRole() === 'Attendee';
+    this.isOrganizer = this.authService.getUserRole() === 'Event Organizer';
+    this.isAdmin = this.authService.getUserRole() === 'Admin';
     this.loadAllUsers();
     this.loadFeedbacks();
     this.loadEvents();
@@ -218,6 +254,7 @@ export class FeedbackComponent implements OnInit {
   closeFeedbackPopup(): void {
     this.selectedFeedback = null;
     this.showFeedbackPopup = false;
+    this.replyText = '';
   }
 
   // New method to check if current user can delete the feedback

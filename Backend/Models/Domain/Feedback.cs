@@ -10,10 +10,14 @@ namespace Event_Management_System.Models.Domain
         public Guid UserID { get; set; }
         public int Rating { get; set; }
         public string Comments { get; set; }
+
+        public string? Reply { get; set; }
         public DateTime SubmittedTimestamp { get; set; }
+        // public string? Reply { get; set; }  // Organizer's reply to the feedback (nullable)
 
         public UserDto User { get; set; }
         public Event Event { get; set; }
+
     }
 
 

@@ -2,12 +2,11 @@
 {
     public class CreateFeedbackDto
     {
-
         public Guid EventID { get; set; }
         public Guid UserID { get; set; }
         public int Rating { get; set; }
         public string Comments { get; set; }
         public DateTime SubmittedTimestamp { get; set; }
-
+        public string? Reply { get; set; }  // Organizer's reply to the feedback (nullable)
     }
 }

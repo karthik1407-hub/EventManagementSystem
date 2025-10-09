@@ -117,6 +117,19 @@
       <p><strong>Comments:</strong> {{ selectedFeedback.comments }}</p>
       <p><strong>User:</strong> {{ getUserName(selectedFeedback.userID) }}</p>
       <p><strong>Submitted:</strong> {{ selectedFeedback.submittedTimestamp | date:'medium' }}</p>
+      <div *ngIf="selectedFeedback.reply" class="reply-section mb-3 p-2 bg-light border rounded">
+        <strong>Organizer Reply:</strong>
+        <p>{{ selectedFeedback.reply }}</p>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-secondary me-2" (click)="editingReply = true; replyText = ''">Reply</button>
+      </div>
+      <div *ngIf="isOrganizer && editingReply" class="mb-3">
+        <label for="replyInput" class="form-label">Add/Edit Reply</label>
+        <textarea id="replyInput" class="form-control" [(ngModel)]="replyText" rows="3"></textarea>
+        <button class="btn btn-primary mt-2 me-2" (click)="submitReply()">Submit Reply</button>
+        <button class="btn btn-secondary mt-2" (click)="cancelReply()">Cancel</button>
+      </div>
       <button class="btn btn-danger" (click)="delete(selectedFeedback.feedbackID); closeFeedbackPopup()">Delete Feedback</button>
       <button class="btn btn-secondary ms-2" (click)="closeFeedbackPopup()">Close</button>
     </div>

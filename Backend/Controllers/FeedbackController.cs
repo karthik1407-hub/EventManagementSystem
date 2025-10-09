@@ -69,7 +69,8 @@ namespace Event_Management_System.Controllers
                     UserEmail = f.User.Email,
                     EventName = f.Event.EventName,
                     f.EventID,
-                    f.UserID
+                    f.UserID,
+                    Reply = f.Reply
                 })
                 .ToListAsync();
 
@@ -108,7 +109,8 @@ namespace Event_Management_System.Controllers
                 UserID = dto.UserID,
                 Rating = dto.Rating,
                 Comments = dto.Comments,
-                SubmittedTimestamp = dto.SubmittedTimestamp
+                SubmittedTimestamp = dto.SubmittedTimestamp,
+                Reply = dto.Reply
             };
 
             _context.Feedbacks.Add(feedback);
@@ -136,6 +138,7 @@ namespace Event_Management_System.Controllers
             feedback.Rating = dto.Rating;
             feedback.Comments = dto.Comments;
             feedback.SubmittedTimestamp = dto.SubmittedTimestamp;
+            feedback.Reply = dto.Reply;
 
             await _context.SaveChangesAsync();
             return NoContent();

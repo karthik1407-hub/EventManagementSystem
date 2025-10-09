@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Event_Management_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250925164524_MigrationOne")]
+    [Migration("20251009142857_MigrationOne")]
     partial class MigrationOne
     {
         /// <inheritdoc />
@@ -117,6 +117,9 @@ namespace Event_Management_System.Migrations
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
+
+                    b.Property<string>("Reply")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("SubmittedTimestamp")
                         .HasColumnType("datetime2");
@@ -323,7 +326,7 @@ namespace Event_Management_System.Migrations
                     b.ToTable("Tickets");
                 });
 
-            modelBuilder.Entity("Event_Management_System.Models.Domain.User", b =>
+            modelBuilder.Entity("Event_Management_System.Models.Domain.UserDto", b =>
                 {
                     b.Property<Guid>("UserID")
                         .ValueGeneratedOnAdd()
@@ -356,7 +359,7 @@ namespace Event_Management_System.Migrations
 
             modelBuilder.Entity("Event_Management_System.Models.Domain.Event", b =>
                 {
-                    b.HasOne("Event_Management_System.Models.Domain.User", "Organizer")
+                    b.HasOne("Event_Management_System.Models.Domain.UserDto", "Organizer")
                         .WithMany()
                         .HasForeignKey("OrganizerID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -384,7 +387,7 @@ namespace Event_Management_System.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Event_Management_System.Models.Domain.User", "User")
+                    b.HasOne("Event_Management_System.Models.Domain.UserDto", "User")
                         .WithMany("Feedbacks")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -403,7 +406,7 @@ namespace Event_Management_System.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Event_Management_System.Models.Domain.User", "User")
+                    b.HasOne("Event_Management_System.Models.Domain.UserDto", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -455,7 +458,7 @@ namespace Event_Management_System.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Event_Management_System.Models.Domain.User", "User")
+                    b.HasOne("Event_Management_System.Models.Domain.UserDto", "User")
                         .WithMany("Tickets")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -485,7 +488,7 @@ namespace Event_Management_System.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("Event_Management_System.Models.Domain.User", b =>
+            modelBuilder.Entity("Event_Management_System.Models.Domain.UserDto", b =>
                 {
                     b.Navigation("Feedbacks");
 

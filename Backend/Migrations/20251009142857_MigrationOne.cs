@@ -180,6 +180,7 @@ namespace Event_Management_System.Migrations
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reply = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SubmittedTimestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

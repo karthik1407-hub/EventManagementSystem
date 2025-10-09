@@ -35,6 +35,8 @@ export class TicketComponent implements OnInit {
   feedbackModel: { rating: number; comments: string } = { rating: 5, comments: '' }; // Model for feedback form
   showFeedbackForm: boolean = false; // Track if feedback form is shown
   editingFeedback: Feedback | null = null; // Feedback being edited, null for new
+  editingReply: boolean = false; // Track if reply form is shown
+  replyText: string = ''; // Text for reply
 
   @Output() ticketStatusChanged = new EventEmitter<Ticket>();
 
@@ -69,6 +71,8 @@ export class TicketComponent implements OnInit {
     this.showFeedbackForm = false; // Reset form
     this.editingFeedback = null;
     this.feedbackModel = { rating: 5, comments: '' };
+    this.editingReply = false;
+    this.replyText = '';
     // Use Bootstrap modal JS to show modal
     const modalElement = document.getElementById('ticketModal');
     if (modalElement) {
@@ -123,6 +127,46 @@ export class TicketComponent implements OnInit {
     this.showFeedbackForm = false;
     this.editingFeedback = null;
     this.feedbackModel = { rating: 5, comments: '' };
+    this.editingReply = false;
+    this.replyText = '';
+  }
+
+  editReply(fb: Feedback): void {
+    this.editingReply = true;
+    this.editingFeedback = fb;
+    this.replyText = fb.reply || '';
+  }
+
+  submitReply(): void {
+    if (!this.editingFeedback) return;
+
+    const updatedFeedback = {
+      ...this.editingFeedback,
+      reply: this.replyText,
+      submittedTimestamp: new Date().toISOString()
+    };
+
+    this.feedbackService.update(this.editingFeedback.feedbackID, updatedFeedback).subscribe({
+      next: () => {
+        alert('Reply submitted successfully.');
+        if (this.selectedTicket) {
+          this.loadFeedbackForTicket(this.selectedTicket);
+        }
+        this.editingReply = false;
+        this.editingFeedback = null;
+        this.replyText = '';
+      },
+      error: (err) => {
+        console.error('Failed to submit reply', err);
+        alert('Failed to submit reply. Please try again.');
+      }
+    });
+  }
+
+  cancelReply(): void {
+    this.editingReply = false;
+    this.editingFeedback = null;
+    this.replyText = '';
   }
 
   submitFeedback(): void {
