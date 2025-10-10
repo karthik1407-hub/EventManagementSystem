@@ -12,7 +12,10 @@ import { CartService } from '../cart/services/cart.service';
 })
 export class EventComponent implements OnInit {
   eventList: Event[] = [];
-  filteredEvents: Event[] = [];
+  upcomingEvents: Event[] = [];
+  pastEvents: Event[] = [];
+  filteredUpcoming: Event[] = [];
+  filteredPast: Event[] = [];
   errorMessage: string = '';
   isLoading: boolean = false;
   isOrganizer: boolean = false;
@@ -23,6 +26,8 @@ export class EventComponent implements OnInit {
   priceRange: number = 10000;
   selectedTags: Set<string> = new Set();
   allTags: string[] = ['Outdoor', 'Family Friendly', 'Free Drinks', 'Live Music'];
+
+  currentView: 'upcoming' | 'past' = 'upcoming';
 
   constructor(
     private eventService: EventService,
@@ -51,8 +56,26 @@ export class EventComponent implements OnInit {
     this.isLoading = true;
     this.eventService.getEvent().subscribe({
       next: (data) => {
-        this.eventList = data;
-        this.filteredEvents = data; // Initialize filteredEvents with all events initially
+
+        let baseEvents = data;
+
+        if (this.isOrganizer) {
+          const userId = this.getUserId();
+          if (userId) {
+            baseEvents = data.filter(event => event.organizerID === userId);
+          }
+        } else if (!this.isAdmin) {
+          // Attendees: only future events
+          baseEvents = data.filter(event => this.isFutureEvent(event));
+        }
+        // Admins: all events (no filter)
+
+        this.eventList = baseEvents;
+        this.upcomingEvents = baseEvents.filter(event => this.isFutureEvent(event));
+        this.pastEvents = baseEvents.filter(event => !this.isFutureEvent(event));
+        this.filteredUpcoming = [...this.upcomingEvents];
+        this.filteredPast = [...this.pastEvents];
+        this.currentView = (!this.isOrganizer && !this.isAdmin) ? 'upcoming' : 'upcoming';
         this.isLoading = false;
       },
       error: (err) => {
@@ -63,15 +86,24 @@ export class EventComponent implements OnInit {
     });
   }
 
+  private isFutureEvent(event: Event): boolean {
+    const now = new Date();
+    const eventDate = new Date(event.eventDate);
+    return eventDate >= now;
+  }
+
   applyFilters(): void {
-    this.filteredEvents = this.eventList.filter(event => {
+    const filterFn = (event: Event) => {
       const searchMatch = event.eventName.toLowerCase().includes(this.searchQuery.toLowerCase());
       const categoryMatch = this.selectedCategory ? event.eventType === this.selectedCategory : true;
-      const priceMatch = event.eventPrice <= this.priceRange; // Corrected property name
+      const priceMatch = event.eventPrice <= this.priceRange;
       const tagsMatch = this.selectedTags.size > 0 ? [...this.selectedTags].every(tag => event.tags.includes(tag)) : true;
-      
+
       return searchMatch && categoryMatch && priceMatch && tagsMatch;
-    });
+    };
+
+    this.filteredUpcoming = this.upcomingEvents.filter(filterFn);
+    this.filteredPast = this.pastEvents.filter(filterFn);
   }
 
   onTagChange(tag: string, event: any) {
@@ -89,7 +121,26 @@ export class EventComponent implements OnInit {
     this.priceRange = 50000;
     this.selectedTags.clear();
     document.querySelectorAll<HTMLInputElement>('.tag-list .form-check-input').forEach(el => el.checked = false);
-    this.filteredEvents = this.eventList.slice(); // Reset to show all events
+    this.filteredUpcoming = [...this.upcomingEvents];
+    this.filteredPast = [...this.pastEvents];
+  }
+
+  switchView(view: 'upcoming' | 'past'): void {
+    if (this.isOrganizer || this.isAdmin) {
+      this.currentView = view;
+    }
+  }
+
+  get currentFilteredEvents(): Event[] {
+    return this.currentView === 'upcoming' ? this.filteredUpcoming : this.filteredPast;
+  }
+
+  get currentEventsLength(): number {
+    return this.currentFilteredEvents.length;
+  }
+
+  get showPastEvents(): boolean {
+    return this.isOrganizer || this.isAdmin;
   }
   
   viewEventDetails(eventID: string): void {
