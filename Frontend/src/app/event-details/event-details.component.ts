@@ -1,17 +1,17 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventService } from '../event/services/event.service';
 import { Event } from '../event/models/event.model';
 import { AuthService } from '../auth.service';
 import { Modal } from 'bootstrap';
-import { CartService, OrderBasketDto, OrderBasketItemDto, CreateOrderBasketItemDto } from '../cart/services/cart.service'; // Added
+import { CartService, OrderBasketDto, OrderBasketItemDto, CreateOrderBasketItemDto } from '../cart/services/cart.service';
 
 @Component({
   selector: 'app-event-details',
   templateUrl: './event-details.component.html',
   styleUrls: ['./event-details.component.css']
 })
-export class EventDetailsComponent implements OnInit, AfterViewInit {
+export class EventDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   event: Event | null = null;
   otherEventsByOrganizer: Event[] = [];
   isLoading: boolean = false;
@@ -20,17 +20,22 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   canManageEvent: boolean = false;
   private deleteModal: Modal | undefined;
 
+  timeLeft: number = 0;
+  timerMessage: string = '';
+  showTimer: boolean = false;
+  eventEnded: boolean = false;
+  private timerInterval: any;
+
   constructor(
     private route: ActivatedRoute,
     private eventService: EventService,
     private router: Router,
     private authService: AuthService,
-    private cartService: CartService // Added
+    private cartService: CartService
   ) { }
 
   ngOnInit(): void {
     const userRole = this.authService.getUserRole();
-    // Check if user is an Event Organizer or Admin
     this.canManageEvent = (userRole === 'Event Organizer' || userRole === 'Admin');
 
     this.route.paramMap.subscribe(params => {
@@ -41,6 +46,12 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
         this.errorMessage = 'Event ID not provided.';
       }
     });
+  }
+
+  get formattedTimeLeft(): string {
+    const minutes = Math.floor(this.timeLeft / 60);
+    const seconds = this.timeLeft % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
   canManageThisEvent(): boolean {
@@ -60,15 +71,20 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
 
   fetchEventDetails(id: string): void {
     this.isLoading = true;
+    this.showTimer = false;
+    this.eventEnded = false;
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+
     this.eventService.getEventById(id).subscribe({
       next: (data) => {
-        console.log('Fetched event details:', data);
         this.event = data;
         this.isLoading = false;
+        this.checkEventEndTime();
         if (this.event && this.event.organizerID) {
           this.loadOtherEventsByOrganizer(this.event.organizerID, this.event.eventID);
         } else {
-          console.error('organizerID is undefined in event data:', this.event);
         }
       },
       error: (err) => {
@@ -81,13 +97,9 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   loadOtherEventsByOrganizer(organizerId: string, currentEventId: string): void {
     this.eventService.getEventsByOrganizer(organizerId).subscribe({
       next: (events) => {
-        console.log('Fetched other events by organizer:', events);
-        // Filter out the current event from the list
         this.otherEventsByOrganizer = events.filter(e => e.eventID !== currentEventId);
-        console.log('Filtered other events:', this.otherEventsByOrganizer);
       },
       error: (err) => {
-        console.error('Failed to load other events by organizer:', err);
       }
     });
   }
@@ -114,18 +126,16 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
             this.router.navigate(['/cart']);
           },
           error: (error) => {
-            console.error('Error adding to cart:', error);
             alert('Failed to add event to cart. Please try again.');
           }
         });
       },
       error: (error) => {
-        console.error('Error getting or creating cart:', error);
         alert('Failed to get or create cart. Please try again.');
       }
     });
   }
-  
+
   editEvent(): void {
     if (this.event) {
       this.router.navigate(['/event/edit', this.event.eventID]);
@@ -147,5 +157,43 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
         this.isDeleting = false;
       }
     });
+  }
+
+  checkEventEndTime(): void {
+    if (!this.event) return;
+
+    const eventDate = new Date(this.event.eventDate);
+    const now = new Date();
+    const diff = eventDate.getTime() - now.getTime();
+    const fiveMinutes = 5 * 60 * 1000;
+
+    if (diff > 0 && diff <= fiveMinutes) {
+      this.showTimer = true;
+      this.timeLeft = Math.floor(diff / 1000);
+      this.timerMessage = this.canManageThisEvent() ? 'Your event is starting in' : 'Book the event before the timer ends';
+      this.startTimer();
+    } else if (diff <= 0) {
+      this.eventEnded = true;
+    }
+  }
+
+  startTimer(): void {
+    this.timerInterval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+      } else {
+        this.showTimer = false;
+        this.eventEnded = true;
+        this.timerMessage = this.canManageThisEvent() ? 'Your event has started' : 'Oops! The event has already started. Sorry for the inconvenience.';
+        alert(this.timerMessage);
+        clearInterval(this.timerInterval);
+      }
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
   }
 }

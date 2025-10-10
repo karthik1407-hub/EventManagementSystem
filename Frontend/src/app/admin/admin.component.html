@@ -38,7 +38,6 @@
               <strong>Rating:</strong> {{ item.rating }}/5 | <strong>Comments:</strong> {{ item.comments }}
             </div>
             <div class="item-actions">
-              
               <button class="delete-btn" (click)="initiateDelete('feedback', item.feedbackID)">Delete</button>
             </div>
           </li>
@@ -133,7 +132,6 @@
         </ul>
       </div>
     </section>
-
 
   <!-- Delete Confirmation Modal -->
   <div *ngIf="itemToDelete()" class="modal">

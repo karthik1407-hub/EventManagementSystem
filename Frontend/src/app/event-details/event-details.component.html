@@ -87,10 +87,18 @@
                 <span class="fs-4 fw-bold text-primary">₹{{ event!.eventPrice | number }}</span>
               </div>
 
+              <div *ngIf="showTimer" class="timer-container alert alert-warning">
+                <p>{{ timerMessage }}</p>
+                <p class="fw-bold">Time left: {{ formattedTimeLeft }}</p>
+              </div>
+
               <div *ngIf="!canManageThisEvent(); else organizerView">
-                <button class="btn btn-primary btn-lg w-100" (click)="addToCart(event)">
+                <button *ngIf="!eventEnded" class="btn btn-primary btn-lg w-100" (click)="addToCart(event!)">
                   Add to Cart
                 </button>
+                <div *ngIf="eventEnded" class="alert alert-info">
+                  <p>Kindly move back to the events page.</p>
+                </div>
               </div>
 
               <ng-template #organizerView>

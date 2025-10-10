@@ -56,6 +56,7 @@ export class EventComponent implements OnInit {
     this.isLoading = true;
     this.eventService.getEvent().subscribe({
       next: (data) => {
+        console.log('Fetched events data:', data); // Debug log to check eventDate formats
 
         let baseEvents = data;
 
@@ -73,6 +74,8 @@ export class EventComponent implements OnInit {
         this.eventList = baseEvents;
         this.upcomingEvents = baseEvents.filter(event => this.isFutureEvent(event));
         this.pastEvents = baseEvents.filter(event => !this.isFutureEvent(event));
+        console.log('Upcoming events:', this.upcomingEvents.map(e => ({name: e.eventName, date: e.eventDate}))); // Debug
+        console.log('Past events:', this.pastEvents.map(e => ({name: e.eventName, date: e.eventDate}))); // Debug
         this.filteredUpcoming = [...this.upcomingEvents];
         this.filteredPast = [...this.pastEvents];
         this.currentView = (!this.isOrganizer && !this.isAdmin) ? 'upcoming' : 'upcoming';
@@ -87,9 +90,12 @@ export class EventComponent implements OnInit {
   }
 
   private isFutureEvent(event: Event): boolean {
-    const now = new Date();
+    const today = new Date();
     const eventDate = new Date(event.eventDate);
-    return eventDate >= now;
+    // Compare date parts only (ignore time)
+    const todayDateStr = today.toDateString();
+    const eventDateStr = eventDate.toDateString();
+    return eventDateStr >= todayDateStr;
   }
 
   applyFilters(): void {
