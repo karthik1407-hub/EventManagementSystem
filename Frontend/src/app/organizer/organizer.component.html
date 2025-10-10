@@ -16,9 +16,29 @@
   <div class="tab-content mt-3">
     <!-- Events Tab -->
     <div *ngIf="activeTab === 'events'" class="tab-pane active">
-      <h4>Your Events</h4>
+      <h4>Upcoming Events</h4>
       <div class="row">
-        <div class="col-md-4 d-flex" *ngFor="let event of events">
+        <div class="col-md-4 d-flex" *ngFor="let event of upcomingEvents">
+          <div class="card mb-3">
+            <img [src]="'http://localhost:5247/EventImages/' + event.eventImageUrl" class="card-img-top" alt="Event Image">
+            <div class="card-body">
+              <h5 class="card-title">{{ event.eventName }}</h5>
+              <p class="card-text">{{ event.eventDescription }}</p>
+              <p><strong>Type:</strong> {{ event.eventType }}</p>
+              <p><strong>Location:</strong> {{ event.eventLocation }}</p>
+              <p><strong>Date:</strong> {{ event.eventDate | date }}</p>
+              <p><strong>Price:</strong> ${{ event.eventPrice }}</p>
+              <button class="btn btn-primary" (click)="onEventClick(event)">View Bookings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <h4>Past Events</h4>
+      <div class="row">
+        <div class="col-md-4 d-flex" *ngFor="let event of pastEvents">
           <div class="card mb-3">
             <img [src]="'http://localhost:5247/EventImages/' + event.eventImageUrl" class="card-img-top" alt="Event Image">
             <div class="card-body">

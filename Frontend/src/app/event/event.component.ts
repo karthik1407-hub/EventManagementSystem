@@ -78,7 +78,7 @@ export class EventComponent implements OnInit {
         console.log('Past events:', this.pastEvents.map(e => ({name: e.eventName, date: e.eventDate}))); // Debug
         this.filteredUpcoming = [...this.upcomingEvents];
         this.filteredPast = [...this.pastEvents];
-        this.currentView = (!this.isOrganizer && !this.isAdmin) ? 'upcoming' : 'upcoming';
+        this.currentView = 'upcoming';
         this.isLoading = false;
       },
       error: (err) => {
@@ -90,12 +90,9 @@ export class EventComponent implements OnInit {
   }
 
   private isFutureEvent(event: Event): boolean {
-    const today = new Date();
+    const now = new Date();
     const eventDate = new Date(event.eventDate);
-    // Compare date parts only (ignore time)
-    const todayDateStr = today.toDateString();
-    const eventDateStr = eventDate.toDateString();
-    return eventDateStr >= todayDateStr;
+    return eventDate >= now;
   }
 
   applyFilters(): void {
@@ -132,7 +129,7 @@ export class EventComponent implements OnInit {
   }
 
   switchView(view: 'upcoming' | 'past'): void {
-    if (this.isOrganizer || this.isAdmin) {
+    if (this.showPastEvents || view === 'upcoming') {
       this.currentView = view;
     }
   }

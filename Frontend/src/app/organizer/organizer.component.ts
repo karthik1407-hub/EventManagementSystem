@@ -10,6 +10,8 @@ import { environment } from '../environments/environment';
 })
 export class OrganizerComponent implements OnInit {
   events: any[] = [];
+  upcomingEvents: any[] = [];
+  pastEvents: any[] = [];
   feedbacks: any[] = [];
   tickets: any[] = [];
   selectedEvent: any = null;
@@ -28,7 +30,9 @@ export class OrganizerComponent implements OnInit {
   fetchEvents(): void {
     this.http.get(`${environment.apiUrl}/api/event`).subscribe({
       next: (data: any) => {
-        this.events = data;
+        const now = new Date();
+        this.upcomingEvents = data.filter((event: any) => new Date(event.eventDate) >= now);
+        this.pastEvents = data.filter((event: any) => new Date(event.eventDate) < now);
       },
       error: (err) => console.error('Error fetching events:', err)
     });

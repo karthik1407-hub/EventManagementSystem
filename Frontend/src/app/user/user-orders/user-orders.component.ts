@@ -31,7 +31,7 @@ export class UserOrdersComponent implements OnInit {
     try {
       this.orderService.getUserOrders().subscribe({
         next: (orders) => {
-          this.orders = orders;
+          this.orders = orders.filter(order => order.status !== OrderStatus.EventEnded);
           this.isLoading = false;
         },
         error: (err) => {
