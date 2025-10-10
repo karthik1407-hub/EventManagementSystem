@@ -4,10 +4,10 @@ import { Event } from '../event/models/event.model';
 import { PaymentService } from './services/payment.service';
 import { AuthService } from '../auth.service';
 import { OrderBasketDto } from '../cart/services/cart.service';
-import { TicketService } from '../ticket/services/ticket.service'; // Added
-import { NotificationService } from '../notification/services/notification.service'; // Added
-import { CreateTicketDto, Ticket } from '../ticket/models/ticket.model'; // Added Ticket
-import { CreateNotificationDto, Notification } from '../notification/models/notification.model'; // Added Notification
+import { TicketService } from '../ticket/services/ticket.service';
+import { NotificationService } from '../notification/services/notification.service';
+import { CreateTicketDto, Ticket } from '../ticket/models/ticket.model';
+import { CreateNotificationDto, Notification } from '../notification/models/notification.model';
 
 @Component({
   selector: 'app-payment',
@@ -21,7 +21,7 @@ export class PaymentComponent implements OnInit {
   paymentError: string = '';
   isLoading: boolean = false;
 
-  // New properties for card details
+  // Card details properties
   cardNumber: string = '';
   cardHolder: string = '';
   expiryMonth: string = '';
@@ -30,12 +30,15 @@ export class PaymentComponent implements OnInit {
   years: string[] = [];
   cvv: string = '';
 
+  // Property to track CVV focus
+  isCvvFocused: boolean = false;
+
   constructor(
     private router: Router,
     private paymentService: PaymentService,
     private authService: AuthService,
-    private ticketService: TicketService, // Added
-    private notificationService: NotificationService // Added
+    private ticketService: TicketService,
+    private notificationService: NotificationService
   ) {
     const navigation = this.router.getCurrentNavigation();
     this.basket = navigation?.extras?.state?.['basket'] as OrderBasketDto;
@@ -57,6 +60,15 @@ export class PaymentComponent implements OnInit {
     if (!this.basket || !this.basket.items || this.basket.items.length === 0) {
       this.router.navigate(['/cart']);
     }
+  }
+
+  // Methods to handle CVV focus events
+  onCvvFocus(): void {
+    this.isCvvFocused = true;
+  }
+
+  onCvvBlur(): void {
+    this.isCvvFocused = false;
   }
 
   getMaskedCardNumber(): string {
@@ -89,8 +101,8 @@ export class PaymentComponent implements OnInit {
     }
 
     paymentForm.submitted = true;
-    if (!this.cardNumber || this.cardNumber.length < 16 || !this.expiryMonth || !this.expiryYear || !this.cvv || this.cvv.length < 3 || !paymentForm.form.valid) {
-      this.paymentError = 'Please fill in valid payment details.';
+    if (!paymentForm.form.valid) {
+      this.paymentError = 'Please fill in all required payment details correctly.';
       console.log('payment form is invalid', paymentForm.form.errors);
       return;
     }
@@ -113,13 +125,11 @@ export class PaymentComponent implements OnInit {
         this.isLoading = false;
         alert(`Payment of ${totalAmount} processed successfully. Your order has been placed.`);
 
-        // Process each item in the basket to create tickets and send notifications
         if (this.basket && this.basket.items && this.authService.userValue) {
           const userId = this.authService.userValue.id;
           const bookingDate = new Date().toISOString();
 
           this.basket.items.forEach(item => {
-            // 1. Create Ticket
             const createTicketDto: CreateTicketDto = {
               eventID: item.eventId,
               userID: userId,
@@ -130,8 +140,6 @@ export class PaymentComponent implements OnInit {
             this.ticketService.createTicket(createTicketDto).subscribe({
               next: (ticket: Ticket) => {
                 console.log('Ticket created:', ticket);
-
-                // 2. Send Notification
                 const eventName = this.events[item.eventId]?.eventName || 'Unknown Event';
                 const notificationMessage = `Your ticket for "${eventName}" has been successfully booked! Ticket ID: ${ticket.ticketID}`;
 
