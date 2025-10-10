@@ -21,7 +21,6 @@ import { AddEventComponent } from './event/add-event/add-event.component';
 import { EditEventComponent } from './event/edit-event/edit-event.component';
 
 // User Management
-import { UserComponent } from './user/user.component';
 import { UserdetailsComponent } from './userdetails/userdetails.component';
 import {ProfileComponent} from "./user/profile/profile.component";
 
@@ -45,7 +44,7 @@ const routes: Routes = [
   {path: 'about-us', component: AboutUsComponent},
 
   // Protected Routes
-  { path: 'user', component: UserComponent, canActivate: [AuthGuard] },
+  
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuard], data: { roles: ['Admin'] } },
   { path: 'admin/users', component: AdminUserComponent, canActivate: [AuthGuard], data: { roles: ['Admin'] } },
   { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AuthGuard], data: { roles: ['Event Organizer', 'Admin'] } },

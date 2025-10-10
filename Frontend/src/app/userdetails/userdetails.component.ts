@@ -16,9 +16,7 @@ export class UserdetailsComponent implements OnInit {
   ngOnInit(): void {
     this.updateForm = this.fb.group({
       name: [''],
-      email: [''],
-      contactNumber: [''],
-      roles: ['']
+      contactNumber: ['']
     });
   }
 
