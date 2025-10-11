@@ -20,11 +20,17 @@ export class EventDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   canManageEvent: boolean = false;
   private deleteModal: Modal | undefined;
 
+  showPopup: boolean = false;
+  popupMessage: string = '';
+  popupIsError: boolean = false;
+
   timeLeft: number = 0;
   timerMessage: string = '';
   showTimer: boolean = false;
   eventEnded: boolean = false;
-  private timerInterval: any;
+  timerInterval: any;
+
+
 
   constructor(
     private route: ActivatedRoute,
@@ -122,7 +128,7 @@ export class EventDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
         };
         this.cartService.addToCart(dto).subscribe({
           next: (response) => {
-            alert('Event added to cart successfully!');
+            this.showPopupMessage('Event added to cart successfully!', false);
             this.router.navigate(['/cart']);
           },
           error: (error) => {
@@ -189,6 +195,16 @@ export class EventDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
         clearInterval(this.timerInterval);
       }
     }, 1000);
+  }
+
+  showPopupMessage(message: string, isError: boolean): void {
+    this.popupMessage = message;
+    this.popupIsError = isError;
+    this.showPopup = true;
+  }
+
+  closePopup(): void {
+    this.showPopup = false;
   }
 
   ngOnDestroy(): void {

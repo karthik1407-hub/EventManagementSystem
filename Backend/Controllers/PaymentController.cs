@@ -494,7 +494,15 @@ namespace Event_Management_System.Controllers
                     CreatedDate = order.CreatedDate,
                     UpdatedDate = order.UpdatedDate,
                     StatusString = order.Status.ToString(),
-                    PaymentAmount = payment?.Amount ?? 0
+                    PaymentAmount = payment?.Amount ?? 0,
+                    Items = order.Items?.Select(i => new OrderItemDto
+                    {
+                        Id = i.Id,
+                        OrderId = i.OrderId,
+                        ProductId = i.EventId,
+                        Quantity = i.Quantity,
+                        UnitPrice = i.UnitPrice
+                    }).ToList() ?? new List<OrderItemDto>()
                 };
 
                 dtos.Add(dto);
@@ -517,6 +525,29 @@ namespace Event_Management_System.Controllers
             var updated = await paymentRepository.UpdateOrderAsync(id, existingOrder);
             if (updated == null) return NotFound();
 
+            if (existingOrder.Status == OrderStatus.Cancelled)
+            {
+                var orderItems = await _context.OrderItems
+                    .Where(oi => oi.OrderId == id)
+                    .Select(oi => oi.EventId)
+                    .Distinct()
+                    .ToListAsync();
+
+                foreach (var eventId in orderItems)
+                {
+                    var tickets = await _context.Tickets
+                        .Where(t => t.EventID == eventId && t.UserID == existingOrder.UserId)
+                        .ToListAsync();
+
+                    foreach (var ticket in tickets)
+                    {
+                        ticket.IsCancelled = true;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
             return Ok(new { updated.Id, updated.Status });
         }
 
@@ -537,8 +568,15 @@ namespace Event_Management_System.Controllers
                 Status = order.Status,
                 CreatedDate = order.CreatedDate,
                 UpdatedDate = order.UpdatedDate,
-                StatusString = order.Status.ToString()
-                // Items can be added if needed
+                StatusString = order.Status.ToString(),
+                Items = order.Items?.Select(i => new OrderItemDto
+                {
+                    Id = i.Id,
+                    OrderId = i.OrderId,
+                    ProductId = i.EventId,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList() ?? new List<OrderItemDto>()
             }).ToList();
 
             return Ok(dtos);
@@ -641,7 +679,7 @@ namespace Event_Management_System.Controllers
             public int Status { get; set; }
         }
 
-                public class OrderDto2
+        public class OrderDto2
         {
             public Guid Id { get; set; }
             public Guid UserId { get; set; }
@@ -652,6 +690,7 @@ namespace Event_Management_System.Controllers
             public DateTime UpdatedDate { get; set; }
             public string StatusString { get; set; }
             public decimal PaymentAmount { get; set; }
+            public List<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
         }
     }
 }

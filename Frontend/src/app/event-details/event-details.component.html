@@ -135,3 +135,11 @@
     </div>
   </div>
 </div>
+
+<!-- Popup Modal for Add to Cart -->
+<div class="popup-modal" [class.show]="showPopup">
+  <div class="popup-content" [class.error]="popupIsError">
+    <p>{{ popupMessage }}</p>
+    <button (click)="closePopup()">Close</button>
+  </div>
+</div>

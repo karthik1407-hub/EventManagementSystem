@@ -20,6 +20,10 @@ export class PaymentComponent implements OnInit {
   paymentSuccess: boolean = false;
   paymentError: string = '';
   isLoading: boolean = false;
+  showSuccessModal: boolean = false;
+  showErrorModal: boolean = false;
+  successMessage: string = '';
+  errorMessage: string = '';
 
   // Card details properties
   cardNumber: string = '';
@@ -123,7 +127,8 @@ export class PaymentComponent implements OnInit {
       next: (response) => {
         this.paymentSuccess = true;
         this.isLoading = false;
-        alert(`Payment of ${totalAmount} processed successfully. Your order has been placed.`);
+        this.showSuccessModal = true;
+        this.successMessage = `Payment of ${totalAmount} processed successfully. Your order has been placed.`;
 
         if (this.basket && this.basket.items && this.authService.userValue) {
           const userId = this.authService.userValue.id;
@@ -160,21 +165,29 @@ export class PaymentComponent implements OnInit {
             });
           });
         }
-
-        this.router.navigate(['/user/profile']);
       },
       error: (err: any) => {
+        let errorMsg = 'Payment failed. Please try again.';
         if (err.error && typeof err.error === 'object') {
-          this.paymentError = JSON.stringify(err.error);
+          errorMsg = JSON.stringify(err.error);
         } else if (err.error?.message) {
-          this.paymentError = err.error.message;
+          errorMsg = err.error.message;
         } else if (typeof err === 'string') {
-          this.paymentError = err;
-        } else {
-          this.paymentError = 'Payment failed. Please try again.';
+          errorMsg = err;
         }
+        this.errorMessage = errorMsg;
+        this.showErrorModal = true;
         this.isLoading = false;
       }
     });
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.router.navigate(['/user/profile']);
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
   }
 }

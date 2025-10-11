@@ -30,7 +30,6 @@ import { ProfileComponent } from './user/profile/profile.component';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthInterceptor } from './auth.interceptor';
 import { CartComponent } from './cart/cart.component';
-import { MyTicketComponent } from './ticket/my-ticket/my-ticket.component';
 
 import { AboutUsComponent } from './about-us/about-us.component';
 import { FooterComponent } from './footer/footer.component';
@@ -60,7 +59,6 @@ import { OrganizerComponent } from './organizer/organizer.component';
     AdminUserComponent,
     ProfileComponent,
     CartComponent,
-    MyTicketComponent,
 
     AboutUsComponent,
     FooterComponent,

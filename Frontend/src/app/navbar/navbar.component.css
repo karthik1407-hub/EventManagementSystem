@@ -92,3 +92,14 @@
 .dropdown-item.text-danger:hover {
     background-color: rgba(220, 53, 69, 0.1); /* Subtle red background on hover */
 }
+
+/* Smooth transition for navbar collapse */
+.navbar-collapse {
+    transition: max-height 0.35s ease, opacity 0.35s ease;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.navbar-collapse.show {
+    max-height: 500px; /* Adjust based on content height */
+}

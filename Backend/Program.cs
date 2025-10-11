@@ -62,9 +62,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlOptions => sqlOptions.EnableRetryOnFailure())
 );
-// EventImage
 
-builder.Services.AddScoped<IEventImageRepository, EventImageRepository>();
+
 
 
 // ✅ Register repositories

@@ -19,6 +19,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   notifications: Notification[] = []; // To store fetched notifications
   showNotificationsDropdown: boolean = false; // To control dropdown visibility
   cartItemCount: number = 0;
+  isNavbarCollapsed: boolean = true;
   private subscription: Subscription = new Subscription();
 
   constructor(private authService: AuthService, private notificationService: NotificationService, private cartService: CartService, private elementRef: ElementRef) { }
@@ -65,6 +66,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const clickedInside = this.elementRef.nativeElement.contains(event.target);
     if (!clickedInside) {
       this.showNotificationsDropdown = false;
+      this.isNavbarCollapsed = true;
     }
   }
 
@@ -118,6 +120,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
       event.stopPropagation();
     }
     this.showNotificationsDropdown = !this.showNotificationsDropdown;
+  }
+
+  /**
+   * Toggles the navbar collapse.
+   */
+  toggleNavbar(event: Event): void {
+    event.stopPropagation();
+    this.isNavbarCollapsed = !this.isNavbarCollapsed;
   }
 
   /**

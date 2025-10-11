@@ -14,10 +14,9 @@
   
   .loader-5 {
     text-align: center;
-  padding: 50px;
-  font-size: 18px;
-    position: absolute;
-    scale: 0.325;
+   font-size: 18px;
+    position:relative;
+    scale: .5;
   }
   
   .loader-5 svg {
