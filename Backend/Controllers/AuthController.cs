@@ -1,5 +1,4 @@
-﻿using Event_Management_System.Data;
-using Event_Management_System.Models.Domain;
+﻿using Event_Management_System.Models.Domain;
 using Event_Management_System.Models.DTO;
 using Event_Management_System.Repositories.Interface;
 using Microsoft.AspNetCore.Identity;
@@ -16,19 +15,16 @@ namespace Event_Management_System.Controllers
         private readonly ITokenRepository tokenRepository;
         private readonly IAuthRepository authRepository;
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly ApplicationDbContext _dbContext;
 
         public AuthController(UserManager<IdentityUser> userManager,
             ITokenRepository tokenRepository,
             IAuthRepository authRepository,
-            RoleManager<IdentityRole> roleManager,
-            ApplicationDbContext dbContext) // Inject ApplicationDbContext
+            RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
             this.authRepository = authRepository;
             this.roleManager = roleManager;
-            this._dbContext = dbContext;
         }
 
         // POST: {apibaseurl}/api/auth/login
