@@ -53,7 +53,7 @@ export class ProfileComponent implements OnInit {
   fetchProfile() {
     if (this.token && this.userId) {
       const headers = new HttpHeaders().set('Authorization', `Bearer ${this.token}`);
-      this.http.get(`https://localhost:7272/api/Users/${this.userId}`, { headers })
+      this.http.get(`https://localhost:7272/api/User/${this.userId}`, { headers })
       .subscribe({
         next: (data: any) => {
           this.profile = data;
@@ -88,14 +88,12 @@ export class ProfileComponent implements OnInit {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.token}`);
 
     // Prepare payload with only allowed fields
-    const rolesValue = this.editProfile.roles || this.editProfile.Roles;
     const updatePayload = {
       Name: this.editProfile.Name || this.editProfile.name,
       ContactNumber: this.editProfile.ContactNumber || this.editProfile.contactNumber,
-      Roles: Array.isArray(rolesValue) ? rolesValue.join(',') : rolesValue,
     };
 
-    this.http.put(`https://localhost:7272/api/Users/${userId}`, updatePayload, { headers, observe: 'response' })
+    this.http.put(`https://localhost:7272/api/User/${userId}`, updatePayload, { headers, observe: 'response' })
       .subscribe({
         next: (response) => {
           if (response.status === 204) {

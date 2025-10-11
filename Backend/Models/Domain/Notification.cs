@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Event_Management_System.Models.Domain
 {
@@ -11,8 +12,7 @@ namespace Event_Management_System.Models.Domain
         public Guid? TicketID { get; set; }
         public string Message { get; set; }
         public DateTime SentTimestamp { get; set; }
-
-        public UserDto User { get; set; }
+        public User User { get; set; }
         public Event Event { get; set; }
     }
 

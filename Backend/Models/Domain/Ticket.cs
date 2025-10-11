@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Event_Management_System.Models.Domain
 {
@@ -7,14 +8,10 @@ namespace Event_Management_System.Models.Domain
         [Key]
         public Guid TicketID { get; set; }
         public Guid EventID { get; set; }
-        public Event Event { get; set; }
-
         public Guid UserID { get; set; }
-        public UserDto User { get; set; }
-
         public DateTime BookingDate { get; set; }
         public bool IsCancelled { get; set; }
+        public User User { get; set; }
+        public Event Event { get; set; }
     }
-
-
 }

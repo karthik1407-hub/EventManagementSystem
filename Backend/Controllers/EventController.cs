@@ -1,13 +1,15 @@
-﻿using Event_Management_System.Data;
-using Event_Management_System.Models.Domain;
+﻿using Event_Management_System.Models.Domain;
 using Event_Management_System.Models.DTO;
+using Event_Management_System.Repositories.Interface;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.IO;
-using System.Threading.Tasks;
 using System;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Event_Management_System.Controllers
 {
@@ -15,13 +17,13 @@ namespace Event_Management_System.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IEventRepository _eventRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EventController(ApplicationDbContext dbContext, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
+        public EventController(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
         {
-            _dbContext = dbContext;
+            _eventRepository = eventRepository;
             _webHostEnvironment = webHostEnvironment;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -41,12 +43,12 @@ namespace Event_Management_System.Controllers
 
             if (isOrganizer)
             {
-                var events = await _dbContext.Events.Where(e => e.OrganizerID == userId).ToListAsync();
+                var events = await _eventRepository.GetEventsByOrganizer(userId);
                 return Ok(events);
             }
             else
             {
-                var events = await _dbContext.Events.ToListAsync();
+                var events = await _eventRepository.GetAllEvents();
                 return Ok(events);
             }
         }
@@ -55,7 +57,7 @@ namespace Event_Management_System.Controllers
         [Authorize]
         public async Task<IActionResult> GetEventById(Guid id)
         {
-            var existingEvent = await _dbContext.Events.FirstOrDefaultAsync(x => x.EventID == id);
+            var existingEvent = await _eventRepository.GetEventById(id);
             if (existingEvent == null)
             {
                 return NotFound();
@@ -67,12 +69,12 @@ namespace Event_Management_System.Controllers
         [Authorize]
         public async Task<IActionResult> GetEventsByOrganizer(Guid organizerId)
         {
-            var events = await _dbContext.Events.Where(e => e.OrganizerID == organizerId).ToListAsync();
+            var events = await _eventRepository.GetEventsByOrganizer(organizerId);
             return Ok(events);
         }
 
         [HttpPost]
-        
+        [Authorize(Roles = "Admin,Event Organizer")]
         public async Task<IActionResult> CreateEvent([FromForm] CreateEventDto createEventDto)
         {
             //if (createEventDto.EventImage == null || createEventDto.EventImage.Length == 0)
@@ -115,14 +117,13 @@ namespace Event_Management_System.Controllers
                 OrganizerID = userId // Assign the user ID from the token
             };
 
-            await _dbContext.Events.AddAsync(newEvent);
-            await _dbContext.SaveChangesAsync();
+            await _eventRepository.CreateEvent(newEvent);
 
             return CreatedAtAction(nameof(GetEventById), new { id = newEvent.EventID }, newEvent);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Event Organizer")]
+        [Authorize(Roles = "Admin,Event Organizer")]
         public async Task<IActionResult> UpdateEvent(Guid id, [FromForm] UpdateEventDto updateEventDto)
         {
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -131,10 +132,17 @@ namespace Event_Management_System.Controllers
                 return Unauthorized("User is not authenticated or the ID is invalid.");
             }
 
-            var existingEvent = await _dbContext.Events.FirstOrDefaultAsync(x => x.EventID == id && x.OrganizerID == userId);
+            var existingEvent = await _eventRepository.GetEventById(id);
             if (existingEvent == null)
             {
                 return NotFound();
+            }
+
+            var userRoles = _httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+            var isAdmin = userRoles.Contains("Admin");
+            if (!isAdmin && existingEvent.OrganizerID != userId)
+            {
+                return Forbid("You do not have permission to update this event.");
             }
 
             if (updateEventDto.EventImage != null && updateEventDto.EventImage.Length > 0)
@@ -163,13 +171,12 @@ namespace Event_Management_System.Controllers
             existingEvent.EventDescription = updateEventDto.EventDescription;
             existingEvent.EventPrice = updateEventDto.EventPrice;// Ensure this is updated
 
-            _dbContext.Events.Update(existingEvent);
-            await _dbContext.SaveChangesAsync();
+            await _eventRepository.UpdateEvent(existingEvent);
             return Ok(existingEvent);
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Event Organizer")]
+        [Authorize(Roles = "Admin,Event Organizer")]
         public async Task<IActionResult> DeleteEvent(Guid id)
         {
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -178,10 +185,17 @@ namespace Event_Management_System.Controllers
                 return Unauthorized("User is not authenticated or the ID is invalid.");
             }
 
-            var ev = await _dbContext.Events.FirstOrDefaultAsync(e => e.EventID == id && e.OrganizerID == userId);
+            var ev = await _eventRepository.GetEventById(id);
             if (ev == null)
             {
                 return NotFound();
+            }
+
+            var userRoles = _httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+            var isAdmin = userRoles.Contains("Admin");
+            if (!isAdmin && ev.OrganizerID != userId)
+            {
+                return Forbid("You do not have permission to delete this event.");
             }
 
             // Delete the associated image file
@@ -193,10 +207,8 @@ namespace Event_Management_System.Controllers
                     System.IO.File.Delete(imagePath);
                 }
             }
-
-            _dbContext.Events.Remove(ev);
-            await _dbContext.SaveChangesAsync();
-            return NoContent();
+            await _eventRepository.DeleteEvent(id);
+            return Ok($"Event with Id {id}  is deleted successfully.");
         }
     }
 }

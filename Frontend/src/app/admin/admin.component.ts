@@ -1,19 +1,31 @@
 import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../environments/environment';
+import { UserService } from '../user/services/user.service';
 import { User } from '../user/models/user.model';
+import { AuthService } from '../auth.service';
 
 // --- Interfaces for better type safety ---
-import { Feedback } from '../feedback/models/feedback.model';
-import { Event } from '../event/models/event.model';
-
+interface Feedback {
+  feedbackID: string;
+  comments: string;
+  rating: number;
+  eventID: string;
+  userID: string;
+  eventName?: string;
+  userEmail?: string;
+  submittedTimestamp?: string;
+}
 interface Notification {
   notificationID: string;
   message: string;
   sentTimestamp: string;
+  user?: {
+    email: string;
+  };
 }
 interface Ticket {
   ticketID: string;
@@ -21,6 +33,19 @@ interface Ticket {
   userID?: string;
   bookingDate?: string;
   isCancelled?: boolean;
+  event?: {
+    eventName: string;
+  };
+  user?: {
+    email: string;
+  };
+}
+interface Event {
+  eventID: string;
+  eventName: string;
+  eventDate: string;
+  location?: string;
+  description?: string;
 }
 interface Payment {
   id: string;
@@ -32,14 +57,6 @@ interface Payment {
   transactionId?: string;
 }
 
-// --- Entity Configuration Interface ---
-interface EntityConfig {
-  apiEndpoint: string;
-  idField: string;
-  formFields: { [key: string]: any[] };
-  hasForm: boolean;
-  postEndpoint?: string; // For payments, it's /payment
-}
 
 @Component({
   selector: 'app-admin',
@@ -51,101 +68,72 @@ export class AdminComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
+  private authService = inject(AuthService);
 
   // --- API Configuration ---
   private readonly API_URL = environment.apiUrl;
 
-  // --- Entity Configurations ---
-  private entityConfigs: { [key: string]: EntityConfig } = {
-    users: { apiEndpoint: 'Users', idField: 'userID', formFields: {}, hasForm: false },
-    feedback: {
-      apiEndpoint: 'Feedback',
-      idField: 'feedbackID',
-      formFields: {
-        comments: ['', [Validators.required, Validators.minLength(10)]],
-        rating: ['5', [Validators.required, Validators.min(1), Validators.max(5)]]
-      },
-      hasForm: true
-    },
-    notifications: {
-      apiEndpoint: 'Notification',
-      idField: 'notificationID',
-      formFields: {
-        message: ['', [Validators.required, Validators.minLength(5)]]
-      },
-      hasForm: true
-    },
-    tickets: {
-      apiEndpoint: 'Ticket',
-      idField: 'ticketID',
-      formFields: {
-        eventID: ['', Validators.required],
-        userID: ['', Validators.required],
-        bookingDate: [new Date().toISOString().split('T')[0], Validators.required],
-        isCancelled: [false]
-      },
-      hasForm: true
-    },
-    events: { apiEndpoint: 'Event', idField: 'eventID', formFields: {}, hasForm: false },
-    payments: {
-      apiEndpoint: 'Payment',
-      idField: 'id',
-      formFields: {
-        userId: ['', Validators.required],
-        amount: ['', [Validators.required, Validators.min(0.01)]],
-        method: ['', Validators.required],
-        status: ['Pending', Validators.required],
-        transactionId: ['']
-      },
-      hasForm: true,
-      postEndpoint: 'Payment/payment'
-    }
-  };
+  // --- State Management with Signals ---
+  users: WritableSignal<User[]> = signal([]);
+  feedback: WritableSignal<Feedback[]> = signal([]);
+  notifications: WritableSignal<Notification[]> = signal([]);
+  tickets: WritableSignal<Ticket[]> = signal([]);
+  events: WritableSignal<Event[]> = signal([]);
+  payments: WritableSignal<Payment[]> = signal([]);
 
-  // --- State Management with Maps ---
-  dataSignals = new Map<string, WritableSignal<any[]>>();
-  countSignals = new Map<string, WritableSignal<number>>();
-  showFormSignals = new Map<string, WritableSignal<boolean>>();
-  editingSignals = new Map<string, WritableSignal<string | null>>();
-  forms = new Map<string, FormGroup | null>();
+  // Count signals for initial display
+  userCount: WritableSignal<number> = signal(0);
+  feedbackCount: WritableSignal<number> = signal(0);
+  notificationCount: WritableSignal<number> = signal(0);
+  ticketCount: WritableSignal<number> = signal(0);
+  eventCount: WritableSignal<number> = signal(0);
+  paymentCount: WritableSignal<number> = signal(0);
 
   isLoading = signal(true);
   errorMessage = signal('');
   activeSection = signal('');
   expandedSections: WritableSignal<Set<string>> = signal(new Set());
+
   itemToDelete = signal<{ type: string, id: string } | null>(null);
 
-  constructor() {
-    // Initialize maps
-    Object.keys(this.entityConfigs).forEach(key => {
-      this.dataSignals.set(key, signal([]));
-      this.countSignals.set(key, signal(0));
-      this.showFormSignals.set(key, signal(false));
-      this.editingSignals.set(key, signal(null));
-      this.forms.set(key, null);
-    });
-  }
+  // --- Form State Management ---
+  userForm: FormGroup | null = null;
+  notificationForm: FormGroup | null = null;
+  ticketForm: FormGroup | null = null;
+  eventForm: FormGroup | null = null;
+  paymentForm: FormGroup | null = null;
+
+  // Form visibility states
+  showUserForm = signal(false);
+  showNotificationForm = signal(false);
+  showTicketForm = signal(false);
+  showEventForm = signal(false);
+  showPaymentForm = signal(false);
+
+  // Edit mode states
+  editingUser = signal<number | null>(null);
+  editingNotification = signal<string | null>(null);
+  editingTicket = signal<string | null>(null);
+  editingEvent = signal<string | null>(null);
+  editingPayment = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadCounts();
-    this.expandedSections.update(set => set.add('feedback'));
-    this.loadSectionData('feedback');
-    this.loadSectionData('users');
-    this.loadSectionData('events');
   }
 
-  getUserName(userId: string): string {
-    const users = this.dataSignals.get('users')!();
-    const user = users.find((u: any) => u.userID === userId);
-    return user ? user.email : userId;
+  // Helper method to map API event data to frontend Event interface
+  private mapEventData(apiEvent: any): Event {
+    // <-- CORRECTED MAPPING LOGIC
+    // This handles the API's mixed naming convention (e.g., eventName and EventLocation)
+    return {
+      ...apiEvent, // Keeps all existing correct properties (like eventName, eventDate)
+      eventID: apiEvent.eventID || apiEvent.EventID, // Handle both cases for safety
+      location: apiEvent.location || apiEvent.EventLocation,      // Handle camelCase and PascalCase
+      description: apiEvent.description || apiEvent.EventDescription // Handle camelCase and PascalCase
+    };
   }
 
-  getEventName(eventId: string): string {
-    const events = this.dataSignals.get('events')!();
-    const event = events.find((e: any) => e.eventID === eventId);
-    return event ? event.eventName : eventId;
-  }
-
+  // --- UI Interaction ---
   toggleSection(section: string): void {
     const expanded = this.expandedSections();
     if (expanded.has(section)) {
@@ -158,102 +146,179 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  addEntity(entity: string): void {
-    const config = this.entityConfigs[entity];
-    if (config.hasForm) {
-      this.showAddForm(entity);
-    } else {
-      const routes: { [key: string]: string } = {
-        users: '/admin/users',
-        events: '/add-event'
-      };
-      this.router.navigate([routes[entity]]);
-    }
-  }
+  // --- Navigation Methods ---
+  addUser(): void { this.router.navigate(['/admin/users']); }
+  editUser(user: User): void { this.router.navigate(['/admin/users'], { queryParams: { edit: user.userID } }); }
 
-  editEntity(entity: string, item: any): void {
-    const config = this.entityConfigs[entity];
-    if (config.hasForm) {
-      this.showEditForm(entity, item);
-    } else {
-      const routes: { [key: string]: string } = {
-        users: '/admin/users',
-        events: '/event/edit'
-      };
-      const route = routes[entity];
-      const id = item[config.idField];
-      if (entity === 'events') {
-        this.router.navigate([route, id]);
-      } else {
-        this.router.navigate([route], { queryParams: { edit: id } });
-      }
-    }
+  addFeedback(): void { this.router.navigate(['/feedback']); }
+  editFeedback(feedbackItem: Feedback): void { this.router.navigate(['/feedback'], { queryParams: { edit: feedbackItem.feedbackID } }); }
+
+  addNotification(): void { this.router.navigate(['/notifications']); }
+  editNotification(notification: Notification): void { this.router.navigate(['/notifications'], { queryParams: { edit: notification.notificationID } });}
+
+
+  addTicket(): void { this.router.navigate(['/tickets']); }
+  editTicket(ticket: Ticket): void { this.router.navigate(['/tickets'], { queryParams: { edit: ticket.ticketID } }); }
+
+  addEvent(): void { this.router.navigate(['/add-event']); }
+  editEvent(event: Event): void { this.router.navigate(['/event/edit', event.eventID]); }
+  
+  addPayment(): void { this.router.navigate(['/payment']); }
+  editPayment(payment: Payment): void { this.router.navigate(['/payment'], { queryParams: { edit: payment.id } });}
+
+
+  // --- Data Loading ---
+  private getAuthHeaders(): HttpHeaders {
+    const userString = sessionStorage.getItem('user');
+    if (!userString) return new HttpHeaders();
+    const user = JSON.parse(userString);
+    return user?.token ? new HttpHeaders({ 'Authorization': `Bearer ${user.token}` }) : new HttpHeaders();
   }
 
   loadCounts(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
+    const headers = this.getAuthHeaders();
 
-    const requests: { [key: string]: any } = {};
-    Object.keys(this.entityConfigs).forEach(key => {
-      requests[key] = this.http.get<any[]>(`${this.API_URL}/api/${this.entityConfigs[key].apiEndpoint}`);
-    });
-
-    forkJoin(requests).subscribe({
-      next: (data: any) => {
-        Object.keys(data).forEach(key => {
-          this.countSignals.get(key)!.set(data[key].length);
-        });
-      },
-      error: (err) => {
-        console.error('Failed to load counts', err);
-        this.errorMessage.set('Failed to load dashboard data. Please try again later.');
-      },
-      complete: () => {
-        this.isLoading.set(false);
-      }
-    });
+    if (this.isAdmin()) {
+      forkJoin({
+        users: this.http.get<User[]>(`${this.API_URL}/api/User`, { headers }),
+        feedback: this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`, { headers }),
+        notifications: this.http.get<Notification[]>(`${this.API_URL}/api/Notification`, { headers }),
+        tickets: this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`, { headers }),
+        events: this.http.get<any[]>(`${this.API_URL}/api/Event`, { headers }),
+        payments: this.http.get<Payment[]>(`${this.API_URL}/api/Payment`, { headers })
+      }).subscribe({
+        next: (data) => {
+          const mappedEvents = data.events.map((event: any) => this.mapEventData(event));
+          this.users.set(data.users);
+          this.feedback.set(data.feedback);
+          this.notifications.set(data.notifications);
+          this.tickets.set(data.tickets);
+          this.events.set(mappedEvents);
+          this.payments.set(data.payments);
+          this.userCount.set(data.users.length);
+          this.feedbackCount.set(data.feedback.length);
+          this.notificationCount.set(data.notifications.length);
+          this.ticketCount.set(data.tickets.length);
+          this.eventCount.set(mappedEvents.length);
+          this.paymentCount.set(data.payments.length);
+        },
+        error: (err) => {
+          console.error('Failed to load counts', err);
+          this.errorMessage.set('Failed to load dashboard data. Please try again later.');
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        }
+      });
+    } else if (this.isOrganizer()) {
+      forkJoin({
+        feedback: this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`, { headers }),
+        notifications: this.http.get<Notification[]>(`${this.API_URL}/api/Notification/organizer`, { headers }),
+        tickets: this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`, { headers }),
+        events: this.http.get<any[]>(`${this.API_URL}/api/Event`, { headers }),
+        payments: this.http.get<Payment[]>(`${this.API_URL}/api/Payment`, { headers })
+      }).subscribe({
+        next: (data) => {
+          const mappedEvents = data.events.map((event: any) => this.mapEventData(event));
+          this.feedback.set(data.feedback);
+          this.notifications.set(data.notifications);
+          this.tickets.set(data.tickets);
+          this.events.set(mappedEvents);
+          this.payments.set(data.payments);
+          this.feedbackCount.set(data.feedback.length);
+          this.notificationCount.set(data.notifications.length);
+          this.ticketCount.set(data.tickets.length);
+          this.eventCount.set(mappedEvents.length);
+          this.paymentCount.set(data.payments.length);
+        },
+        error: (err) => {
+          console.error('Failed to load counts', err);
+          this.errorMessage.set('Failed to load dashboard data. Please try again later.');
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        }
+      });
+    }
   }
 
   loadSectionData(section: string): void {
-    const config = this.entityConfigs[section];
-    this.http.get<any[]>(`${this.API_URL}/api/${config.apiEndpoint}`).subscribe({
-      next: (data) => {
-        this.dataSignals.get(section)!.set(data);
-        this.countSignals.get(section)!.set(data.length);
-        if (section === 'feedback') {
-          console.log('Feedback data received:', data);
+    const headers = this.getAuthHeaders();
+    switch (section) {
+      case 'users': {
+        if (this.isAdmin()) {
+          this.http.get<User[]>(`${this.API_URL}/api/User`, { headers }).subscribe({
+            next: (data) => this.users.set(data),
+            error: (err) => console.error('Failed to load users', err)
+          });
         }
-      },
-      error: (err) => console.error(`Failed to load ${section}`, err)
-    });
-  }
-
-  loadAllData(): void {
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-
-    const requests: { [key: string]: any } = {};
-    Object.keys(this.entityConfigs).forEach(key => {
-      requests[key] = this.http.get<any[]>(`${this.API_URL}/api/${this.entityConfigs[key].apiEndpoint}`);
-    });
-
-    forkJoin(requests).subscribe({
-      next: (data: any) => {
-        Object.keys(data).forEach(key => {
-          this.dataSignals.get(key)!.set(data[key]);
-        });
-      },
-      error: (err) => {
-        console.error('Failed to load data', err);
-        this.errorMessage.set('Failed to load dashboard data. Please try again later.');
-      },
-      complete: () => {
-        this.isLoading.set(false);
+        break;
       }
-    });
+      case 'feedback': {
+        this.http.get<Feedback[]>(`${this.API_URL}/api/Feedback`, { headers }).subscribe({
+          next: (data) => {
+            const sanitizedData = data.map(item => ({
+              ...item,
+              userEmail: item.userEmail || 'Unknown User',
+              eventName: item.eventName || 'N/A',
+              comments: item.comments || 'No comments provided',
+              rating: item.rating || 0
+            }));
+            this.feedback.set(sanitizedData);
+          },
+          error: (err) => console.error('Failed to load feedback', err)
+        });
+        break;
+      }
+      case 'notifications': {
+        if (this.isAdmin()) {
+          this.http.get<Notification[]>(`${this.API_URL}/api/Notification`, { headers }).subscribe({
+            next: (data) => {
+              this.notifications.set(data);
+              this.notificationCount.set(data.length);
+            },
+            error: (err) => console.error('Failed to load notifications', err)
+          });
+        } else if (this.isOrganizer()) {
+          this.http.get<Notification[]>(`${this.API_URL}/api/Notification/organizer`, { headers }).subscribe({
+            next: (data) => {
+              this.notifications.set(data);
+              this.notificationCount.set(data.length);
+            },
+            error: (err) => console.error('Failed to load organizer notifications', err)
+          });
+        }
+        break;
+      }
+      case 'tickets':
+        this.http.get<Ticket[]>(`${this.API_URL}/api/Ticket`, { headers }).subscribe({
+          next: (data) => {
+            this.tickets.set(data);
+          },
+          error: (err) => console.error('Failed to load tickets', err)
+        });
+        break;
+      case 'events':
+        this.http.get<any[]>(`${this.API_URL}/api/Event`, { headers }).subscribe({
+          next: (data) => {
+            const mappedEvents = data.map(event => this.mapEventData(event));
+            this.events.set(mappedEvents);
+          },
+          error: (err) => console.error('Failed to load events', err)
+        });
+        break;
+      case 'payments':
+        this.http.get<Payment[]>(`${this.API_URL}/api/Payment`, { headers }).subscribe({
+          next: (data) => this.payments.set(data),
+          error: (err) => console.error('Failed to load payments', err)
+        });
+        break;
+    }
   }
 
+  // --- Deletion Logic ---
   initiateDelete(type: string, id: string): void {
     this.itemToDelete.set({ type, id });
   }
@@ -268,28 +333,61 @@ export class AdminComponent implements OnInit {
 
     const { type, id } = item;
     if (!id) {
-      console.error(`Delete failed: No id provided for type ${type}`);
       this.errorMessage.set(`Failed to delete the selected ${type}: missing id.`);
       this.itemToDelete.set(null);
       return;
     }
 
     const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    if (!guidRegex.test(id)) {
-      console.error(`Delete failed: Invalid GUID format for id ${id}`);
-      this.errorMessage.set(`Failed to delete the selected ${type}: invalid id format.`);
-      this.itemToDelete.set(null);
-      return;
+    if (type !== 'user' && !guidRegex.test(id)) { 
+      console.warn(`ID for ${type} is not a valid GUID: ${id}. Proceeding anyway.`);
     }
 
-    const config = this.entityConfigs[type];
-    const apiUrl = `${this.API_URL}/api/${config.apiEndpoint}/${id}`;
-    const signalToUpdate = this.dataSignals.get(type)!;
+    const headers = this.getAuthHeaders();
+    let apiUrl = `${this.API_URL}/api/`;
 
-    this.http.delete(apiUrl).subscribe({
+    let signalToUpdate: WritableSignal<any[]>;
+    switch (type) {
+      case 'user':
+        apiUrl += `User/${id}`;
+        signalToUpdate = this.users;
+        break;
+      case 'feedback':
+        apiUrl += `Feedback/${id}`;
+        signalToUpdate = this.feedback;
+        break;
+      case 'notification':
+        apiUrl += `Notification/${id}`;
+        signalToUpdate = this.notifications;
+        break;
+      case 'ticket':
+        apiUrl += `Ticket/${id}`;
+        signalToUpdate = this.tickets;
+        break;
+      case 'event':
+        apiUrl += `Event/${id}`;
+        signalToUpdate = this.events;
+        break;
+      case 'payment':
+        apiUrl += `Payment/${id}`;
+        signalToUpdate = this.payments;
+        break;
+      default:
+        console.error('Invalid delete type:', type);
+        this.itemToDelete.set(null);
+        return;
+    }
+
+    this.http.delete(apiUrl, { headers }).subscribe({
       next: () => {
-        signalToUpdate.update(currentItems => currentItems.filter(i => i[config.idField] !== id));
-        console.log(`${type} with id ${id} deleted successfully.`);
+        signalToUpdate.update(currentItems => currentItems.filter(i => {
+          if (type === 'user') return i.userID !== id;
+          if (type === 'event') return i.eventID !== id;
+          if (type === 'feedback') return i.feedbackID !== id;
+          if (type === 'notification') return i.notificationID !== id;
+          if (type === 'ticket') return i.ticketID !== id;
+          return i.id !== id;
+        }));
         this.itemToDelete.set(null);
       },
       error: (err) => {
@@ -300,79 +398,221 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  // --- Generic Form Methods ---
-  showAddForm(entity: string): void {
-    const config = this.entityConfigs[entity];
-    if (!config.hasForm) return;
-    this.initializeForm(entity);
-    this.showFormSignals.get(entity)!.set(true);
-    this.editingSignals.get(entity)!.set(null);
+  // --- Role Checks ---
+  getRole(): string {
+    return this.authService.getUserRole() || '';
+  }
+  isOrganizer(): boolean {
+    return this.getRole().toLowerCase() === 'event organizer';
+  }
+  isAdmin(): boolean {
+    return this.getRole().toLowerCase() === 'admin';
   }
 
-  showEditForm(entity: string, item: any): void {
-    const config = this.entityConfigs[entity];
-    if (!config.hasForm) return;
-    this.initializeForm(entity, item);
-    this.showFormSignals.get(entity)!.set(true);
-    this.editingSignals.get(entity)!.set(item[config.idField]);
+
+  // ===== NOTIFICATION CRUD =====
+  showAddNotificationForm(): void {
+    this.initializeNotificationForm();
+    this.showNotificationForm.set(true);
+    this.editingNotification.set(null);
   }
 
-  hideForm(entity: string): void {
-    const config = this.entityConfigs[entity];
-    if (!config.hasForm) return;
-    this.showFormSignals.get(entity)!.set(false);
-    this.editingSignals.get(entity)!.set(null);
-    this.forms.set(entity, null);
+  showEditNotificationForm(notification: Notification): void {
+    this.initializeNotificationForm(notification);
+    this.showNotificationForm.set(true);
+    this.editingNotification.set(notification.notificationID);
   }
 
-  private initializeForm(entity: string, item?: any): void {
-    const config = this.entityConfigs[entity];
-    const formGroup: { [key: string]: any } = {};
-    Object.keys(config.formFields).forEach(field => {
-      const [defaultValue, validators] = config.formFields[field];
-      formGroup[field] = [item ? item[field] || defaultValue : defaultValue, validators];
+  hideNotificationForm(): void {
+    this.showNotificationForm.set(false);
+    this.editingNotification.set(null);
+    this.notificationForm = null;
+  }
+
+  private initializeNotificationForm(notification?: Notification): void {
+    this.notificationForm = this.formBuilder.group({
+      message: [notification?.message || '', [Validators.required, Validators.minLength(5)]]
     });
-    this.forms.set(entity, this.formBuilder.group(formGroup));
   }
 
-  saveForm(entity: string): void {
-    const config = this.entityConfigs[entity];
-    const form = this.forms.get(entity);
-    if (!form?.valid) {
+  saveNotification(): void {
+    if (!this.notificationForm?.valid) {
       this.errorMessage.set('Please fill in all required fields correctly.');
       return;
     }
 
-    const formData = { ...form.value };
-    // Special handling for rating
-    if (entity === 'feedback' && formData.rating) {
-      formData.rating = parseInt(formData.rating, 10);
-    }
+    const formData = this.notificationForm.value;
+    const headers = this.getAuthHeaders();
+    const isEditing = this.editingNotification() !== null;
 
-    const isEditing = this.editingSignals.get(entity)!() !== null;
-    const id = this.editingSignals.get(entity)!();
-
-    const apiUrl = `${this.API_URL}/api/${config.apiEndpoint}`;
-    const request = isEditing
-      ? this.http.put(`${apiUrl}/${id}`, formData)
-      : this.http.post(config.postEndpoint ? `${this.API_URL}/api/${config.postEndpoint}` : apiUrl, formData);
-
-    request.subscribe({
-      next: (response: any) => {
-        const signal = this.dataSignals.get(entity)!;
-        if (isEditing) {
-          signal.update(items => items.map(i => i[config.idField] === id ? response : i));
-        } else {
-          signal.update(items => [...items, response]);
-          this.countSignals.get(entity)!.update(count => count + 1);
+    if (isEditing) {
+      const notificationId = this.editingNotification();
+      this.http.put(`${this.API_URL}/api/Notification/${notificationId}`, formData, { headers }).subscribe({
+        next: (updatedNotification: any) => {
+          this.notifications.update(notifications =>
+            notifications.map(n => n.notificationID === notificationId ? updatedNotification : n)
+          );
+          this.hideNotificationForm();
+          this.errorMessage.set('');
+        },
+        error: (err) => {
+          console.error('Failed to update notification', err);
+          this.errorMessage.set('Failed to update notification. Please try again.');
         }
-        this.hideForm(entity);
-        this.errorMessage.set('');
-      },
-      error: (err) => {
-        console.error(`Failed to ${isEditing ? 'update' : 'create'} ${entity}`, err);
-        this.errorMessage.set(`Failed to ${isEditing ? 'update' : 'create'} ${entity}. Please try again.`);
-      }
+      });
+    } else {
+      this.http.post(`${this.API_URL}/api/Notification`, formData, { headers }).subscribe({
+        next: (newNotification: any) => {
+          this.notifications.update(notifications => [...notifications, newNotification]);
+          this.hideNotificationForm();
+          this.errorMessage.set('');
+          this.notificationCount.update(count => count + 1);
+        },
+        error: (err) => {
+          console.error('Failed to create notification', err);
+          this.errorMessage.set('Failed to create notification. Please try again.');
+        }
+      });
+    }
+  }
+
+  // ===== TICKET CRUD =====
+  showAddTicketForm(): void {
+    this.initializeTicketForm();
+    this.showTicketForm.set(true);
+    this.editingTicket.set(null);
+  }
+
+  showEditTicketForm(ticket: Ticket): void {
+    this.initializeTicketForm(ticket);
+    this.showTicketForm.set(true);
+    this.editingTicket.set(ticket.ticketID);
+  }
+
+  hideTicketForm(): void {
+    this.showTicketForm.set(false);
+    this.editingTicket.set(null);
+    this.ticketForm = null;
+  }
+
+  private initializeTicketForm(ticket?: Ticket): void {
+    this.ticketForm = this.formBuilder.group({
+      eventID: [ticket?.eventID || '', Validators.required],
+      userID: [ticket?.userID || '', Validators.required],
+      bookingDate: [ticket?.bookingDate || new Date().toISOString().split('T')[0], Validators.required],
+      isCancelled: [ticket?.isCancelled || false]
     });
   }
+
+  saveTicket(): void {
+    if (!this.ticketForm?.valid) {
+      this.errorMessage.set('Please fill in all required fields correctly.');
+      return;
+    }
+
+    const formData = this.ticketForm.value;
+    const headers = this.getAuthHeaders();
+    const isEditing = this.editingTicket() !== null;
+
+    if (isEditing) {
+      const ticketId = this.editingTicket();
+      this.http.put(`${this.API_URL}/api/Ticket/${ticketId}`, formData, { headers }).subscribe({
+        next: (updatedTicket: any) => {
+          this.tickets.update(tickets =>
+            tickets.map(t => t.ticketID === ticketId ? updatedTicket : t)
+          );
+          this.hideTicketForm();
+          this.errorMessage.set('');
+        },
+        error: (err) => {
+          console.error('Failed to update ticket', err);
+          this.errorMessage.set('Failed to update ticket. Please try again.');
+        }
+      });
+    } else {
+      this.http.post(`${this.API_URL}/api/Ticket`, formData, { headers }).subscribe({
+        next: (newTicket: any) => {
+          this.tickets.update(tickets => [...tickets, newTicket]);
+          this.hideTicketForm();
+          this.errorMessage.set('');
+          this.ticketCount.update(count => count + 1);
+        },
+        error: (err) => {
+          console.error('Failed to create ticket', err);
+          this.errorMessage.set('Failed to create ticket. Please try again.');
+        }
+      });
+    }
+  }
+
+  // ===== PAYMENT CRUD =====
+  showAddPaymentForm(): void {
+    this.initializePaymentForm();
+    this.showPaymentForm.set(true);
+    this.editingPayment.set(null);
+  }
+
+  showEditPaymentForm(payment: Payment): void {
+    this.initializePaymentForm(payment);
+    this.showPaymentForm.set(true);
+    this.editingPayment.set(payment.id);
+  }
+
+  hidePaymentForm(): void {
+    this.showPaymentForm.set(false);
+    this.editingPayment.set(null);
+    this.paymentForm = null;
+  }
+
+  private initializePaymentForm(payment?: Payment): void {
+    this.paymentForm = this.formBuilder.group({
+      userId: [payment?.userId || '', Validators.required],
+      amount: [payment?.amount || '', [Validators.required, Validators.min(0.01)]],
+      method: [payment?.method || '', Validators.required],
+      status: [payment?.status || 'Pending', Validators.required],
+      transactionId: [payment?.transactionId || '']
+    });
+  }
+
+  savePayment(): void {
+    if (!this.paymentForm?.valid) {
+      this.errorMessage.set('Please fill in all required fields correctly.');
+      return;
+    }
+
+    const formData = this.paymentForm.value;
+    const headers = this.getAuthHeaders();
+    const isEditing = this.editingPayment() !== null;
+
+    if (isEditing) {
+      const paymentId = this.editingPayment();
+      this.http.put(`${this.API_URL}/api/Payment/${paymentId}`, formData, { headers }).subscribe({
+        next: (updatedPayment: any) => {
+          this.payments.update(payments =>
+            payments.map(p => p.id === paymentId ? updatedPayment : p)
+          );
+          this.hidePaymentForm();
+          this.errorMessage.set('');
+        },
+        error: (err) => {
+          console.error('Failed to update payment', err);
+          this.errorMessage.set('Failed to update payment. Please try again.');
+        }
+      });
+    } else {
+      this.http.post(`${this.API_URL}/api/Payment/payment`, formData, { headers }).subscribe({
+        next: (newPayment: any) => {
+          this.payments.update(payments => [...payments, newPayment]);
+          this.hidePaymentForm();
+          this.errorMessage.set('');
+          this.paymentCount.update(count => count + 1);
+        },
+        error: (err) => {
+          console.error('Failed to create payment', err);
+          this.errorMessage.set('Failed to create payment. Please try again.');
+        }
+      });
+    }
+  }
 }
+

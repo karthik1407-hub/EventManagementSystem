@@ -10,19 +10,16 @@ namespace Event_Management_System.Data
             : base(options) { }
 
         public DbSet<Event> Events { get; set; }
-        public DbSet<UserDto> Users { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
-
-        public DbSet<EventImage> EventImages { get; set; }
 
         public DbSet<OrderBasket> OrderBaskets { get; set; }
         public DbSet<OrderBasketItem> OrderBasketItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<EventImage> EventImage { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

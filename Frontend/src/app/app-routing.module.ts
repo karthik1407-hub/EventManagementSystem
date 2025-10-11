@@ -13,7 +13,6 @@ import { AuthGuard } from './auth.guard';
 import { AdminComponent } from './admin/admin.component';
 import { AdminUserComponent } from './admin-user/admin-user.component';
 import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.component';
-
 // Event Management
 import { EventComponent } from './event/event.component';
 import { EventDetailsComponent } from './event-details/event-details.component';

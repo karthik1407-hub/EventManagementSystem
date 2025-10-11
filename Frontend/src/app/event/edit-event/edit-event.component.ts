@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EventService } from 'src/app/event/services/event.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-edit-event',
@@ -33,7 +34,7 @@ export class EditEventComponent implements OnInit {
       eventDate: ['', Validators.required],
       eventDescription: ['', [Validators.required, Validators.maxLength(1000)]],
       eventPrice: ['', [Validators.required, Validators.min(0)]],
-      eventImage:['', [Validators.required], Validators.pattern(/.*\.(jpg|jpeg|png|gif)$/i)],
+      eventImage:['', [Validators.required, Validators.pattern(/.*\.(jpg|jpeg|png|gif)$/i)]],
       tags: ['']
     });
 
@@ -56,7 +57,7 @@ export class EditEventComponent implements OnInit {
           eventImage: event.eventImageUrl,
           tags: event.tags ? event.tags.join(', ') : ''
         });
-        this.imagePreview = event.eventImageUrl ? '/EventImages/' + event.eventImageUrl : null;
+        this.imagePreview = event.eventImageUrl ? environment.apiUrl + '/EventImages/' + event.eventImageUrl : null;
       },
       error: (error) => {
         this.errorMessage = 'Failed to load event details.';

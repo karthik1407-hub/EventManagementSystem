@@ -155,12 +155,15 @@ export class EventDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.eventService.deleteEvent(this.event.eventID.toString()).subscribe({
       next: () => {
         this.deleteModal?.hide();
-        alert('Event deleted successfully.');
-        this.router.navigate(['/event']);
+        this.showPopupMessage('Event deleted successfully!', false);
+        setTimeout(() => {
+          this.router.navigate(['/event']);
+        }, 2000); // 2 seconds delay
       },
       error: (err) => {
         this.errorMessage = 'Failed to delete the event.';
         this.isDeleting = false;
+        this.showPopupMessage('Failed to delete the event.', true);
       }
     });
   }

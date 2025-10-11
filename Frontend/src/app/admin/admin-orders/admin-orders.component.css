@@ -10,33 +10,11 @@
   text-align: center;
 }
 
-/* loader-5 */
-  
-  .loader-5 {
-    text-align: center;
-   font-size: 18px;
-    position:relative;
-    scale: .5;
-  }
-  
-  .loader-5 svg {
-    --blue: #8f44fd;
-    stroke: var(--blue);
-    stroke-width: 5;
-    fill: none;
-    stroke-dasharray: 50, 14;
-    stroke-dashoffset: 192;
-    animation: dash_682 1.8s linear infinite;
-  }
-  
-  @keyframes dash_682 {
-    72.5% {
-      opacity: 1;
-    }
-  
-    to {
-      stroke-dashoffset: 1;
-    }
+.loading-spinner {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #666;
 }
 
 .error-message {

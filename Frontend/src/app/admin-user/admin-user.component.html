@@ -5,9 +5,9 @@
   <div *ngIf="isLoading()" class="loading">Loading users...</div>
   <div *ngIf="errorMessage()" class="error-message">{{ errorMessage() }}</div>
 
-  <div class="actions">
+  <!-- <div class="actions">
     <button class="add-btn" (click)="showAddUserForm()">Add New User</button>
-  </div>
+  </div> -->
 
   <!-- User Form -->
   <div *ngIf="showUserForm()" class="form-container">
@@ -25,10 +25,7 @@
         <label for="contactNumber">Contact Number:</label>
         <input type="text" id="contactNumber" formControlName="contactNumber" required>
       </div>
-      <div class="form-group">
-        <label for="roles">Roles:</label>
-        <input type="text" id="roles" formControlName="roles">
-      </div>
+      
       <div class="form-actions">
         <button type="button" class="cancel-btn" (click)="hideUserForm()">Cancel</button>
         <button type="submit" class="save-btn" [disabled]="!userForm.valid">Save</button>
@@ -40,18 +37,20 @@
   <div class="users-list">
     <h2>Users ({{ users().length }})</h2>
     <ul class="data-list">
-      <li *ngFor="let user of users()" class="data-item">
-        <div class="item-info">
-          <strong>{{ user.name }}</strong><br>
-          Email: {{ user.email }}<br>
-          Contact: {{ user.contactNumber }}<br>
-          Roles: {{ user.roles }}
-        </div>
-        <div class="item-actions">
-          <button class="edit-btn" (click)="showEditUserForm(user)">Edit</button>
-          <button class="delete-btn" (click)="deleteUser(user)">Delete</button>
-        </div>
-      </li>
+      <ng-container *ngFor="let user of users()">
+        <li *ngIf="user" class="data-item">
+          <div class="item-info">
+            <strong>{{ user?.name }}</strong><br>
+            Email: {{ user?.email }}<br>
+            Contact: {{ user?.contactNumber }}<br>
+            Roles: {{ user?.roles }}
+          </div>
+          <div class="item-actions">
+            <button class="edit-btn" (click)="showEditUserForm(user)">Edit</button>
+            <button class="delete-btn" (click)="deleteUser(user)">Delete</button>
+          </div>
+        </li>
+      </ng-container>
     </ul>
   </div>
 </div>

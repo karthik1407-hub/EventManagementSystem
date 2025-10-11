@@ -40,9 +40,9 @@ export class EventService {
     return this.http.put(`${this.apiUrl}/${id}`, formData, { headers });
   }
 
-  deleteEvent(id: string): Observable<any> {
+  deleteEvent(id: string): Observable<string> {
     const headers = this.getAuthHeaders();
-    return this.http.delete(`${this.apiUrl}/${id}`, { headers });
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers, responseType: 'text' });
   }
 
   getEventsByOrganizer(organizerId: string): Observable<Event[]> {

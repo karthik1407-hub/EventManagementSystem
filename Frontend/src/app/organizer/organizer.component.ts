@@ -66,7 +66,7 @@ export class OrganizerComponent implements OnInit {
         const eventTickets = tickets.filter((t: any) => t.eventID === event.eventID);
         // For each ticket, fetch user details
         eventTickets.forEach((ticket: any) => {
-          this.http.get(`${environment.apiUrl}/api/users/${ticket.userID}`).subscribe({
+          this.http.get(`${environment.apiUrl}/api/User/${ticket.userID}`).subscribe({
             next: (user: any) => {
               this.eventBookings.push({
                 ...ticket,

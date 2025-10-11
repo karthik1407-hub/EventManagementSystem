@@ -64,13 +64,13 @@ namespace Event_Management_System.Controllers
                 {
                     f.FeedbackID,
                     f.Rating,
-                    f.Comments,
+                    Comments = f.Comments ?? string.Empty,
                     f.SubmittedTimestamp,
-                    UserEmail = f.User.Email,
-                    EventName = f.Event.EventName,
+                    UserEmail = f.User.Email ?? string.Empty,
+                    EventName = f.Event.EventName ?? string.Empty,
                     f.EventID,
                     f.UserID,
-                    Reply = f.Reply
+                    Reply = f.Reply ?? string.Empty
                 })
                 .ToListAsync();
 

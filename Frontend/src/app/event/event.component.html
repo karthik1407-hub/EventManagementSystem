@@ -200,4 +200,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Popup Modal -->
+  <div class="popup-modal" [class.show]="showPopup">
+    <div class="popup-content" [class.error]="popupIsError">
+      <p>{{ popupMessage }}</p>
+      <button (click)="closePopup()">OK</button>
+    </div>
+  </div>
 </div>

@@ -23,7 +23,7 @@ export class UserdetailsComponent implements OnInit {
   onSubmit(): void {
     const updateData = this.updateForm.value;
 
-    this.http.put(`https://localhost:7272/api/Users/${this.userId}`, updateData)
+    this.http.put(`https://localhost:7272/api/User/${this.userId}`, updateData)
       .subscribe({
         next: () => alert('User updated successfully!'),
         error: err => console.error('Update failed:', err)

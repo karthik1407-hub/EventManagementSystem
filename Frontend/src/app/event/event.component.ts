@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { EventService } from './services/event.service';
 import { Event } from './models/event.model';
 import { AuthService } from '../auth.service';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { CartService } from '../cart/services/cart.service';
+import { filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-event',
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css']
 })
-export class EventComponent implements OnInit {
+export class EventComponent implements OnInit, OnDestroy {
   eventList: Event[] = [];
   upcomingEvents: Event[] = [];
   pastEvents: Event[] = [];
@@ -28,6 +30,11 @@ export class EventComponent implements OnInit {
   allTags: string[] = ['Outdoor', 'Family Friendly', 'Free Drinks', 'Live Music'];
 
   currentView: 'upcoming' | 'past' = 'upcoming';
+
+  showPopup: boolean = false;
+  popupMessage: string = '';
+  popupIsError: boolean = false;
+  private subscription: Subscription | undefined;
 
   constructor(
     private eventService: EventService,
@@ -49,6 +56,20 @@ export class EventComponent implements OnInit {
     this.isAdmin = this.authService.getUserRole() === 'Admin';
     if (this.isLoggedIn()) {
       this.fetchEvents();
+    }
+    this.subscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event) => {
+      const navEvent = event as NavigationEnd;
+      if (navEvent.url === '/event') {
+        this.fetchEvents();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
@@ -160,14 +181,24 @@ export class EventComponent implements OnInit {
     if (confirm('Are you sure you want to delete this event?')) {
       this.eventService.deleteEvent(eventID).subscribe({
         next: () => {
-          alert('Event deleted successfully!');
+          this.showPopupMessage('Event deleted successfully!', false);
           this.fetchEvents(); // Refresh the list
         },
         error: (err) => {
           console.error('Error deleting event:', err);
-          alert('Failed to delete event.');
+          this.showPopupMessage('Failed to delete event.', true);
         }
       });
     }
+  }
+
+  showPopupMessage(message: string, isError: boolean): void {
+    this.popupMessage = message;
+    this.popupIsError = isError;
+    this.showPopup = true;
+  }
+
+  closePopup(): void {
+    this.showPopup = false;
   }
 }
